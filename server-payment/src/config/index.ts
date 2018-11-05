@@ -1,0 +1,35 @@
+import convict from "convict";
+
+const config = convict({
+  environment: {
+    doc: "The application environment.",
+    format: ["production", "development", "test"],
+    default: "production",
+    env: "NODE_ENV"
+  },
+  host: {
+    doc: "The IP address to bind.",
+    format: "ipaddress",
+    default: "0.0.0.0",
+    env: "HOST"
+  },
+  port: {
+    doc: "The port to bind.",
+    format: "port",
+    default: 8080,
+    env: "PORT"
+  },
+  db: {
+    url: {
+      doc: "Database connection url",
+      format: String,
+      default: null,
+      env: "DATABASE_URL"
+    }
+  }
+});
+
+// Perform validation
+config.validate({ allowed: "strict" });
+
+export { config };
