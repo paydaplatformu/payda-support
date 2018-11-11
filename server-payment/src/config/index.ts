@@ -29,6 +29,10 @@ const config = convict({
   }
 });
 
+if (config.get("environment")) {
+  config.set("db.url", "");
+}
+
 // Perform validation
 config.validate({ allowed: "strict" });
 
