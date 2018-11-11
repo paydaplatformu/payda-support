@@ -1,0 +1,12 @@
+{
+    "name": "payda-support",
+    "version": "0.1.0",
+    "scripts": {
+      "postinstall": "yarn --pure-lockfile --cwd frontend-payment && yarn --pure-lockfile --cwd server-payment"
+    },
+    "engines": {
+      "node": "8.12.0",
+      "yarn": "1.9.4"
+    },
+    "cacheDirectories": ["server-payment/node_modules", "frontend-payment/node_modules"]
+  }
