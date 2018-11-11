@@ -1,1 +1,1 @@
-web: cd server-payment && yarn start
+web: yarn --cwd server-payment start

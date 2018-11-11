@@ -23,7 +23,7 @@ const config = convict({
     url: {
       doc: "Database connection url",
       format: String,
-      default: null,
+      default: "",
       env: "DATABASE_URL"
     }
   }
