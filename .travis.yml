@@ -1,0 +1,27 @@
+language: node_js
+branches:
+  only:
+  - master
+node_js:
+- 8.12.0
+before_install:
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.9.4
+- export PATH="$HOME/.yarn/bin:$PATH"
+before_script:
+- cd frontend-payment
+- yarn --pure-lockfile
+- yarn build
+- cd ..
+- rm -rf server-payment/frontend-dist/
+- cp -R frontend-payment/build/ server-payment/frontend-dist/
+- cd server-payment
+- yarn --pure-lockfile
+- yarn build
+cache: yarn
+deploy:
+  provider: heroku
+  api_key:
+    secure: WQoV8VIc8gqh2E+f9pj1OJIPxyYC6zsALMTY6L0HuqZdsY/XopXKK9omRfYNWw0W3XwGkbpeBHn8QBb9WWDR4KWOBHxmddZ4qKa+xgEg4W4XxZaEaXM+Ufb81p3LGJfOO3Ye6oEwZW7ol/VR9hhW4iC43pMT7fIw88jXHYH8kDLpiXhbZLZC37kqQOtJRO28b0ng92KdLje5tyuO9DlyoblWkfTdSIXyG8kfPVWKt87QjsuQNEsoUgSMnp+8sCAWPlvShBDNDcgZj1yhr6TrMJccyLmJCyc7Tl08PA/E4d2AapgVZFZLrKo3IWzFkwzX6uaSJeQvqg/ROiU7a/8CYehEqukn/e/ysdwu0NHTE2ZkX2oBZx0nGzBTSO2WbnPL7OgBc2CGnZGHZnF3+ZDDYwIW3YfkdJLbmz9sQS0pAo1Scv7fj5ZniF1g3sQ6plVoX1VO7W++Gk+KesaQ0GodUDzApIGNs0cu2NN1StpG4+gAiIi/zyy8peWkK1bDLVRaz1egZIK+7IpsOccVAI9iX/5cBfinIloSDjPeVXv3lHabvknny2qDXQAtxgFAsA7PCm7TFGxNInAe4uagbB4vgZez5Xnsi3BMK21RDGXt3h76HQAKuH1eAcjilCQJblXbvbSnllrGAy20LZhFfQOgipdWlFngftC9/nQME0TjjnQ=
+  app: payda-support-v2
+  on:
+    repo: utkuturunc/payda-support
