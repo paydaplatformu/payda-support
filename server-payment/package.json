@@ -41,7 +41,8 @@
     "start:debug": "NODE_ENV=development TS_NODE_FILES=true nodemon --config nodemon.json",
     "format": "prettier --write ./src/**/*.ts",
     "lint": "tslint -p .",
-    "test": "NODE_ENV=test TS_NODE_FILES=true jest --watch",
+    "test:debug": "NODE_ENV=test TS_NODE_FILES=true jest --watch",
+    "test": "NODE_ENV=test TS_NODE_FILES=true jest",
     "build": "tsc"
   },
   "engines": {
