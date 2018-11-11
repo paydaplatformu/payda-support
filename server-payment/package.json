@@ -43,5 +43,9 @@
     "lint": "tslint -p .",
     "test": "NODE_ENV=test TS_NODE_FILES=true jest --watch",
     "build": "tsc"
+  },
+  "engines": {
+    "node": "8.12.0",
+    "yarn": "1.9.4"
   }
 }
