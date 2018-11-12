@@ -17,8 +17,8 @@ const log = console.log; // tslint:disable-line
 
 type Environment = "production" | "development" | "test";
 
-const getProfile = (environment: Environment) => {
-  if (environment === "test") {
+const getProfile = (input: Environment) => {
+  if (input === "test") {
     return test;
   }
   return production;
@@ -44,6 +44,7 @@ export const createServer = (callback?: (error: any, app: Express) => any) => {
     context,
     typeDefs,
     resolvers,
+    introspection: true,
     formatError: (error: any) => {
       console.error(error);
       return error;
