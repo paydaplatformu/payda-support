@@ -3,5 +3,5 @@ import { IPackageService } from "../models/PackageService";
 
 @injectable()
 export class MongoPackageService implements IPackageService {
-  public getAll = () => [{ name: "asdffaerf" }];
+  public getAll = async () => [{ name: "asdffaerf" }] as any;
 }
