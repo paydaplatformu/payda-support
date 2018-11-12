@@ -3,11 +3,11 @@ branches:
   only:
   - master
 node_js:
-- 8.12.0
+- 10.13.0
 env:
 - NODE_ENV=PRODUCTION
 before_install:
-- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.9.4
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
 - export PATH="$HOME/.yarn/bin:$PATH"
 before_script:
 - cd frontend-payment
