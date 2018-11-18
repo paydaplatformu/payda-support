@@ -5,10 +5,13 @@ import chalk from "chalk";
 import express, { Express } from "express";
 import "express-async-errors";
 import { Container } from "inversify";
+import OAuthServer, { Request, Response, Token } from "oauth2-server";
 import path from "path";
 import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
+import { IAuthentication } from "./models/Authentication";
+import { IUserService } from "./models/IUserService";
 import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
 import { TYPES } from "./types";
@@ -32,11 +35,38 @@ const container = new Container();
 const profile = getProfile(environment);
 container.load(profile);
 
-export const createServer = (callback?: (error: any, app: Express) => any) => {
-  const context: ContextFunction = async () => {
+const getToken = (authenticationModel: IAuthentication) => async (
+  header: string | undefined
+): Promise<Token | null> => {
+  if (header) {
+    try {
+      const token = await authenticationModel.getAccessToken(header.replace("Bearer ", ""));
+      return token || null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
+export const createServer = async (callback?: (error: any, app: Express) => any) => {
+  const model = container.get<IAuthentication>(TYPES.IAuthentication);
+
+  const context: ContextFunction = async ({ req }) => {
+    const token = await getToken(model)(req.get("Authorization"));
+
+    const authorizationData = token
+      ? {
+          user: token.user,
+          scope: token.scope,
+          client: token.client
+        }
+      : {};
+
     const tools = container.get<IContextProvider>(TYPES.IContextProvider);
     return {
-      ...tools
+      ...tools,
+      ...authorizationData
     };
   };
 
@@ -53,9 +83,29 @@ export const createServer = (callback?: (error: any, app: Express) => any) => {
 
   const app: Express = express();
 
+  const oauth = new OAuthServer({
+    model: model as any
+  });
+
+  const userService = container.get<IUserService>(TYPES.IUserService);
+
+  const userCount = await userService.getUserCount();
+  if (userCount === 0) {
+    await userService.create({
+      email: config.get("defaultUser.email"),
+      password: config.get("defaultUser.password")
+    });
+  }
+
   app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
   server.applyMiddleware({ app });
   app.use(errorHandler);
+
+  app.post("/oauth2/token", async (req, res) => {
+    const response = await oauth.token(new Request(req), new Response(res));
+    res.json(response);
+  });
 
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
   // Handle React routing, return all requests to React app
