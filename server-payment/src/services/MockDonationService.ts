@@ -1,11 +1,21 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
+import { isAlpha, isEmail, isLength } from 'validator';
 import { IDonation, IDonationCreator } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
+import { FieldErrorCode, ValidationError } from "../models/Errors";
+import { IPackageService } from "../models/PackageService";
+import { Validator } from "../models/Validator";
+import { TYPES } from "../types";
+import { BaseEntityService } from "../models/BaseEntityService";
 
 @injectable()
-export class MockDonationService implements IDonationService {
+export class MockDonationService extends BaseEntityService<IDonationCreator> implements IDonationService {
   private donations: IDonation[];
+
+  @inject(TYPES.IPackageService) private packageService: IPackageService = null as any;
+
   constructor() {
+    super()
     this.donations = [
       {
         id: "d1",
@@ -34,7 +44,27 @@ export class MockDonationService implements IDonationService {
     ];
   }
 
+  public creatorValidator: Validator<IDonationCreator> = {
+    email: async value => {
+      if (!isEmail(value)) return [FieldErrorCode.INVALID_EMAIL]
+      return null;
+    },
+    fullName: async value => {
+      if (!isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME]
+      else if (!isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL]
+      return null;
+    },
+    packageId: async value => {
+      const donationPackage = await this.packageService.getById(value)
+      if (!donationPackage) return [FieldErrorCode.PACKAGE_DOES_NOT_EXIST]
+      return null;
+    }
+  }
+
   public create = async (donationCreator: IDonationCreator) => {
+    const errors = await this.validate(donationCreator)
+    if (errors) throw new ValidationError(errors)
+
     const newDonation = {
       id: Math.random()
         .toString(36)

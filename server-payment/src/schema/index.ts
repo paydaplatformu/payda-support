@@ -31,7 +31,7 @@ const Query = gql`
     activatePackage(id: String!): String
     deactivatePackage(id: String!): String
 
-    createDonation: Package!
+    createDonation(donationCreator: DonationCreator!): Package!
     cleanPendingDonations: Int!
   }
 `;
