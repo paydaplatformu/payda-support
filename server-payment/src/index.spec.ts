@@ -12,15 +12,15 @@ describe("API Test", () => {
   });
 
   let server: Server | undefined;
-  beforeAll(done => {
+  beforeAll(async done => {
     if (server) {
-      server.close(() => {
-        server = createServer(() => {
+      server.close(async () => {
+        server = await createServer(() => {
           done();
         });
       });
     } else {
-      server = createServer(() => {
+      server = await createServer(() => {
         done();
       });
     }
