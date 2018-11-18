@@ -50,7 +50,10 @@ const rootResolvers: IResolvers<any, IContext> = {
       return userService.getAll();
     },
     package: (parent, { id }, { packageService }) => packageService.getById(id),
-    packages: (parent, { onlyActive }, { packageService }) => packageService.getAll({ onlyActive }),
+    packages: (parent, { onlyActive }, { packageService, user }) => {
+      if (!user) return packageService.getAll({ onlyActive: true })
+      return packageService.getAll({ onlyActive })
+    },
     donation: (parent, { id }, { donationService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return donationService.getById(id);
