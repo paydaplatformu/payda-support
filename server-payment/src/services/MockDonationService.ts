@@ -20,24 +20,24 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
       {
         id: "d1",
         date: new Date(),
-        email: "a@a.com",
-        fullName: "asdf asf",
+        email: "donator1@gmail.com",
+        fullName: "First donator",
         packageId: "p1",
         paymentConfirmed: true
       },
       {
         id: "d2",
         date: new Date(),
-        email: "b@b.com",
-        fullName: "yujtyujt asf",
+        email: "supporter@microsoft.com",
+        fullName: "Support Person",
         packageId: "p2",
         paymentConfirmed: true
       },
       {
         id: "d3",
         date: new Date(),
-        email: "c@c.com",
-        fullName: "carfer asf",
+        email: "non_confirmed@supporter.com",
+        fullName: "Non Confirmed",
         packageId: "p1",
         paymentConfirmed: false
       }
