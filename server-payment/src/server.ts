@@ -15,6 +15,7 @@ import { IUserService } from "./models/IUserService";
 import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
 import { TYPES } from "./types";
+import { ValidationError, InvalidInput } from "./models/Errors";
 
 const log = console.log; // tslint:disable-line
 
@@ -57,10 +58,10 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
 
     const authorizationData = token
       ? {
-          user: token.user,
-          scope: token.scope,
-          client: token.client
-        }
+        user: token.user,
+        scope: token.scope,
+        client: token.client
+      }
       : {};
 
     const tools = container.get<IContextProvider>(TYPES.IContextProvider);
@@ -76,6 +77,9 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     resolvers,
     introspection: true,
     formatError: (error: any) => {
+      if (error instanceof ValidationError) {
+        return new InvalidInput(error.invalidFields)
+      }
       console.error(error);
       return error;
     }
