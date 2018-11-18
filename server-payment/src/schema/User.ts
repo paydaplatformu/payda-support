@@ -6,7 +6,6 @@ import { IContext } from "./context";
 export const typeDef = gql`
   type User {
     id: String!
-    username: String!
     email: String!
     createdAt: Date!
     role: String!

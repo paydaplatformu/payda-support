@@ -12,9 +12,12 @@ import { resolvers as packageResolvers, typeDef as Package } from "./Package";
 import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as RepeatConfig } from "./RepeatConfig";
 import { resolvers as userResolvers, typeDef as User } from "./User";
+import { AuthorizationRequired } from "../models/Errors";
 
 const Query = gql`
   type Query {
+    users: [User!]!
+
     package(id: String!): Package
     packages(onlyActive: Boolean): [Package!]!
 
@@ -42,21 +45,44 @@ const SchemaDefinition = gql`
 
 const rootResolvers: IResolvers<any, IContext> = {
   Query: {
+    users: (parent, { id }, { userService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return userService.getAll();
+    },
     package: (parent, { id }, { packageService }) => packageService.getById(id),
     packages: (parent, { onlyActive }, { packageService }) => packageService.getAll({ onlyActive }),
-    donation: (parent, { id }, { donationService }) => donationService.getById(id),
-    donations: (parent, args, { donationService }) => donationService.getAll()
+    donation: (parent, { id }, { donationService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return donationService.getById(id);
+    },
+    donations: (parent, args, { donationService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return donationService.getAll();
+    }
   },
   Mutation: {
-    createPackage: (parent, { packageCreator }, { packageService }) =>
-      packageService.create(packageCreator as IPackageCreator),
-    editPackage: (parent, { packageModifier }, { packageService }) =>
-      packageService.edit(packageModifier as IPackageModifier),
-    activatePackage: (parent, { id }, { packageService }) => packageService.activate(id),
-    deactivatePackage: (parent, { id }, { packageService }) => packageService.deactivate(id),
-    createDonation: (parent, { donationCreator }, { donationService }) =>
+    createPackage: (parent, { packageCreator }, { packageService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return packageService.create(packageCreator as IPackageCreator);
+    },
+    editPackage: (parent, { packageModifier }, { packageService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return packageService.edit(packageModifier as IPackageModifier);
+    },
+    activatePackage: (parent, { id }, { packageService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return packageService.activate(id);
+    },
+    deactivatePackage: (parent, { id }, { packageService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return packageService.deactivate(id);
+    },
+    createDonation: (parent, { donationCreator }, { donationService, user }) =>
       donationService.create(donationCreator as IDonationCreator),
-    cleanPendingDonations: (parent, args, { donationService }) => donationService.cleanPendingDonations()
+    cleanPendingDonations: (parent, args, { donationService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return donationService.cleanPendingDonations();
+    }
   }
 };
 
