@@ -16,13 +16,15 @@ import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
 import { TYPES } from "./types";
 import { ValidationError, InvalidInput } from "./models/Errors";
+import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
+import retry from 'async-retry'
 
 const log = console.log; // tslint:disable-line
 
-type Environment = "production" | "development" | "test";
+type Environment = "production" | "staging" | "development" | "test";
 
 const getProfile = (input: Environment) => {
-  if (input === "test") {
+  if (["test", "development"].includes(input)) {
     return test;
   }
   return production;
@@ -51,6 +53,17 @@ const getToken = (authenticationModel: IAuthentication) => async (
 };
 
 export const createServer = async (callback?: (error: any, app: Express) => any) => {
+
+  if (container.isBound(MongoDbConnectionProvider)) {
+    const mongoDbConnectionProvider = container.get<MongoDbConnectionProvider>(MongoDbConnectionProvider)
+    await retry(async () => await mongoDbConnectionProvider.getConnection(), {
+      retries: 100, onRetry: error => {
+        log(error)
+      }
+    })
+    log(chalk.green("\n  Database connected"))
+  }
+
   const model = container.get<IAuthentication>(TYPES.IAuthentication);
 
   const context: ContextFunction = async ({ req }) => {
