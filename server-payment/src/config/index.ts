@@ -3,7 +3,7 @@ import convict from "convict";
 const config = convict({
   environment: {
     doc: "The application environment.",
-    format: ["production", "development", "test"],
+    format: ["production", "staging", "development", "test"],
     default: "production",
     env: "NODE_ENV"
   },
@@ -23,7 +23,7 @@ const config = convict({
     url: {
       doc: "Database connection url",
       format: String,
-      default: "",
+      default: null,
       env: "DATABASE_URL"
     }
   },
@@ -51,7 +51,7 @@ const config = convict({
     password: {
       doc: "User password to create if no user exists",
       format: String,
-      default: "override_me",
+      default: null,
       env: "DEFAULT_USER_PASSWORD"
     }
   },
@@ -77,7 +77,7 @@ const config = convict({
     secret: {
       doc: "JWT Secret",
       format: String,
-      default: "override_me",
+      default: null,
       env: "JWT_SECRET"
     },
     accessTokenLifetime: {
@@ -93,8 +93,10 @@ const config = convict({
   }
 });
 
-if (config.get("environment")) {
+if (["development", "test"].includes(config.get("environment"))) {
   config.set("db.url", "");
+  config.set("jwt.secret", "secret");
+  config.set("defaultUser.password", "123456");
 }
 
 // Perform validation

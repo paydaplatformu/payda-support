@@ -10,8 +10,12 @@ import { MockDonationService } from "./services/MockDonationService";
 import { MockPackageService } from "./services/MockPackageService";
 import { MockUserService } from "./services/MockUserService";
 import { TYPES } from "./types";
+import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 
 const production = new ContainerModule(bind => {
+  bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
+    .toSelf()
+    .inSingletonScope();
   bind<IAuthentication>(TYPES.IAuthentication)
     .to(JwtAuthentication)
     .inSingletonScope();
