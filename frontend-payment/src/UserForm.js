@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import TextField from './TextField';
+import Button from './Button';
+
+const StyledUserFormContainer = styled.div`
+  @media (max-width: 768px) {
+    margin: 30px 20px;
+  }
+`;
 
 class UserForm extends Component {
   constructor(props) {
@@ -24,59 +31,29 @@ class UserForm extends Component {
 
   render() {
     return (
-      <div>
-        <TextField
-          id="quantity"
-          label="Adet"
-          // className={classes.textField}
-          value={this.state.quantity}
-          type="number"
-          onChange={this.handleChange('quantity')}
-          margin="normal"
-          variant="outlined"
-          fullWidth
-        />
+      <StyledUserFormContainer>
         <TextField
           id="outlined-name"
           label="Destekleyen Kisi"
-          // className={classes.textField}
           value={this.state.name}
           onChange={this.handleChange('name')}
-          margin="normal"
-          variant="outlined"
-          fullWidth
         />
         <TextField
           id="email"
           label="E-posta Adresi"
-          // className={classes.textField}
           value={this.state.email}
           type="email"
           onChange={this.handleChange('email')}
-          margin="normal"
-          variant="outlined"
-          fullWidth
         />
         <TextField
           id="description"
           label="Aciklama"
-          // className={classes.textField}
           value={this.state.description}
           onChange={this.handleChange('description')}
-          margin="normal"
-          variant="outlined"
           multiline
-          fullWidth
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.handleClick}
-          fullWidth
-        >
-          Destek Ol!
-        </Button>
-      </div>
+        <Button onClick={this.handleClick}>Destek Ol!</Button>
+      </StyledUserFormContainer>
     );
   }
 }
