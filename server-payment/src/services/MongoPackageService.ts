@@ -1,4 +1,3 @@
-import { ObjectID } from "bson";
 import { injectable } from "inversify";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageModifier, IPackageFilters } from "../models/Package";
 import { IPackageService } from "../models/PackageService";

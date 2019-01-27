@@ -12,6 +12,8 @@ import { MockUserService } from "./services/MockUserService";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { MongoPackageService } from "./services/MongoPackageService";
 import { TYPES } from "./types";
+import { MongoUserService } from "./services/MongoUserService";
+import { MongoDonationService } from "./services/MongoDonationService";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
@@ -21,13 +23,13 @@ const production = new ContainerModule(bind => {
     .to(JwtAuthentication)
     .inSingletonScope();
   bind<IUserService>(TYPES.IUserService)
-    .to(MockUserService)
+    .to(MongoUserService)
     .inSingletonScope();
   bind<IPackageService>(TYPES.IPackageService)
-    .to(MockPackageService)
+    .to(MongoPackageService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
-    .to(MockDonationService)
+    .to(MongoDonationService)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
