@@ -7,6 +7,7 @@ import { IContext } from "./context";
 export const typeDef = gql`
 
   input PackageFilter {
+    ids: [String!]
     onlyActive: Boolean
   }
 
@@ -17,7 +18,6 @@ export const typeDef = gql`
     createdAt: Date!
     updatedAt: Date!
     repeatConfig: RepeatConfig!
-    donations: [Donation!]!
     donationCount: Int!
     image: String
     price: MonateryAmount!
@@ -29,10 +29,6 @@ export const typeDef = gql`
 
 export const resolvers: IResolvers<IPackage, IContext> = {
   Package: {
-    donations: (parent, args, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
-      return donationService.getByPackageId(parent.id);
-    },
     donationCount: (parent, args, { donationService, user }) => {
       // if (!user) throw new AuthorizationRequired();
       return donationService.countByPackageId(parent.id);

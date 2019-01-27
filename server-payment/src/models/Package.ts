@@ -23,7 +23,8 @@ export interface IPackageModifier {
 }
 
 export interface IPackageFilters {
-  onlyActive: boolean;
+  ids?: string[];
+  onlyActive?: boolean;
 }
 
 export interface IPackage {

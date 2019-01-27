@@ -14,14 +14,8 @@ export const typeDef = gql`
     fullName: String!
     email: String!
     packageId: String!
-    package: Package!
     paymentConfirmed: Boolean!
     date: Date!
   }
 `;
 
-export const resolvers: IResolvers<IDonation, IContext> = {
-  Donation: {
-    package: (parent, args, { packageService }) => packageService.getById(parent.packageId)
-  }
-};

@@ -6,7 +6,7 @@ import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
-import { resolvers as donationResolvers, typeDef as Donation } from "./Donation";
+import { typeDef as Donation } from "./Donation";
 import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
@@ -52,16 +52,16 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
 
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
-    allPackages: (parent, { filter: { onlyActive } = { onlyActive: true }, sortField, sortOrder, page, perPage }, { packageService, user }) => {
+    allPackages: (parent, { filter: { onlyActive, ids } = { onlyActive: true, ids: undefined }, sortField, sortOrder, page, perPage }, { packageService, user }) => {
       if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      if (!user) return packageService.getAll({ onlyActive: true }, pagination, sorting);
-      return packageService.getAll({ onlyActive }, pagination, sorting);
+      if (!user) return packageService.getAll({ onlyActive: true, ids }, pagination, sorting);
+      return packageService.getAll({ onlyActive, ids }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       // if (!user) throw new AuthorizationRequired();
-      if (!user) return { count: packageService.count({ onlyActive: true }) };
+      if (!user) return { count: packageService.count({ onlyActive: true, ids: filter.ids }) };
       return { count: await packageService.count(filter) };
     },
 
@@ -113,4 +113,4 @@ export const typeDefs = [
   ListMetadata
 ];
 
-export const resolvers = merge(dateResolvers, rootResolvers, packageResolvers, donationResolvers, userResolvers);
+export const resolvers = merge(dateResolvers, rootResolvers, packageResolvers, userResolvers);

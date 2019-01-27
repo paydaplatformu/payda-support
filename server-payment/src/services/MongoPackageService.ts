@@ -2,17 +2,22 @@ import { injectable } from "inversify";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageModifier, IPackageFilters } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
 import { BaseMongoService } from "./BaseMongoService";
-import { Cursor } from "mongodb";
+import { Cursor, ObjectID } from "mongodb";
 
 @injectable()
 export class MongoPackageService extends BaseMongoService<IPackageEntity, IPackage, IPackageFilters, IPackageCreator, IPackageModifier> implements IPackageService {
   public static collectionName = "packages";
 
-  public getFilteredQuery({ onlyActive }: IPackageFilters): Cursor<IPackageEntity> {
-    if (onlyActive) {
-      return this.collection.find({ isActive: true });
-    }
-    return this.collection.find();
+  public getFilteredQuery({ onlyActive, ids }: IPackageFilters): Cursor<IPackageEntity> {
+    // if
+    const filters = [
+      onlyActive !== undefined ? { isActive: onlyActive } : undefined,
+      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectID(id)) } } : undefined
+    ].filter(el => el !== undefined)
+
+    return this.collection.find({
+      $and: filters
+    });
   }
 
   public async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {

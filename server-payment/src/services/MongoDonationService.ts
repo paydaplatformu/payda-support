@@ -9,7 +9,7 @@ import { IModifier } from "../models/Modifier";
 export class MongoDonationService extends BaseMongoService<IDonationEntity, IDonation, IDonationFilters, IDonationCreator, IModifier> implements IDonationService {
   public static collectionName = "donations";
 
-  public getFilteredQuery({ paymentConfirmed }: IDonationFilters): Cursor<IDonationEntity> {
+  public getFilteredQuery({ paymentConfirmed }: IDonationFilters = {}): Cursor<IDonationEntity> {
     if (paymentConfirmed !== undefined) {
       return this.collection.find({ paymentConfirmed });
     }
@@ -28,6 +28,15 @@ export class MongoDonationService extends BaseMongoService<IDonationEntity, IDon
   public async cleanPendingDonations(): Promise<number> {
     const result = await this.collection.deleteMany({ paymentConfirmed: false })
     return result.deletedCount || 0;
+  }
+
+  public async createEntity(creator: IDonationCreator): Promise<IDonationEntity> {
+    const fromSuper = await super.createEntity(creator);
+    return {
+      ...fromSuper,
+      paymentConfirmed: false,
+      date: new Date()
+    }
   }
 
   public toModel(entity: IDonationEntity): IDonation {
