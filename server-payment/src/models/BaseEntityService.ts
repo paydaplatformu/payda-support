@@ -1,25 +1,26 @@
-import { Validator } from "./Validator";
-import { chain } from 'lodash'
-import { isDefined } from "../utilities/helpers";
 import { injectable } from "inversify";
+import { chain } from "lodash";
+import { isDefined } from "../utilities/helpers";
+import { Validator } from "./Validator";
 
 @injectable()
 export abstract class BaseEntityService<Creator> {
-  abstract creatorValidator: Validator<Creator>
+  public abstract creatorValidator: Validator<Creator>;
 
-  async validate(input: Creator) {
+  public async validate(input: Creator) {
     const promises = Object.entries(this.creatorValidator).map(([field, validationFunction]) => {
-      const value = (input as any)[field].toString()
-      return (validationFunction as any)(value)
+      const value = (input as any)[field].toString();
+      return (validationFunction as any)(value);
     });
 
-    const results = await Promise.all(promises)
+    const results = await Promise.all(promises);
 
-    const errors = chain(results).filter(isDefined).flatten().value()
+    const errors = chain(results)
+      .filter(isDefined)
+      .flatten()
+      .value();
 
-    if (errors.length === 0) return null
-    return errors
-
+    if (errors.length === 0) return null;
+    return errors;
   }
 }
-

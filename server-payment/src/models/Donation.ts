@@ -5,6 +5,10 @@ export interface IDonationCreator {
   packageId: string;
 }
 
+export interface IDonationFilters {
+  paymentConfirmed: boolean;
+}
+
 export interface IDonation {
   id: string;
   fullName: string;

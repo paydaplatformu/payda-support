@@ -1,23 +1,24 @@
 import { ContextFunction } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-express";
+import retry from "async-retry";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
 import express, { Express } from "express";
 import "express-async-errors";
 import { Container } from "inversify";
+import { Db } from "mongodb";
 import OAuthServer, { Request, Response, Token } from "oauth2-server";
 import path from "path";
 import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { IAuthentication } from "./models/Authentication";
-import { IUserService } from "./models/IUserService";
+import { InvalidInput, ValidationError } from "./models/Errors";
+import { IUserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
-import { TYPES } from "./types";
-import { ValidationError, InvalidInput } from "./models/Errors";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
-import retry from 'async-retry'
+import { TYPES } from "./types";
 
 const log = console.log; // tslint:disable-line
 
@@ -53,15 +54,16 @@ const getToken = (authenticationModel: IAuthentication) => async (
 };
 
 export const createServer = async (callback?: (error: any, app: Express) => any) => {
-
   if (container.isBound(MongoDbConnectionProvider)) {
-    const mongoDbConnectionProvider = container.get<MongoDbConnectionProvider>(MongoDbConnectionProvider)
-    await retry(async () => await mongoDbConnectionProvider.getConnection(), {
-      retries: 100, onRetry: error => {
-        log(error)
+    const mongoDbConnectionProvider = container.get<MongoDbConnectionProvider>(MongoDbConnectionProvider);
+    const db = await retry(async () => await mongoDbConnectionProvider.getConnection(), {
+      retries: 100,
+      onRetry: error => {
+        log(error);
       }
-    })
-    log(chalk.green("\n  Database connected"))
+    });
+    container.bind<Db>(TYPES.IMongoDb).toConstantValue(db);
+    log(chalk.green("\n  Database connected"));
   }
 
   const model = container.get<IAuthentication>(TYPES.IAuthentication);
@@ -71,10 +73,10 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
 
     const authorizationData = token
       ? {
-        user: token.user,
-        scope: token.scope,
-        client: token.client
-      }
+          user: token.user,
+          scope: token.scope,
+          client: token.client
+        }
       : {};
 
     const tools = container.get<IContextProvider>(TYPES.IContextProvider);
@@ -91,7 +93,7 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     introspection: true,
     formatError: (error: any) => {
       if (error instanceof ValidationError) {
-        return new InvalidInput(error.invalidFields)
+        return new InvalidInput(error.invalidFields);
       }
       console.error(error);
       return error;

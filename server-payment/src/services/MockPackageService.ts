@@ -1,10 +1,12 @@
 import { injectable } from "inversify";
 import { Currency } from "../models/Currency";
 import { LanguageCode } from "../models/LanguageCode";
-import { IPackage, IPackageCreator, IPackageModifier } from "../models/Package";
-import { IPackageFilters } from "../models/PackageFilters";
+import { IPackage, IPackageCreator, IPackageModifier, IPackageFilters } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
 import { RepeatConfig } from "../models/RepeatConfig";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
+import { sortAndPaginate } from "../utilities/helpers";
 
 @injectable()
 export class MockPackageService implements IPackageService {
@@ -13,14 +15,30 @@ export class MockPackageService implements IPackageService {
     this.packages = [
       {
         id: "p1",
-        defaultTag: { code: LanguageCode.EN, name: "Platinum Supporter", description: "The donation will be used by Payda to grow existing projects, kickstart new ones and maintain operational efficiency as the organization becomes larger through investments in infrastructural systems." },
+        defaultTag: {
+          code: LanguageCode.EN,
+          name: "Platinum Supporter",
+          description:
+            "The donation will be used by Payda to grow existing projects, \
+            kickstart new ones and maintain operational efficiency as the \
+            organization becomes larger through investments in infrastructural systems."
+        },
         price: {
           amount: 10000,
           currency: Currency.TRY
         },
         priority: 2,
         repeatConfig: RepeatConfig.NONE,
-        tags: [{ code: LanguageCode.TR, name: "Platinyum Destekçi", description: "Bu desteğiniz, Payda'nın mevcut projelerini geliştirebilmesi, yeni projeleri başlatabilmesi ve kurumsal olarak büyürken de verimli çalışmasını mümkün kılacak yatırımlar için değerlendirilecektir." }],
+        tags: [
+          {
+            code: LanguageCode.TR,
+            name: "Platinyum Destekçi",
+            description:
+              "Bu desteğiniz, Payda'nın mevcut projelerini geliştirebilmesi, \
+              yeni projeleri başlatabilmesi ve kurumsal olarak büyürken de \
+              verimli çalışmasını mümkün kılacak yatırımlar için değerlendirilecektir."
+          }
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
         isActive: true
@@ -41,14 +59,44 @@ export class MockPackageService implements IPackageService {
       },
       {
         id: "p3",
-        defaultTag: { code: LanguageCode.EN, name: "Connecting Schools Project", description: "Connecting Schools Project This project came up when some students in Payda With Students Project asked “can you teach us English?” In this project, which we created after thinking how we could meet this demand permanently and ensuring the cohesion of the different segments parallel to Payda’s main objective, students from different regions of Turkey are matched and they are making video conference via Internet in the after-school hours to practice their English on current issues. After the first two years that advanced on the basis of English practice between Robert College and Mardin Science High School students, Üsküdar American High School and Aziz Sancar Anatolian High School we will include in other schools and other “common denominators”." },
+        defaultTag: {
+          code: LanguageCode.EN,
+          name: "Connecting Schools Project",
+          description:
+            "Connecting Schools Project This project came up when some \
+            students in Payda With Students Project asked “can you teach \
+            us English?” In this project, which we created after thinking \
+            how we could meet this demand permanently and ensuring the \
+            cohesion of the different segments parallel to Payda’s main \
+            objective, students from different regions of Turkey are matched \
+            and they are making video conference via Internet in the \
+            after-school hours to practice their English on current issues. \
+            After the first two years that advanced on the basis of English \
+            practice between Robert College and Mardin Science High School \
+            students, Üsküdar American High School and Aziz Sancar Anatolian \
+            High School we will include in other schools and other “common denominators”."
+        },
         price: {
           amount: 150,
           currency: Currency.TRY
         },
         priority: 32,
         repeatConfig: RepeatConfig.WEEKLY,
-        tags: [{ code: LanguageCode.TR, name: "Okullar Konuşuyor Projesi", description: "Okullar Konuşuyor Projesi Payda Öğrencilerle Birlikte Projesindeki bazı öğrencilerin, “siz bize İngilizce öğretir misiniz?” demesiyle ortaya çıktı Okullar Konuşuyor Projesi. Payda olarak bu talebi nasıl kalıcı ve Payda’nın ana amacı olan farklı kesimlerin kaynaşmasını sağlayacak şekilde karşılayabileceğimizi düşünerek oluşturduğumuz bu projede Türkiye’nin farklı bölgelerindeki öğrenciler eşleştiriliyor ve okul sonrası saatlerde, güncel konular üzerinde İngilizce pratiği yapabilmek için internet üzerinden video konferans yapıyorlar." }],
+        tags: [
+          {
+            code: LanguageCode.TR,
+            name: "Okullar Konuşuyor Projesi",
+            description:
+              "Okullar Konuşuyor Projesi Payda Öğrencilerle Birlikte Projesindeki \
+              bazı öğrencilerin, “siz bize İngilizce öğretir misiniz?” demesiyle \
+              ortaya çıktı Okullar Konuşuyor Projesi. Payda olarak bu talebi nasıl \
+              kalıcı ve Payda’nın ana amacı olan farklı kesimlerin kaynaşmasını \
+              sağlayacak şekilde karşılayabileceğimizi düşünerek oluşturduğumuz bu \
+              projede Türkiye’nin farklı bölgelerindeki öğrenciler eşleştiriliyor \
+              ve okul sonrası saatlerde, güncel konular üzerinde İngilizce pratiği \
+              yapabilmek için internet üzerinden video konferans yapıyorlar."
+          }
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
         isActive: false
@@ -56,12 +104,18 @@ export class MockPackageService implements IPackageService {
     ];
   }
 
-  public getAll = async ({ onlyActive }: IPackageFilters) => {
+  public getAll = async ({ onlyActive }: IPackageFilters, pagination: PaginationSettings, sorting: SortingSettings) => {
+    let results = this.packages;
     if (onlyActive) {
-      return this.packages.filter(p => p.isActive);
+      results = this.packages.filter(p => p.isActive);
     }
-    return this.packages;
+    return sortAndPaginate(results, pagination, sorting);
   };
+
+  public count = async (filters: IPackageFilters) => {
+    const results = await this.getAll(filters, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: 'ASC', sortField: 'id' });
+    return results.length;
+  }
 
   public getById = async (id: string) => this.packages.find(p => p.id === id) || null;
 
@@ -106,8 +160,7 @@ export class MockPackageService implements IPackageService {
     return id;
   };
 
-  public deactivate = this.setIsActive(false); // tslint:disable-line
+  public deactivate = this.setIsActive(false);
 
-  public activate = this.setIsActive(true); // tslint:disable-line
-
+  public activate = this.setIsActive(true);
 }

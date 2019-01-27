@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
 import { userEntityToModel } from "../converters/user";
 import { IUserEntity } from "../entities/UserEntity";
-import { IUserService } from "../models/IUserService";
 import { IUserCreator } from "../models/User";
+import { IUserService } from "../models/UserService";
 
 @injectable()
 export class MockUserService implements IUserService {

@@ -4,6 +4,11 @@ import { IDonation } from "../models/Donation";
 import { IContext } from "./context";
 
 export const typeDef = gql`
+
+  input DonationFilter {
+    paymentConfirmed: Boolean
+  }
+
   input DonationCreator {
     fullName: String!
     email: String!
