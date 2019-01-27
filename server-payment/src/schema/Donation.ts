@@ -9,12 +9,6 @@ export const typeDef = gql`
     paymentConfirmed: Boolean
   }
 
-  input DonationCreator {
-    fullName: String!
-    email: String!
-    packageId: String!
-  }
-
   type Donation {
     id: String!
     fullName: String!

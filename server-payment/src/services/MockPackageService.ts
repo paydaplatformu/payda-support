@@ -148,19 +148,4 @@ export class MockPackageService implements IPackageService {
     this.packages = this.packages.filter(p => p.id !== packageModifier.id).concat([next]);
     return next;
   };
-
-  private setIsActive = (value: boolean) => async (id: string) => {
-    const current = await this.getById(id);
-    if (!current) return null;
-    const next: IPackage = {
-      ...current,
-      isActive: value
-    };
-    this.packages = this.packages.filter(p => p.id !== id).concat([next]);
-    return id;
-  };
-
-  public deactivate = this.setIsActive(false);
-
-  public activate = this.setIsActive(true);
 }
