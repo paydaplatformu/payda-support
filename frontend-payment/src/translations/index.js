@@ -6,6 +6,7 @@ import tr from "./tr.json";
 export const TR = "TR";
 export const EN = "EN";
 
+/* eslint-disable */
 const __translate = (langCode, translationKey) => {
   switch (langCode) {
     case TR:
@@ -16,5 +17,6 @@ const __translate = (langCode, translationKey) => {
       return translationKey;
   }
 };
+/* eslint-enable */
 
 export const TranslationContext = React.createContext();
