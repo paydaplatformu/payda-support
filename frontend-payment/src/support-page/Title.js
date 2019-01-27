@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import { paydaOrange } from './constants';
+import { paydaOrange } from "../constants";
 
 const StyledTitleContainer = styled.div`
   padding: 50px 30px;

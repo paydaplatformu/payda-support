@@ -1,25 +1,26 @@
-import React from 'react';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import React from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
 
-import Title from './Title';
-import DonationList from './DonationList';
-import UserForm from './UserForm';
-import LegalLinks from './LegalLinks';
+import HomePage from "./home-page/HomePage";
+import SupportPage from "./support-page/SupportPage";
+import AdminPage from "./admin-page/AdminPage";
 
 const client = new ApolloClient({
-  uri: 'https://payda-support-v2.herokuapp.com/graphql'
+  uri: "https://payda-support-v2.herokuapp.com/graphql",
 });
 
 const App = () => (
-  <ApolloProvider client={client}>
-    <div>
-      <Title />
-      <DonationList />
-      <UserForm />
-      <LegalLinks />
-    </div>
-  </ApolloProvider>
+  <Router>
+    <ApolloProvider client={client}>
+      <div>
+        <Route exact path="/" component={HomePage} />
+        <Route path="/support" component={SupportPage} />
+        <Route path="/admin" component={AdminPage} />
+      </div>
+    </ApolloProvider>
+  </Router>
 );
 
 export default App;

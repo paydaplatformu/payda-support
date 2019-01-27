@@ -1,10 +1,10 @@
-import React from 'react';
-import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { withStyles } from "@material-ui/core/styles";
 
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from './Select';
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "../../components/Select";
 
 const query = gql`
   {
@@ -44,8 +44,8 @@ const DonationSelect = props => (
 const styles = {
   container: {
     marginBottom: 20,
-    width: '100%'
-  }
+    width: "100%",
+  },
 };
 
 export default withStyles(styles)(DonationSelect);
