@@ -16,12 +16,12 @@
     "@types/oauth2-server": "^3.0.9",
     "@types/validator": "^9.4.3",
     "jest": "^23.6.0",
-    "nodemon": "^1.18.6",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.4",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6"
+    "ts-node": "^8.0.2",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
   },
   "license": "",
   "dependencies": {
@@ -48,8 +48,8 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "watch:staging": "NODE_ENV=staging TS_NODE_FILES=true nodemon --config nodemon.json",
-    "watch:development": "NODE_ENV=development TS_NODE_FILES=true nodemon --config nodemon.json",
+    "watch:staging": "NODE_ENV=staging ts-node-dev src/index.ts",
+    "watch:development": "NODE_ENV=development TS_NODE_FILES=true ts-node-dev src/index.ts",
     "format": "prettier --write ./src/**/*.ts",
     "lint": "tslint -p .",
     "test:debug": "NODE_ENV=test TS_NODE_FILES=true jest --watch",
@@ -57,7 +57,7 @@
     "build": "tsc"
   },
   "engines": {
-    "node": "10.13.0",
-    "yarn": "1.12.3"
+    "node": ">=10.13.0",
+    "yarn": ">=1.12.3"
   }
 }

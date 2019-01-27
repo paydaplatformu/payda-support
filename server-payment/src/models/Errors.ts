@@ -6,7 +6,6 @@ export class AuthorizationRequired extends AuthenticationError {
   }
 }
 
-
 export enum FieldErrorCode {
   INVALID_EMAIL = "INVALID_EMAIL",
   INVALID_NAME = "INVALID_NAME",
@@ -15,22 +14,28 @@ export enum FieldErrorCode {
 }
 
 export interface InvalidField {
-  name: string,
-  code: FieldErrorCode
+  name: string;
+  code: FieldErrorCode;
 }
 
 export class InvalidInput extends UserInputError {
   constructor(invalidFields: InvalidField[]) {
     super("Invalid input.", {
       invalidFields
-    })
+    });
+  }
+}
+
+export class AuthorizationError extends Error {
+  constructor(message: string = "Not authorized.") {
+    super(message);
   }
 }
 
 export class ValidationError extends Error {
   public invalidFields: InvalidField[];
   constructor(invalidFields: InvalidField[]) {
-    super("Invalid data.")
+    super("Invalid data.");
     this.invalidFields = invalidFields;
   }
 }

@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { AuthorizationCode, Client, Falsey, RefreshToken, Token, User } from "oauth2-server";
 import { config } from "../config";
 import { IAuthentication } from "../models/Authentication";
-import { IUserService } from "../models/IUserService";
 import { IUser } from "../models/User";
+import { IUserService } from "../models/UserService";
 import { TYPES } from "../types";
 import { sign, verify } from "../utilities/jwt";
 

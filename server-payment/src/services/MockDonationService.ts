@@ -1,21 +1,41 @@
 import { inject, injectable } from "inversify";
-import { isAlpha, isEmail, isLength } from 'validator';
-import { IDonation, IDonationCreator } from "../models/Donation";
+import { isAlpha, isEmail, isLength } from "validator";
+import { BaseEntityService } from "../models/BaseEntityService";
+import { IDonation, IDonationCreator, IDonationFilters } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { FieldErrorCode, ValidationError } from "../models/Errors";
 import { IPackageService } from "../models/PackageService";
 import { Validator } from "../models/Validator";
 import { TYPES } from "../types";
-import { BaseEntityService } from "../models/BaseEntityService";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
+import { sortAndPaginate } from "../utilities/helpers";
 
 @injectable()
 export class MockDonationService extends BaseEntityService<IDonationCreator> implements IDonationService {
-  private donations: IDonation[];
+  public creatorValidator: Validator<IDonationCreator> = {
+    email: async value => {
+      if (!isEmail(value)) return [FieldErrorCode.INVALID_EMAIL];
+      return null;
+    },
+    fullName: async value => {
+      if (!isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME];
+      else if (!isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL];
+      return null;
+    },
+    packageId: async value => {
+      const donationPackage = await this.packageService.getById(value);
+      if (!donationPackage) return [FieldErrorCode.PACKAGE_DOES_NOT_EXIST];
+      return null;
+    }
+  };
 
-  @inject(TYPES.IPackageService) private packageService: IPackageService = null as any;
+  private donations: IDonation[];
+  @inject(TYPES.IPackageService)
+  private packageService: IPackageService = null as any;
 
   constructor() {
-    super()
+    super();
     this.donations = [
       {
         id: "d1",
@@ -44,26 +64,9 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
     ];
   }
 
-  public creatorValidator: Validator<IDonationCreator> = {
-    email: async value => {
-      if (!isEmail(value)) return [FieldErrorCode.INVALID_EMAIL]
-      return null;
-    },
-    fullName: async value => {
-      if (!isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME]
-      else if (!isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL]
-      return null;
-    },
-    packageId: async value => {
-      const donationPackage = await this.packageService.getById(value)
-      if (!donationPackage) return [FieldErrorCode.PACKAGE_DOES_NOT_EXIST]
-      return null;
-    }
-  }
-
   public create = async (donationCreator: IDonationCreator) => {
-    const errors = await this.validate(donationCreator)
-    if (errors) throw new ValidationError(errors)
+    const errors = await this.validate(donationCreator);
+    if (errors) throw new ValidationError(errors);
 
     const newDonation = {
       id: Math.random()
@@ -80,7 +83,18 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
     return newDonation;
   };
 
-  public getAll = async () => this.donations;
+  public getAll = async (filters: IDonationFilters, pagination: PaginationSettings, sorting: SortingSettings) => {
+    let results = this.donations;
+    if (filters.paymentConfirmed !== undefined) {
+      results = this.donations.filter(d => d.paymentConfirmed === filters.paymentConfirmed);  
+    }
+    return sortAndPaginate(results, pagination, sorting);
+  };  
+
+  public count = async (filters: IDonationFilters) => {
+    const results = await this.getAll(filters, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: 'ASC', sortField: 'id' });
+    return results.length;
+  }
 
   public getByPackageId = async (packageId: string) => this.donations.filter(d => d.packageId === packageId);
 

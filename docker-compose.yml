@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  server-payment:
+    build:
+      context: ./server-payment
+      dockerfile: Dockerfile-dev
+    environment:
+      - NODE_ENV=staging
+      - DATABASE_URL=mongodb://payda:paydapw@mongodb:27017/paydadb?authSource=admin
+      - DEFAULT_USER_EMAIL=a@a.com
+      - DEFAULT_USER_PASSWORD=123456
+      - JWT_SECRET=verysecrettoken
+    volumes:
+      - ./server-payment:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - 8080:8080
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:3.4
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+      - MONGO_INITDB_ROOT_USERNAME=payda
+      - MONGO_INITDB_ROOT_PASSWORD=paydapw
+      - MONGO_INITDB_DATABASE=paydadb
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet

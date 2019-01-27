@@ -1,7 +1,10 @@
-import { IDonation, IDonationCreator } from "./Donation";
+import { IDonation, IDonationCreator, IDonationFilters } from "./Donation";
+import { PaginationSettings } from "./PaginationSettings";
+import { SortingSettings } from "./SortingSettings";
 
 export interface IDonationService {
-  getAll(): Promise<IDonation[]>;
+  getAll(filters: IDonationFilters, pagination: PaginationSettings, sorting: SortingSettings): Promise<IDonation[]>;
+  count(filters: IDonationFilters): Promise<number>;
   getByPackageId(packageId: string): Promise<IDonation[]>;
   getById(id: string): Promise<IDonation | null>;
   create(packageCreator: IDonationCreator): Promise<IDonation>;

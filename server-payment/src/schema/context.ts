@@ -2,9 +2,9 @@ import { inject, injectable } from "inversify";
 import { Client } from "oauth2-server";
 import "reflect-metadata";
 import { IDonationService } from "../models/DonationService";
-import { IUserService } from "../models/IUserService";
 import { IPackageService } from "../models/PackageService";
 import { IUser } from "../models/User";
+import { IUserService } from "../models/UserService";
 import { TYPES } from "../types";
 
 export const Type = Symbol.for("IContextProvider");

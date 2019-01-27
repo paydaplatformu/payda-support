@@ -2,15 +2,16 @@ import { ContainerModule } from "inversify";
 import "reflect-metadata";
 import { IAuthentication } from "./models/Authentication";
 import { IDonationService } from "./models/DonationService";
-import { IUserService } from "./models/IUserService";
 import { IPackageService } from "./models/PackageService";
+import { IUserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
 import { JwtAuthentication } from "./services/JwtAuthentication";
 import { MockDonationService } from "./services/MockDonationService";
 import { MockPackageService } from "./services/MockPackageService";
 import { MockUserService } from "./services/MockUserService";
-import { TYPES } from "./types";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
+import { MongoPackageService } from "./services/MongoPackageService";
+import { TYPES } from "./types";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)

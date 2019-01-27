@@ -1,10 +1,15 @@
 import { gql } from "apollo-server-core";
 import { IResolvers } from "graphql-tools";
+import { AuthorizationRequired } from "../models/Errors";
 import { IPackage } from "../models/Package";
 import { IContext } from "./context";
-import { AuthorizationRequired } from "../models/Errors";
 
 export const typeDef = gql`
+
+  input PackageFilter {
+    onlyActive: Boolean
+  }
+
   input PackageCreator {
     defaultTag: PackageTagInput!
     reference: String
@@ -43,7 +48,7 @@ export const typeDef = gql`
 export const resolvers: IResolvers<IPackage, IContext> = {
   Package: {
     donations: (parent, args, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      // if (!user) throw new AuthorizationRequired();
       return donationService.getByPackageId(parent.id);
     }
   }
