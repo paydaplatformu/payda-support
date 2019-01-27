@@ -48,7 +48,7 @@ const rootResolvers: IResolvers<any, IContext> = {
   Query: {
     users: (parent, { id }, { userService, user }) => {
       // if (!user) throw new AuthorizationRequired();
-      return userService.getAll();
+      return userService.getAll({}, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: "ASC", sortField: "id" });
     },
 
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
