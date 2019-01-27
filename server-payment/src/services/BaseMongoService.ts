@@ -17,7 +17,9 @@ export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filter
   }
 
   public paginate(cursor: Cursor<Entity>, pagination: PaginationSettings) {
-    return cursor.skip(pagination.perPage * (pagination.page - 1)).limit(pagination.perPage);
+    const perPage = pagination.perPage || 10;
+    const page = pagination.page || 0;
+    return cursor.skip(perPage * page).limit(perPage);
   }
 
   public sort(cursor: Cursor<Entity>, sorting: SortingSettings) {
@@ -67,16 +69,25 @@ export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filter
     return this.toModel(next);
   }
 
-  public async create(creator: Creator): Promise<Model> {
-    const mongoInput: Entity = {
-      ...creator,
+  public generateCommonFields() {
+    return {
       _id: new ObjectID(),
       createdAt: new Date(),
       updatedAt: new Date(),
       isActive: true
-    } as any as Entity;
+    }
+  }
 
-    const result = await this.collection.insert(mongoInput);
+  public async createEntity(creator: Creator): Promise<Entity> {
+    return {
+      ...creator,
+      ...this.generateCommonFields()
+    } as any as Entity;
+  }
+
+  public async create(creator: Creator): Promise<Model> {
+    const mongoInput: Entity = await this.createEntity(creator)
+    const result = await this.collection.insertOne(mongoInput);
 
     const newPackage: Entity = {
       _id: result.insertedId,

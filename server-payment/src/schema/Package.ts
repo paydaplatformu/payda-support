@@ -18,6 +18,7 @@ export const typeDef = gql`
     updatedAt: Date!
     repeatConfig: RepeatConfig!
     donations: [Donation!]!
+    donationCount: Int!
     image: String
     price: MonateryAmount!
     priority: Int
@@ -31,6 +32,10 @@ export const resolvers: IResolvers<IPackage, IContext> = {
     donations: (parent, args, { donationService, user }) => {
       // if (!user) throw new AuthorizationRequired();
       return donationService.getByPackageId(parent.id);
+    },
+    donationCount: (parent, args, { donationService, user }) => {
+      // if (!user) throw new AuthorizationRequired();
+      return donationService.countByPackageId(parent.id);
     }
   }
 };

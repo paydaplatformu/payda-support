@@ -15,6 +15,14 @@ export class MongoPackageService extends BaseMongoService<IPackageEntity, IPacka
     return this.collection.find();
   }
 
+  public async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {
+    const fromSuper = await super.createEntity(creator);
+    return {
+      ...fromSuper,
+      tags: fromSuper.tags || []
+    }
+  }
+
   public toModel(entity: IPackageEntity): IPackage {
     return {
       id: entity._id.toString(),

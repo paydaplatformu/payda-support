@@ -7,7 +7,7 @@ import { IModifier } from "../models/Modifier";
 
 @injectable()
 export class MongoDonationService extends BaseMongoService<IDonationEntity, IDonation, IDonationFilters, IDonationCreator, IModifier> implements IDonationService {
-  public static collectionName = "Donations";
+  public static collectionName = "donations";
 
   public getFilteredQuery({ paymentConfirmed }: IDonationFilters): Cursor<IDonationEntity> {
     if (paymentConfirmed !== undefined) {
@@ -19,6 +19,10 @@ export class MongoDonationService extends BaseMongoService<IDonationEntity, IDon
   public async getByPackageId(packageId: string): Promise<IDonation[]> {
     const results = await this.collection.find({ packageId: new ObjectID(packageId) }).toArray()
     return results.map(this.toModel);
+  }
+
+  public async countByPackageId(packageId: string): Promise<number> {
+    return this.collection.find({ packageId: new ObjectID(packageId) }).count()
   }
 
   public async cleanPendingDonations(): Promise<number> {
