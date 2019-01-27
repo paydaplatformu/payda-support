@@ -4,13 +4,9 @@ import {
   Datagrid,
   Filter,
   BooleanInput,
-  ArrayField,
   BooleanField,
-  ChipField,
   DateField,
   NumberField,
-  ReferenceArrayField,
-  SingleFieldList,
   TextField,
 } from "react-admin";
 
