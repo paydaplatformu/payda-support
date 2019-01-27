@@ -7,7 +7,7 @@ export interface IDonationCreator {
 }
 
 export interface IDonationFilters {
-  paymentConfirmed: boolean;
+  paymentConfirmed?: boolean;
 }
 
 export interface IDonation {
