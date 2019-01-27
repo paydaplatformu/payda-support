@@ -1,28 +1,28 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
 
-import MuiTextField from '@material-ui/core/TextField';
+import MuiTextField from "@material-ui/core/TextField";
 
-import { paydaOrange } from './constants';
+import { paydaOrange } from "../constants";
 
 const styles = theme => ({
   cssLabel: {
-    '&$cssFocused': {
-      color: paydaOrange
-    }
+    "&$cssFocused": {
+      color: paydaOrange,
+    },
   },
   cssFocused: {},
   cssUnderline: {
-    '&:after': {
-      borderBottomColor: paydaOrange
-    }
+    "&:after": {
+      borderBottomColor: paydaOrange,
+    },
   },
   cssOutlinedInput: {
-    '&$cssFocused $notchedOutline': {
-      borderColor: paydaOrange
-    }
+    "&$cssFocused $notchedOutline": {
+      borderColor: paydaOrange,
+    },
   },
-  notchedOutline: {}
+  notchedOutline: {},
 });
 
 const TextField = props => (
@@ -31,15 +31,15 @@ const TextField = props => (
     InputLabelProps={{
       classes: {
         root: props.classes.cssLabel,
-        focused: props.classes.cssFocused
-      }
+        focused: props.classes.cssFocused,
+      },
     }}
     InputProps={{
       classes: {
         root: props.classes.cssOutlinedInput,
         focused: props.classes.cssFocused,
-        notchedOutline: props.classes.notchedOutline
-      }
+        notchedOutline: props.classes.notchedOutline,
+      },
     }}
     variant="outlined"
     fullWidth
