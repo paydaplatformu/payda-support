@@ -1,14 +1,15 @@
 import React from "react";
 import {
   List,
-  Datagrid,
-  TextField,
-  EmailField,
-  BooleanField,
   Filter,
-  TextInput,
-  NullableBooleanInput,
+  Datagrid,
   Pagination,
+  BooleanField,
+  DateField,
+  EmailField,
+  TextField,
+  NullableBooleanInput,
+  TextInput,
 } from "react-admin";
 
 const DonationPagination = props => (
@@ -23,7 +24,7 @@ const DonationFilter = props => (
   </Filter>
 );
 
-export const DonationList = props => (
+const DonationList = props => (
   <List
     {...props}
     pagination={<DonationPagination />}
@@ -33,9 +34,12 @@ export const DonationList = props => (
       <TextField source="id" />
       <TextField source="fullName" />
       <EmailField source="email" />
-      <TextField source="packageId" />
+      <TextField source="package.id" />
       <TextField source="package.defaultTag.name" />
       <BooleanField source="paymentConfirmed" />
+      <DateField source="date" />
     </Datagrid>
   </List>
 );
+
+export default DonationList;
