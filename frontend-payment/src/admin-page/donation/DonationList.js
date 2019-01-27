@@ -7,6 +7,7 @@ import {
   BooleanField,
   DateField,
   EmailField,
+  ReferenceField,
   TextField,
   NullableBooleanInput,
   TextInput,
@@ -30,12 +31,13 @@ const DonationList = props => (
     pagination={<DonationPagination />}
     filters={<DonationFilter />}
   >
-    <Datagrid rowClick="edit">
+    <Datagrid>
       <TextField source="id" />
       <TextField source="fullName" />
       <EmailField source="email" />
-      <TextField source="package.id" />
-      <TextField source="package.defaultTag.name" />
+      <ReferenceField reference="Package" source="packageId">
+        <TextField source="defaultTag.name" />
+      </ReferenceField>
       <BooleanField source="paymentConfirmed" />
       <DateField source="date" />
     </Datagrid>

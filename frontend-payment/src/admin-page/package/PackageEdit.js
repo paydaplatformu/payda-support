@@ -17,10 +17,15 @@ const PackageEdit = props => (
   <Edit {...props}>
     <SimpleForm>
       <DisabledInput source="id" />
-      <SelectInput
-        source="defaultTag.code"
-        choices={[{ id: TR, name: "Turkish" }, { id: EN, name: "English" }]}
-      />
+      <div style={{ border: "1px solid black" }}>
+        <div>DEFAULT TAG EKLEME YERI</div>
+        <SelectInput
+          source="defaultTag.code"
+          choices={[{ id: TR, name: "Turkish" }, { id: EN, name: "English" }]}
+        />
+        <TextInput source="defaultTag.name" />
+        <TextInput source="defaultTag.description" />
+      </div>
       <TextInput source="reference" />
       <SelectInput
         label="Repeat"
