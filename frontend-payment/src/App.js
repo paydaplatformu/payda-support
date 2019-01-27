@@ -14,11 +14,9 @@ const client = new ApolloClient({
 const App = () => (
   <Router>
     <ApolloProvider client={client}>
-      <div>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/support" component={SupportPage} />
-        <Route path="/admin" component={AdminPage} />
-      </div>
+      <Route exact path="/" component={HomePage} />
+      <Route path="/support" component={SupportPage} />
+      <Route path="/admin" component={AdminPage} />
     </ApolloProvider>
   </Router>
 );
