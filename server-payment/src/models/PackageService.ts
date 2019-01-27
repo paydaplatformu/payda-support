@@ -8,6 +8,4 @@ export interface IPackageService {
   getById(id: string): Promise<IPackage | null>;
   create(packageCreator: IPackageCreator): Promise<IPackage>;
   edit(packageModifier: IPackageModifier): Promise<IPackage | null>;
-  activate(id: string): Promise<string | null>;
-  deactivate(id: string): Promise<string | null>;
 }

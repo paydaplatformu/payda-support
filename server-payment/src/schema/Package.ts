@@ -10,25 +10,6 @@ export const typeDef = gql`
     onlyActive: Boolean
   }
 
-  input PackageCreator {
-    defaultTag: PackageTagInput!
-    reference: String
-    repeatConfig: RepeatConfig!
-    image: String
-    price: MonateryAmountInput!
-    priority: Int!
-    tags: [PackageTagInput!]!
-  }
-
-  input PackageModifier {
-    id: String!
-    defaultTag: PackageTagInput!
-    reference: String
-    image: String
-    priority: Int!
-    tags: [PackageTagInput!]!
-  }
-
   type Package {
     id: String!
     defaultTag: PackageTag

@@ -29,12 +29,10 @@ const Query = gql`
   }
 
   type Mutation {
-    createPackage(packageCreator: PackageCreator!): Package!
-    editPackage(packageModifier: PackageModifier!): Package
-    activatePackage(id: String!): String
-    deactivatePackage(id: String!): String
+    createPackage(defaultTag: PackageTagInput!, reference: String, repeatConfig: RepeatConfig!, image: String, price: MonateryAmountInput!, priority: Int!, tags: [PackageTagInput!]!): Package!
+    updatePackage(id: String!, defaultTag: PackageTagInput, reference: String, image: String, priority: Int, tags: [PackageTagInput!]): Package
 
-    createDonation(donationCreator: DonationCreator!): Package!
+    createDonation(fullName: String!, email: String!, packageId: String!): Donation!
     cleanPendingDonations: Int!
   }
 `;
@@ -54,7 +52,7 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
 
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
-    allPackages: (parent, { filter: { onlyActive }, sortField, sortOrder, page, perPage }, { packageService, user }) => {
+    allPackages: (parent, { filter: { onlyActive } = { onlyActive: true }, sortField, sortOrder, page, perPage }, { packageService, user }) => {
       if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
@@ -74,7 +72,7 @@ const rootResolvers: IResolvers<any, IContext> = {
     allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
       // if (!user) throw new AuthorizationRequired();
       const pagination = { page, perPage };
-      const sorting = { sortField, sortOrder };      
+      const sorting = { sortField, sortOrder };
       return donationService.getAll(filter, pagination, sorting);
     },
     _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
@@ -83,26 +81,18 @@ const rootResolvers: IResolvers<any, IContext> = {
     }
   },
   Mutation: {
-    createPackage: (parent, { packageCreator }, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
-      return packageService.create(packageCreator as IPackageCreator);
+    createPackage: (parent, args, { packageService, user }) => {
+      // if (!user) throw new AuthorizationRequired();
+      return packageService.create(args as IPackageCreator);
     },
-    editPackage: (parent, { packageModifier }, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
-      return packageService.edit(packageModifier as IPackageModifier);
+    updatePackage: (parent, args, { packageService, user }) => {
+      // if (!user) throw new AuthorizationRequired();
+      return packageService.edit(args as IPackageModifier);
     },
-    activatePackage: (parent, { id }, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
-      return packageService.activate(id);
-    },
-    deactivatePackage: (parent, { id }, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
-      return packageService.deactivate(id);
-    },
-    createDonation: (parent, { donationCreator }, { donationService, user }) =>
-      donationService.create(donationCreator as IDonationCreator),
+    createDonation: (parent, args, { donationService, user }) =>
+      donationService.create(args as IDonationCreator),
     cleanPendingDonations: (parent, args, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      // if (!user) throw new AuthorizationRequired();
       return donationService.cleanPendingDonations();
     }
   }
