@@ -29,7 +29,7 @@ const Query = gql`
   }
 
   type Mutation {
-    createPackage(defaultTag: PackageTagInput!, reference: String, repeatConfig: RepeatConfig!, image: String, price: MonateryAmountInput!, priority: Int!, tags: [PackageTagInput!]!): Package!
+    createPackage(defaultTag: PackageTagInput!, reference: String, repeatConfig: RepeatConfig!, image: String, price: MonateryAmountInput!, priority: Int!, tags: [PackageTagInput!]): Package!
     updatePackage(id: String!, defaultTag: PackageTagInput, reference: String, image: String, priority: Int, tags: [PackageTagInput!]): Package
 
     createDonation(fullName: String!, email: String!, packageId: String!): Donation!

@@ -6,6 +6,7 @@ export interface IDonationService {
   getAll(filters: IDonationFilters, pagination: PaginationSettings, sorting: SortingSettings): Promise<IDonation[]>;
   count(filters: IDonationFilters): Promise<number>;
   getByPackageId(packageId: string): Promise<IDonation[]>;
+  countByPackageId(packageId: string): Promise<number>;
   getById(id: string): Promise<IDonation | null>;
   create(packageCreator: IDonationCreator): Promise<IDonation>;
   cleanPendingDonations(): Promise<number>;

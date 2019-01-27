@@ -97,6 +97,7 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
   }
 
   public getByPackageId = async (packageId: string) => this.donations.filter(d => d.packageId === packageId);
+  public countByPackageId = async (packageId: string) => (await this.getByPackageId(packageId)).length;
 
   public getById = async (id: string) => this.donations.find(d => d.id === id) || null;
 
