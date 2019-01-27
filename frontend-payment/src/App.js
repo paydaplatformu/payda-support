@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
+import { TR, TranslationContext } from "./translations";
+
 import HomePage from "./home-page/HomePage";
 import SupportPage from "./support-page/SupportPage";
 import AdminPage from "./admin-page/AdminPage";
@@ -14,9 +16,11 @@ const client = new ApolloClient({
 const App = () => (
   <Router>
     <ApolloProvider client={client}>
-      <Route exact path="/" component={HomePage} />
-      <Route path="/support" component={SupportPage} />
-      <Route path="/admin" component={AdminPage} />
+      <TranslationContext.Provider value={TR}>
+        <Route exact path="/" component={HomePage} />
+        <Route path="/support" component={SupportPage} />
+        <Route path="/admin" component={AdminPage} />
+      </TranslationContext.Provider>
     </ApolloProvider>
   </Router>
 );

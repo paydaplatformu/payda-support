@@ -4,10 +4,14 @@ import {
   Datagrid,
   Filter,
   BooleanInput,
-  TextField,
+  ArrayField,
+  BooleanField,
+  ChipField,
   DateField,
   NumberField,
-  BooleanField,
+  ReferenceArrayField,
+  SingleFieldList,
+  TextField,
 } from "react-admin";
 
 const PackageFilter = props => (
@@ -16,15 +20,21 @@ const PackageFilter = props => (
   </Filter>
 );
 
-export const PackageList = props => (
+const PackageList = props => (
   <List {...props} filters={<PackageFilter />}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
       <TextField source="reference" />
       <DateField source="createdAt" />
       <DateField source="updatedAt" />
+      <TextField source="defaultTag.code" />
+      <TextField label="Repeat Interval" source="repeatConfig" />
+      <NumberField source="donationCount" />
+      <TextField label="Currency" source="price.currency" />
       <NumberField source="priority" />
       <BooleanField source="isActive" />
     </Datagrid>
   </List>
 );
+
+export default PackageList;
