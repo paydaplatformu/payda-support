@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import { paydaOrange } from './constants';
+import { paydaOrange } from "../../constants";
 
-import DonationSelectWithDetails from './DonationSelectWithDetails';
+import DonationSelectWithDetails from "./DonationSelectWithDetails";
 
 const StyledDonationListContainer = styled.div`
   text-align: center;

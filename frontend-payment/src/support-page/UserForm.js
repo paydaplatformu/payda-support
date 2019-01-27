@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import styled from "styled-components";
 
-import TextField from './TextField';
-import Button from './Button';
+import TextField from "../components/TextField";
+import Button from "../components/Button";
 
 const StyledUserFormContainer = styled.div`
   @media (max-width: 768px) {
@@ -16,9 +16,9 @@ class UserForm extends Component {
 
     this.state = {
       quantity: 1,
-      name: '',
-      email: '',
-      description: ''
+      name: "",
+      email: "",
+      description: "",
     };
   }
 
@@ -36,20 +36,20 @@ class UserForm extends Component {
           id="outlined-name"
           label="Destekleyen Kisi"
           value={this.state.name}
-          onChange={this.handleChange('name')}
+          onChange={this.handleChange("name")}
         />
         <TextField
           id="email"
           label="E-posta Adresi"
           value={this.state.email}
           type="email"
-          onChange={this.handleChange('email')}
+          onChange={this.handleChange("email")}
         />
         <TextField
           id="description"
           label="Aciklama"
           value={this.state.description}
-          onChange={this.handleChange('description')}
+          onChange={this.handleChange("description")}
           multiline
         />
         <Button onClick={this.handleClick}>Destek Ol!</Button>

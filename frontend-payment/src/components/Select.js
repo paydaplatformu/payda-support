@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { withStyles } from '@material-ui/core/styles';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import { withStyles } from "@material-ui/core/styles";
 
-import MuiFormControl from '@material-ui/core/FormControl';
-import MuiInputLabel from '@material-ui/core/InputLabel';
-import MuiSelect from '@material-ui/core/Select';
-import MuiOutlinedInput from '@material-ui/core/OutlinedInput';
+import MuiFormControl from "@material-ui/core/FormControl";
+import MuiInputLabel from "@material-ui/core/InputLabel";
+import MuiSelect from "@material-ui/core/Select";
+import MuiOutlinedInput from "@material-ui/core/OutlinedInput";
 
-import { paydaOrange } from './constants';
+import { paydaOrange } from "../constants";
 
 class Select extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      labelWidth: 0
+      labelWidth: 0,
     };
   }
 
   componentDidMount() {
     this.setState({
-      labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth
+      labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,
     });
   }
 
@@ -32,7 +32,7 @@ class Select extends Component {
         <MuiInputLabel
           classes={{
             root: this.props.classes.cssLabel,
-            focused: this.props.classes.cssFocused
+            focused: this.props.classes.cssFocused,
           }}
           ref={ref => {
             this.InputLabelRef = ref;
@@ -49,7 +49,7 @@ class Select extends Component {
               classes={{
                 root: classes.cssOutlinedInput,
                 focused: classes.cssFocused,
-                notchedOutline: classes.notchedOutline
+                notchedOutline: classes.notchedOutline,
               }}
               id="donation-package"
             />
@@ -65,22 +65,22 @@ class Select extends Component {
 
 const styles = {
   cssLabel: {
-    '&$cssFocused': {
-      color: paydaOrange
-    }
+    "&$cssFocused": {
+      color: paydaOrange,
+    },
   },
   cssFocused: {},
   cssUnderline: {
-    '&:after': {
-      borderBottomColor: paydaOrange
-    }
+    "&:after": {
+      borderBottomColor: paydaOrange,
+    },
   },
   cssOutlinedInput: {
-    '&$cssFocused $notchedOutline': {
-      borderColor: paydaOrange
-    }
+    "&$cssFocused $notchedOutline": {
+      borderColor: paydaOrange,
+    },
   },
-  notchedOutline: {}
+  notchedOutline: {},
 };
 
 export default withStyles(styles)(Select);
