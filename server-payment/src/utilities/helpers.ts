@@ -12,3 +12,9 @@ export const sortAndPaginate = <T>(array: T[], pagination: PaginationSettings, s
   const offset = page * pageSize;
   return drop(sortedWithOrder, offset).slice(0, pageSize);
 };
+
+export const getUTF8Length = (input: string) => {
+  // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+  const match = encodeURIComponent(input).match(/%[89ABab]/g);
+  return input.length + (match ? match.length : 0);
+}

@@ -43,7 +43,9 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
         email: "donator1@gmail.com",
         fullName: "First donator",
         packageId: "p1",
-        paymentConfirmed: true
+        paymentConfirmed: true,
+        quantity: 1,
+        usingAmex: false
       },
       {
         id: "d2",
@@ -51,7 +53,9 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
         email: "supporter@microsoft.com",
         fullName: "Support Person",
         packageId: "p2",
-        paymentConfirmed: true
+        paymentConfirmed: true,
+        quantity: 2,
+        usingAmex: false
       },
       {
         id: "d3",
@@ -59,7 +63,9 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
         email: "non_confirmed@supporter.com",
         fullName: "Non Confirmed",
         packageId: "p1",
-        paymentConfirmed: false
+        paymentConfirmed: false,
+        quantity: 1,
+        usingAmex: true
       }
     ];
   }
@@ -77,7 +83,9 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
       fullName: donationCreator.fullName,
       packageId: donationCreator.packageId,
       date: new Date(),
-      paymentConfirmed: false
+      paymentConfirmed: false,
+      quantity: donationCreator.quantity,
+      usingAmex: donationCreator.usingAmex
     };
     this.donations.push(newDonation);
     return newDonation;
@@ -110,4 +118,15 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
     this.donations = this.donations.filter(d => d.paymentConfirmed === true);
     return currentLength - this.donations.length;
   };
+
+  public confirmPayment = async (donationId: string) => {
+    const current = await this.getById(donationId);
+    if (!current) return null;
+    const next: IDonation = {
+      ...current,
+      paymentConfirmed: true
+    }
+    this.donations = this.donations.filter(d => d.id !== donationId).concat([next]);
+    return next;
+  }
 }

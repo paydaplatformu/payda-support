@@ -29,7 +29,7 @@ export const typeDef = gql`
 export const resolvers: IResolvers<IPackage, IContext> = {
   Package: {
     donationCount: (parent, args, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return donationService.countByPackageId(parent.id);
     }
   }

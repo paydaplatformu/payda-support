@@ -29,16 +29,25 @@ const config = convict({
   },
   clients: {
     doc: "Clients",
-    format: Array,
-    default: [
-      {
-        id: "iframe",
-        secret: "T*.!f6s4*W&=!Fs*",
-        grants: ["password", "refresh_token"],
-        accessTokenLifetime: 60 * 60,
-        refreshTokenLifetime: 24 * 60 * 60
+    coerce: (value: string) => JSON.parse(value),
+    format: (value: any) => {
+      const parsed = JSON.parse(value);
+      if (!Array.isArray(parsed)) {
+        throw new Error('Clients should be an array')
       }
-    ],
+      const isValid = parsed.every(client => [
+        'id',
+        'secret',
+        'grants',
+        'accessTokenLifetime',
+        'refreshTokenLifetime'
+      ].every(key => key in client))
+
+      if (!isValid) {
+        throw new Error('Invalid clients format. Every client should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime')
+      }
+    },
+    default: null,
     env: "CLIENTS"
   },
   defaultUser: {
@@ -90,6 +99,42 @@ const config = convict({
       format: "int",
       default: 24 * 60 * 60
     }
+  },
+  payu: {
+    backRef: {
+      doc: 'Payu backref',
+      format: String,
+      default: null,
+      env: 'PAYU_BACK_REF'
+    },
+    defaultCredentials: {
+      merchant: {
+        doc: 'Payu merchant name',
+        format: String,
+        default: null,
+        env: 'PAYU_DEFAULT_CREDENTIALS_MERCHANT'
+      },
+      secret: {
+        doc: 'Payu secret',
+        format: String,
+        default: null,
+        env: 'PAYU_DEFAULT_CREDENTIALS_SECRET'
+      }
+    },
+    amexCredentials: {
+      merchant: {
+        doc: 'Payu merchant name',
+        format: String,
+        default: null,
+        env: 'PAYU_AMEX_CREDENTIALS_MERCHANT'
+      },
+      secret: {
+        doc: 'Payu secret',
+        format: String,
+        default: null,
+        env: 'PAYU_AMEX_CREDENTIALS_SECRET'
+      }
+    }
   }
 });
 
@@ -97,6 +142,20 @@ if (["development", "test"].includes(config.get("environment"))) {
   config.set("db.url", "");
   config.set("jwt.secret", "secret");
   config.set("defaultUser.password", "123456");
+  config.set("payu.backRef", "http://localhost:8080")
+  config.set("payu.defaultCredentials.merchant", "payu_default");
+  config.set("payu.defaultCredentials.secret", "123456");
+  config.set("payu.amexCredentials.merchant", "payu_amex");
+  config.set("payu.amexCredentials.secret", "654321");
+  config.set("clients", JSON.stringify([
+    {
+      id: "iframe",
+      secret: "123456",
+      grants: ["password", "refresh_token"],
+      accessTokenLifetime: 60 * 60,
+      refreshTokenLifetime: 24 * 60 * 60
+    }
+  ]))
 }
 
 // Perform validation

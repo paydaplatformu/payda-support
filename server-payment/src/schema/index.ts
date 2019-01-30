@@ -8,6 +8,7 @@ import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
 import { typeDef as Donation } from "./Donation";
 import { typeDef as LanguageCode } from "./LanguageCode";
+import { typeDef as FormField } from "./FormField";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
 import { typeDef as PackageTag } from "./PackageTag";
@@ -53,7 +54,7 @@ const Query = gql`
       tags: [PackageTagInput!]
     ): Package
 
-    createDonation(fullName: String!, email: String!, packageId: String!): Donation!
+    createDonation(donationCreator: DonationCreator!, language: LanguageCode!): DonationCreationResult!
     cleanPendingDonations: Int!
   }
 `;
@@ -68,7 +69,7 @@ const SchemaDefinition = gql`
 const rootResolvers: IResolvers<any, IContext> = {
   Query: {
     users: (parent, { id }, { userService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return userService.getAll(
         {},
         { page: 1, perPage: Number.MAX_SAFE_INTEGER },
@@ -89,38 +90,48 @@ const rootResolvers: IResolvers<any, IContext> = {
       return packageService.getAll({ onlyActive, ids }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       if (!user) return { count: packageService.count({ onlyActive: true, ids: filter.ids }) };
       return { count: await packageService.count(filter) };
     },
 
     Donation: (parent, { id }, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return donationService.getById(id);
     },
     allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       return donationService.getAll(filter, pagination, sorting);
     },
     _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return { count: await donationService.count(filter) };
     }
   },
   Mutation: {
     createPackage: (parent, args, { packageService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return packageService.create(args as IPackageCreator);
     },
     updatePackage: (parent, args, { packageService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return packageService.edit(args as IPackageModifier);
     },
-    createDonation: (parent, args, { donationService, user }) => donationService.create(args as IDonationCreator),
+    createDonation: async (parent, { donationCreator, language }, { donationService, payuService, packageService }) => {
+      const donation = await donationService.create(donationCreator as IDonationCreator);
+      const pkg = await packageService.getById(donation.packageId);
+      if (!pkg) throw new Error('If package does not exist, donation service create should have failed.')
+      const formFields = await payuService.getFormContents(donation, pkg, language);
+      return {
+        donation,
+        formFields,
+        package: pkg
+      }
+    },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
-      // if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthorizationRequired();
       return donationService.cleanPendingDonations();
     }
   }
@@ -132,6 +143,7 @@ export const typeDefs = [
   Currency,
   MonetaryAmount,
   LanguageCode,
+  FormField,
   PackageTag,
   SchemaDefinition,
   Query,

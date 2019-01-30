@@ -15,7 +15,7 @@ interface ITokenBody {
 
 @injectable()
 export class JwtAuthentication implements IAuthentication {
-  private clients = config.get("clients");
+  private clients = config.get("clients") as any as Client[];
 
   @inject(TYPES.IUserService) private userService: IUserService = null as any;
 

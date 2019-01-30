@@ -29,6 +29,7 @@ export class MongoPackageService
     const fromSuper = await super.createEntity(creator);
     return {
       ...fromSuper,
+      ...creator,
       tags: fromSuper.tags || []
     };
   }

@@ -8,6 +8,14 @@ export const typeDef = gql`
     paymentConfirmed: Boolean
   }
 
+  input DonationCreator {
+    fullName: String!
+    email: String!
+    packageId: String!
+    quantity: Int!
+    usingAmex: Boolean!
+  }
+
   type Donation {
     id: String!
     fullName: String!
@@ -15,5 +23,12 @@ export const typeDef = gql`
     packageId: String!
     paymentConfirmed: Boolean!
     date: Date!
+    quantity: Int!
+  }
+
+  type DonationCreationResult {
+    donation: Donation!
+    package: Package!
+    formFields: [FormField!]!
   }
 `;

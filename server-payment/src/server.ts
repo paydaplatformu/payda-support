@@ -19,6 +19,8 @@ import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { TYPES } from "./types";
+import { IPayuService } from "./models/PayuService";
+import { IDonationService } from "./models/DonationService";
 
 const log = console.log; // tslint:disable-line
 
@@ -66,7 +68,19 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     log(chalk.green("\n  Database connected"));
   }
 
+  const userService = container.get<IUserService>(TYPES.IUserService);
   const model = container.get<IAuthentication>(TYPES.IAuthentication);
+  const payuService = container.get<IPayuService>(TYPES.IPayuService);
+  const donationService = container.get<IDonationService>(TYPES.IDonationService);
+
+  const userCount = await userService.getUserCount();
+  if (userCount === 0) {
+    await userService.create({
+      email: config.get("defaultUser.email"),
+      password: config.get("defaultUser.password")
+    });
+  }
+
 
   const context: ContextFunction = async ({ req }) => {
     const token = await getToken(model)(req.get("Authorization"));
@@ -100,21 +114,12 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     }
   });
 
+
   const app: Express = express();
 
   const oauth = new OAuthServer({
     model: model as any
   });
-
-  const userService = container.get<IUserService>(TYPES.IUserService);
-
-  const userCount = await userService.getUserCount();
-  if (userCount === 0) {
-    await userService.create({
-      email: config.get("defaultUser.email"),
-      password: config.get("defaultUser.password")
-    });
-  }
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -125,6 +130,12 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     const response = await oauth.token(new Request(req), new Response(res));
     res.json(response);
   });
+
+  app.post("/notification", async (req, res) => {
+    const { returnHash, donationId } = await payuService.verifyNotification(req.body);
+    await donationService.confirmPayment(donationId)
+    return returnHash;
+  })
 
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
   // Handle React routing, return all requests to React app

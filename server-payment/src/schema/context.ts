@@ -3,6 +3,7 @@ import { Client } from "oauth2-server";
 import "reflect-metadata";
 import { IDonationService } from "../models/DonationService";
 import { IPackageService } from "../models/PackageService";
+import { IPayuService } from "../models/PayuService";
 import { IUser } from "../models/User";
 import { IUserService } from "../models/UserService";
 import { TYPES } from "../types";
@@ -13,12 +14,14 @@ export interface IContextProvider {
   packageService: IPackageService;
   donationService: IDonationService;
   userService: IUserService;
+  payuService: IPayuService;
 }
 
 export interface IContext {
   packageService: IPackageService;
   donationService: IDonationService;
   userService: IUserService;
+  payuService: IPayuService;
   user: IUser;
   client: Client;
   scope?: string;
@@ -34,4 +37,7 @@ export class ContextProvider implements IContextProvider {
 
   @inject(TYPES.IUserService)
   public userService: IUserService = null as any;
+
+  @inject(TYPES.IPayuService)
+  public payuService: IPayuService = null as any;
 }

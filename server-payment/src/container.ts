@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { IAuthentication } from "./models/Authentication";
 import { IDonationService } from "./models/DonationService";
 import { IPackageService } from "./models/PackageService";
+import { IPayuService } from "./models/PayuService";
 import { IUserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
 import { JwtAuthentication } from "./services/JwtAuthentication";
@@ -10,10 +11,11 @@ import { MockDonationService } from "./services/MockDonationService";
 import { MockPackageService } from "./services/MockPackageService";
 import { MockUserService } from "./services/MockUserService";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
-import { MongoPackageService } from "./services/MongoPackageService";
-import { TYPES } from "./types";
-import { MongoUserService } from "./services/MongoUserService";
 import { MongoDonationService } from "./services/MongoDonationService";
+import { MongoPackageService } from "./services/MongoPackageService";
+import { MongoUserService } from "./services/MongoUserService";
+import { PayuService } from "./services/PayuService";
+import { TYPES } from "./types";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
@@ -30,6 +32,9 @@ const production = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MongoDonationService)
+    .inSingletonScope();
+  bind<IPayuService>(TYPES.IPayuService)
+    .to(PayuService)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
@@ -48,6 +53,9 @@ const test = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MockDonationService)
+    .inSingletonScope();
+  bind<IPayuService>(TYPES.IPayuService)
+    .to(PayuService)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
