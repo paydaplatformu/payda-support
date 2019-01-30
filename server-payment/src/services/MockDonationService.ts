@@ -5,10 +5,10 @@ import { IDonation, IDonationCreator, IDonationFilters } from "../models/Donatio
 import { IDonationService } from "../models/DonationService";
 import { FieldErrorCode, ValidationError } from "../models/Errors";
 import { IPackageService } from "../models/PackageService";
-import { Validator } from "../models/Validator";
-import { TYPES } from "../types";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
+import { Validator } from "../models/Validator";
+import { TYPES } from "../types";
 import { sortAndPaginate } from "../utilities/helpers";
 
 @injectable()
@@ -86,15 +86,19 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
   public getAll = async (filters: IDonationFilters, pagination: PaginationSettings, sorting: SortingSettings) => {
     let results = this.donations;
     if (filters.paymentConfirmed !== undefined) {
-      results = this.donations.filter(d => d.paymentConfirmed === filters.paymentConfirmed);  
+      results = this.donations.filter(d => d.paymentConfirmed === filters.paymentConfirmed);
     }
     return sortAndPaginate(results, pagination, sorting);
-  };  
+  };
 
   public count = async (filters: IDonationFilters) => {
-    const results = await this.getAll(filters, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: 'ASC', sortField: 'id' });
+    const results = await this.getAll(
+      filters,
+      { page: 1, perPage: Number.MAX_SAFE_INTEGER },
+      { sortOrder: "ASC", sortField: "id" }
+    );
     return results.length;
-  }
+  };
 
   public getByPackageId = async (packageId: string) => this.donations.filter(d => d.packageId === packageId);
   public countByPackageId = async (packageId: string) => (await this.getByPackageId(packageId)).length;

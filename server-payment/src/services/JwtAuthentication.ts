@@ -19,7 +19,6 @@ export class JwtAuthentication implements IAuthentication {
 
   @inject(TYPES.IUserService) private userService: IUserService = null as any;
 
-
   /**
    * Invoked to generate a new refresh token.
    *

@@ -14,7 +14,7 @@ export class MockUserService implements IUserService {
 
   public getAll = async () => {
     return this.users.map(userEntityToModel);
-  }
+  };
 
   public create = async (userCreator: IUserCreator) => {
     const newUser: IUserEntity = {

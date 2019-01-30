@@ -2,13 +2,17 @@ import { injectable } from "inversify";
 import { Cursor } from "mongodb";
 import { IModifier } from "../models/Modifier";
 import { IUser, IUserCreator, IUserEntity } from "../models/User";
-import { BaseMongoService } from "./BaseMongoService";
 import { IUserService } from "../models/UserService";
-import { hashPassword, comparePassword } from "../utilities/password";
+import { Validator } from "../models/Validator";
+import { comparePassword, hashPassword } from "../utilities/password";
+import { BaseMongoService } from "./BaseMongoService";
 
 @injectable()
-export class MongoUserService extends BaseMongoService<IUserEntity, IUser, {}, IUserCreator, IModifier> implements IUserService {
+export class MongoUserService extends BaseMongoService<IUserEntity, IUser, {}, IUserCreator, IModifier>
+  implements IUserService {
   public static collectionName = "users";
+
+  public creatorValidator: Validator<IUserCreator> = {};
 
   public getFilteredQuery(): Cursor<IUserEntity> {
     return this.collection.find();
@@ -28,24 +32,24 @@ export class MongoUserService extends BaseMongoService<IUserEntity, IUser, {}, I
       ...this.generateCommonFields(),
       email: creator.email,
       password: await hashPassword(creator.password),
-      role: 'admin'
-    }
+      role: "admin"
+    };
   }
 
   public getUserCount(): Promise<number> {
-    return this.count({})
+    return this.count({});
   }
 
   public async getByEmailAndPassword(email: string, password: string): Promise<IUser | null> {
-    const result = await this.collection.findOne({ email })
+    const result = await this.collection.findOne({ email });
 
     if (result) {
-      const passwordCorrect = await comparePassword(password, result.password)
+      const passwordCorrect = await comparePassword(password, result.password);
       if (passwordCorrect) {
-        return this.toModel(result)
+        return this.toModel(result);
       }
-      return null
+      return null;
     }
     return null;
-  }  
+  }
 }

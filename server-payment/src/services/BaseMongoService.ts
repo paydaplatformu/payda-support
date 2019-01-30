@@ -1,18 +1,26 @@
 import { inject, injectable } from "inversify";
-import { Collection, Db, Cursor, ObjectID } from "mongodb";
-import { TYPES } from "../types";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { SortingSettings } from "../models/SortingSettings";
+import { Collection, Cursor, Db, ObjectID } from "mongodb";
+import { BaseEntityService } from "../models/BaseEntityService";
 import { IModifier } from "../models/Modifier";
 import { MongoEntity } from "../models/MongoEntity";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
+import { TYPES } from "../types";
 
 @injectable()
-export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filters, Creator, Modifier extends IModifier> {
+export abstract class BaseMongoService<
+  Entity extends MongoEntity,
+  Model,
+  Filters,
+  Creator,
+  Modifier extends IModifier
+> extends BaseEntityService<Creator> {
   public static collectionName: string;
 
   public collection: Collection<Entity>;
 
   constructor(@inject(TYPES.IMongoDb) db: Db = null as any) {
+    super();
     this.collection = db.collection((this.constructor as any).collectionName);
   }
 
@@ -23,28 +31,27 @@ export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filter
   }
 
   public sort(cursor: Cursor<Entity>, sorting: SortingSettings) {
-    const field = sorting.sortField === 'id' ? '_id' : sorting.sortField;
-    const order = sorting.sortOrder === 'ASC' ? 1 : -1;
+    const field = sorting.sortField === "id" ? "_id" : sorting.sortField;
+    const order = sorting.sortOrder === "ASC" ? 1 : -1;
     return cursor.sort({ [field]: order });
   }
 
-  public abstract toModel(entity: Entity): Model
+  public abstract toModel(entity: Entity): Model;
 
-  public abstract getFilteredQuery(filters: Filters): Cursor<Entity>
+  public abstract getFilteredQuery(filters: Filters): Cursor<Entity>;
 
   public getAll = async (filters: Filters, pagination: PaginationSettings, sorting: SortingSettings) => {
     const query = this.getFilteredQuery(filters);
     const sorted = this.sort(query, sorting);
-    const paginated = this.paginate(sorted, pagination)
-    const results = await paginated.toArray()
+    const paginated = this.paginate(sorted, pagination);
+    const results = await paginated.toArray();
     return results.map(this.toModel);
   };
 
   public count = (filters: Filters) => {
-    const query = this.getFilteredQuery(filters)
-    return query.count()
-  }  
-
+    const query = this.getFilteredQuery(filters);
+    return query.count();
+  };
 
   private async getEntityById(id: string): Promise<Entity | null> {
     return this.collection.findOne({ _id: new ObjectID(id) });
@@ -75,18 +82,18 @@ export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filter
       createdAt: new Date(),
       updatedAt: new Date(),
       isActive: true
-    }
+    };
   }
 
   public async createEntity(creator: Creator): Promise<Entity> {
-    return {
+    return ({
       ...creator,
       ...this.generateCommonFields()
-    } as any as Entity;
+    } as any) as Entity;
   }
 
   public async create(creator: Creator): Promise<Model> {
-    const mongoInput: Entity = await this.createEntity(creator)
+    const mongoInput: Entity = await this.createEntity(creator);
     const result = await this.collection.insertOne(mongoInput);
 
     const newPackage: Entity = {
@@ -95,5 +102,5 @@ export abstract class BaseMongoService<Entity extends MongoEntity, Model, Filter
     };
 
     return this.toModel(newPackage);
-  }  
+  }
 }

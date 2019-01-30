@@ -5,7 +5,6 @@ import { IPackage } from "../models/Package";
 import { IContext } from "./context";
 
 export const typeDef = gql`
-
   input PackageFilter {
     ids: [String!]
     onlyActive: Boolean

@@ -25,12 +25,33 @@ const Query = gql`
 
     Donation(id: String!): Donation
     allDonations(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: DonationFilter): [Donation!]!
-    _allDonationsMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: DonationFilter): ListMetadata
+    _allDonationsMeta(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: String
+      filter: DonationFilter
+    ): ListMetadata
   }
 
   type Mutation {
-    createPackage(defaultTag: PackageTagInput!, reference: String, repeatConfig: RepeatConfig!, image: String, price: MonateryAmountInput!, priority: Int!, tags: [PackageTagInput!]): Package!
-    updatePackage(id: String!, defaultTag: PackageTagInput, reference: String, image: String, priority: Int, tags: [PackageTagInput!]): Package
+    createPackage(
+      defaultTag: PackageTagInput!
+      reference: String
+      repeatConfig: RepeatConfig!
+      image: String
+      price: MonateryAmountInput!
+      priority: Int!
+      tags: [PackageTagInput!]
+    ): Package!
+    updatePackage(
+      id: String!
+      defaultTag: PackageTagInput
+      reference: String
+      image: String
+      priority: Int
+      tags: [PackageTagInput!]
+    ): Package
 
     createDonation(fullName: String!, email: String!, packageId: String!): Donation!
     cleanPendingDonations: Int!
@@ -48,11 +69,19 @@ const rootResolvers: IResolvers<any, IContext> = {
   Query: {
     users: (parent, { id }, { userService, user }) => {
       // if (!user) throw new AuthorizationRequired();
-      return userService.getAll({}, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: "ASC", sortField: "id" });
+      return userService.getAll(
+        {},
+        { page: 1, perPage: Number.MAX_SAFE_INTEGER },
+        { sortOrder: "ASC", sortField: "id" }
+      );
     },
 
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
-    allPackages: (parent, { filter: { onlyActive, ids } = { onlyActive: true, ids: undefined }, sortField, sortOrder, page, perPage }, { packageService, user }) => {
+    allPackages: (
+      parent,
+      { filter: { onlyActive, ids } = { onlyActive: true, ids: undefined }, sortField, sortOrder, page, perPage },
+      { packageService, user }
+    ) => {
       if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
@@ -89,8 +118,7 @@ const rootResolvers: IResolvers<any, IContext> = {
       // if (!user) throw new AuthorizationRequired();
       return packageService.edit(args as IPackageModifier);
     },
-    createDonation: (parent, args, { donationService, user }) =>
-      donationService.create(args as IDonationCreator),
+    createDonation: (parent, args, { donationService, user }) => donationService.create(args as IDonationCreator),
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       // if (!user) throw new AuthorizationRequired();
       return donationService.cleanPendingDonations();

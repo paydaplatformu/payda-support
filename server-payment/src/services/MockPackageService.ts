@@ -113,9 +113,13 @@ export class MockPackageService implements IPackageService {
   };
 
   public count = async (filters: IPackageFilters) => {
-    const results = await this.getAll(filters, { page: 1, perPage: Number.MAX_SAFE_INTEGER }, { sortOrder: 'ASC', sortField: 'id' });
+    const results = await this.getAll(
+      filters,
+      { page: 1, perPage: Number.MAX_SAFE_INTEGER },
+      { sortOrder: "ASC", sortField: "id" }
+    );
     return results.length;
-  }
+  };
 
   public getById = async (id: string) => this.packages.find(p => p.id === id) || null;
 

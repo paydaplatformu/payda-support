@@ -1,19 +1,24 @@
 import { injectable } from "inversify";
-import { IPackage, IPackageCreator, IPackageEntity, IPackageModifier, IPackageFilters } from "../models/Package";
-import { IPackageService } from "../models/PackageService";
-import { BaseMongoService } from "./BaseMongoService";
 import { Cursor, ObjectID } from "mongodb";
+import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
+import { IPackageService } from "../models/PackageService";
+import { Validator } from "../models/Validator";
+import { BaseMongoService } from "./BaseMongoService";
 
 @injectable()
-export class MongoPackageService extends BaseMongoService<IPackageEntity, IPackage, IPackageFilters, IPackageCreator, IPackageModifier> implements IPackageService {
+export class MongoPackageService
+  extends BaseMongoService<IPackageEntity, IPackage, IPackageFilters, IPackageCreator, IPackageModifier>
+  implements IPackageService {
   public static collectionName = "packages";
+
+  public creatorValidator: Validator<IPackageCreator> = {};
 
   public getFilteredQuery({ onlyActive, ids }: IPackageFilters): Cursor<IPackageEntity> {
     // if
     const filters = [
       onlyActive !== undefined ? { isActive: onlyActive } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectID(id)) } } : undefined
-    ].filter(el => el !== undefined)
+    ].filter(el => el !== undefined);
 
     return this.collection.find({
       $and: filters
@@ -25,7 +30,7 @@ export class MongoPackageService extends BaseMongoService<IPackageEntity, IPacka
     return {
       ...fromSuper,
       tags: fromSuper.tags || []
-    }
+    };
   }
 
   public toModel(entity: IPackageEntity): IPackage {

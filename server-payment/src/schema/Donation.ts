@@ -4,7 +4,6 @@ import { IDonation } from "../models/Donation";
 import { IContext } from "./context";
 
 export const typeDef = gql`
-
   input DonationFilter {
     paymentConfirmed: Boolean
   }
@@ -18,4 +17,3 @@ export const typeDef = gql`
     date: Date!
   }
 `;
-

@@ -15,10 +15,7 @@ export class MongoDbConnectionProvider {
   }
 
   private async connect() {
-    const client = await MongoClient.connect(
-      databaseUrl,
-      { useNewUrlParser: true }
-    );
+    const client = await MongoClient.connect(databaseUrl, { useNewUrlParser: true });
     this.db = client.db();
     this.isConnected = true;
     return this.db;
