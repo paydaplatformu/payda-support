@@ -23,6 +23,7 @@ export const typeDef = gql`
     packageId: String!
     paymentConfirmed: Boolean!
     date: Date!
+    usingAmex: Boolean!
     quantity: Int!
   }
 
