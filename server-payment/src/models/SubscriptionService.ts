@@ -1,6 +1,6 @@
-import { ISubscription, ISubscriptionCreator, ISubscriptionModifier, ISubscriptionFilters } from "./Subscription";
 import { PaginationSettings } from "./PaginationSettings";
 import { SortingSettings } from "./SortingSettings";
+import { ISubscription, ISubscriptionCreator, ISubscriptionFilters, ISubscriptionModifier } from "./Subscription";
 
 export interface ISubscriptionService {
   getAll(

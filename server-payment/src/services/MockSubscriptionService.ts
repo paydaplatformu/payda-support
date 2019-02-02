@@ -1,16 +1,13 @@
 import { injectable } from "inversify";
-import { Currency } from "../models/Currency";
-import { LanguageCode } from "../models/LanguageCode";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
 import {
   ISubscription,
   ISubscriptionCreator,
-  ISubscriptionModifier,
-  ISubscriptionFilters
+  ISubscriptionFilters,
+  ISubscriptionModifier
 } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
-import { RepeatConfig } from "../models/RepeatConfig";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { SortingSettings } from "../models/SortingSettings";
 import { sortAndPaginate } from "../utilities/helpers";
 
 @injectable()

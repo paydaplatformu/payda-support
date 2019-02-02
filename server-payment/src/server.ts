@@ -13,14 +13,14 @@ import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { IAuthentication } from "./models/Authentication";
+import { IDonationService } from "./models/DonationService";
 import { InvalidInput, ValidationError } from "./models/Errors";
+import { IPayuService } from "./models/PayuService";
 import { IUserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
 import { IContextProvider } from "./schema/context";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { TYPES } from "./types";
-import { IPayuService } from "./models/PayuService";
-import { IDonationService } from "./models/DonationService";
 
 const log = console.log; // tslint:disable-line
 
@@ -133,9 +133,9 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
 
   app.post("/notification", async (req, res) => {
     const { returnHash, donationId } = await payuService.verifyNotification(req.body);
-    await donationService.confirmPayment(donationId)
+    await donationService.confirmPayment(donationId);
     return returnHash;
-  })
+  });
 
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
   // Handle React routing, return all requests to React app

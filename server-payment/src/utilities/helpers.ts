@@ -1,7 +1,7 @@
-import { SortingSettings } from "../models/SortingSettings";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { sortBy, drop } from "lodash";
+import { drop, sortBy } from "lodash";
 import { config } from "../config";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
 
 export const isDefined = (val: any) => val !== undefined && val !== null;
 

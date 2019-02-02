@@ -1,10 +1,11 @@
 import { inject, injectable } from "inversify";
 import { Client } from "oauth2-server";
 import "reflect-metadata";
+import { IDonationManagerService } from "../models/DonationManagerService";
 import { IDonationService } from "../models/DonationService";
 import { IPackageService } from "../models/PackageService";
-import { ISubscriptionService } from "../models/SubscriptionService";
 import { IPayuService } from "../models/PayuService";
+import { ISubscriptionService } from "../models/SubscriptionService";
 import { IUser } from "../models/User";
 import { IUserService } from "../models/UserService";
 import { TYPES } from "../types";
@@ -17,6 +18,7 @@ export interface IContextProvider {
   subscriptionService: ISubscriptionService;
   userService: IUserService;
   payuService: IPayuService;
+  donationManagerService: IDonationManagerService;
 }
 
 export interface IContext {
@@ -25,6 +27,7 @@ export interface IContext {
   subscriptionService: ISubscriptionService;
   userService: IUserService;
   payuService: IPayuService;
+  donationManagerService: IDonationManagerService;
   user: IUser;
   client: Client;
   scope?: string;
@@ -46,4 +49,7 @@ export class ContextProvider implements IContextProvider {
 
   @inject(TYPES.IPayuService)
   public payuService: IPayuService = null as any;
+
+  @inject(TYPES.IDonationManagerService)
+  public donationManagerService: IDonationManagerService = null as any;
 }

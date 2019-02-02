@@ -1,10 +1,10 @@
 import { injectable } from "inversify";
 import { Currency } from "../models/Currency";
 import { LanguageCode } from "../models/LanguageCode";
-import { IPackage, IPackageCreator, IPackageModifier, IPackageFilters } from "../models/Package";
+import { IPackage, IPackageCreator, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
-import { RepeatConfig } from "../models/RepeatConfig";
 import { PaginationSettings } from "../models/PaginationSettings";
+import { RepeatConfig } from "../models/RepeatConfig";
 import { SortingSettings } from "../models/SortingSettings";
 import { sortAndPaginate } from "../utilities/helpers";
 

@@ -1,24 +1,26 @@
 import { ContainerModule } from "inversify";
 import "reflect-metadata";
 import { IAuthentication } from "./models/Authentication";
+import { IDonationManagerService } from "./models/DonationManagerService";
 import { IDonationService } from "./models/DonationService";
 import { IPackageService } from "./models/PackageService";
 import { IPayuService } from "./models/PayuService";
+import { ISubscriptionService } from "./models/SubscriptionService";
 import { IUserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
+import { DonationManagerService } from "./services/DonationManagerService";
 import { JwtAuthentication } from "./services/JwtAuthentication";
 import { MockDonationService } from "./services/MockDonationService";
 import { MockPackageService } from "./services/MockPackageService";
+import { MockSubscriptionService } from "./services/MockSubscriptionService";
 import { MockUserService } from "./services/MockUserService";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { MongoDonationService } from "./services/MongoDonationService";
 import { MongoPackageService } from "./services/MongoPackageService";
+import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
 import { MongoUserService } from "./services/MongoUserService";
 import { PayuService } from "./services/PayuService";
 import { TYPES } from "./types";
-import { ISubscriptionService } from "./models/SubscriptionService";
-import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
-import { MockSubscriptionService } from "./services/MockSubscriptionService";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
@@ -41,6 +43,9 @@ const production = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IPayuService>(TYPES.IPayuService)
     .to(PayuService)
+    .inSingletonScope();
+  bind<IDonationManagerService>(TYPES.IDonationManagerService)
+    .to(DonationManagerService)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
@@ -66,10 +71,12 @@ const test = new ContainerModule(bind => {
   bind<IPayuService>(TYPES.IPayuService)
     .to(PayuService)
     .inSingletonScope();
+  bind<IDonationManagerService>(TYPES.IDonationManagerService)
+    .to(DonationManagerService)
+    .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
     .inRequestScope();
 });
 
 export { production, test };
-

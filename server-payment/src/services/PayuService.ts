@@ -1,15 +1,15 @@
-import { injectable, inject } from "inversify";
-import { IDonation } from "../models/Donation";
-import { IPackage } from "../models/Package";
-import { format } from "date-fns";
-import { LanguageCode } from "../models/LanguageCode";
-import { PayuCredentials } from "../models/PayuCredentials";
-import { getUTF8Length, isNonProduction } from "../utilities/helpers";
 import { createHmac } from "crypto";
-import { IPayuService } from "../models/PayuService";
+import { format } from "date-fns";
+import { inject, injectable } from "inversify";
 import { config } from "../config";
-import { TYPES } from "../types";
+import { IDonation } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
+import { LanguageCode } from "../models/LanguageCode";
+import { IPackage } from "../models/Package";
+import { PayuCredentials } from "../models/PayuCredentials";
+import { IPayuService } from "../models/PayuService";
+import { TYPES } from "../types";
+import { getUTF8Length } from "../utilities/helpers";
 
 @injectable()
 export class PayuService implements IPayuService {
@@ -44,7 +44,7 @@ export class PayuService implements IPayuService {
     const payu = {
       IPN_PID: IPN_PID[0],
       IPN_PNAME: IPN_PNAME[0],
-      IPN_DATE: IPN_DATE,
+      IPN_DATE,
       DATE: format(new Date(), "YYYYMMDDHHmmss")
     };
 
@@ -67,8 +67,7 @@ export class PayuService implements IPayuService {
   }
 
   private createHashInput(donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object {
-    const tag = pkg.tags.find(tag => tag.code === language) || pkg.defaultTag;
-    console.log(donation);
+    const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
     return {
       MERCHANT: merchant,
       ORDER_REF: donation.id,
@@ -99,7 +98,6 @@ export class PayuService implements IPayuService {
         })
         .join("");
 
-      console.log(JSON.stringify({ input, toBeHashed }, null, 2));
       const hmac = createHmac("md5", secret);
       hmac.setEncoding("hex");
       hmac.end(toBeHashed, "utf8", () => {

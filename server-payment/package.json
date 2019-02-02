@@ -55,7 +55,7 @@
     "watch:staging": "NODE_ENV=staging ts-node-dev src/index.ts",
     "watch:development": "NODE_ENV=development TS_NODE_FILES=true ts-node-dev src/index.ts",
     "format": "prettier --write ./src/**/*.ts",
-    "lint": "tslint -p .",
+    "lint": "tslint --fix -p .",
     "test:debug": "NODE_ENV=test TS_NODE_FILES=true jest --watch",
     "test": "NODE_ENV=test TS_NODE_FILES=true jest",
     "build": "tsc"

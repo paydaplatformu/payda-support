@@ -1,6 +1,6 @@
-import { IUser, IUserCreator } from "./User";
 import { PaginationSettings } from "./PaginationSettings";
 import { SortingSettings } from "./SortingSettings";
+import { IUser, IUserCreator } from "./User";
 
 export interface IUserService {
   getUserCount(): Promise<number>;

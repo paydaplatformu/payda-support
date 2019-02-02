@@ -4,7 +4,7 @@ import { LastProcess } from "./LastProcess";
 export interface ISubscriptionCreator {
   packageId: string;
   donationId: string;
-  lastProcess: LastProcess;
+  lastProcess: LastProcess | null;
 }
 
 export interface ISubscriptionModifier {

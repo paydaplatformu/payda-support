@@ -13,7 +13,7 @@ convict.addFormat({
 
     if (!isValid) {
       throw new Error(
-        "Invalid clients format. Every client should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime"
+        "Invalid clients format. Clients should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime"
       );
     }
   }

@@ -1,4 +1,4 @@
-import { IPackage, IPackageCreator, IPackageModifier, IPackageFilters } from "./Package";
+import { IPackage, IPackageCreator, IPackageFilters, IPackageModifier } from "./Package";
 import { PaginationSettings } from "./PaginationSettings";
 import { SortingSettings } from "./SortingSettings";
 

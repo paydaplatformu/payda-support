@@ -11,8 +11,10 @@
               "ban-single-arg-parens"
           ]
         },
+        "interface-name": false,
         "curly": false,
         "object-literal-sort-keys": false,
+        "object-literal-key-quotes": false,
         "comma-dangle": ["error", "never"],
         "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
         "new-parens": true,

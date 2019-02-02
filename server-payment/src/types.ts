@@ -7,5 +7,6 @@ export const TYPES = {
   IAuthentication: Symbol.for("IAuthentication"),
   IPackageService: Symbol.for("IPackageService"),
   ISubscriptionService: Symbol.for("ISubscriptionService"),
-  IDonationService: Symbol.for("IDonationService")
+  IDonationService: Symbol.for("IDonationService"),
+  IDonationManagerService: Symbol.for("IDonationManagerService")
 };

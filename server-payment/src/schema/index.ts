@@ -3,23 +3,22 @@ import { merge } from "lodash";
 import { IDonationCreator } from "../models/Donation";
 import { AuthorizationError, AuthorizationRequired } from "../models/Errors";
 import { IPackageCreator, IPackageModifier } from "../models/Package";
+import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
-import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
 import { typeDef as Donation } from "./Donation";
-import { typeDef as Subscription } from "./Subscription";
-import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as FormField } from "./FormField";
+import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
+import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as LastProcess } from "./LastProcess";
+import { typeDef as ListMetadata } from "./ListMetadata";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
 import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as RepeatConfig } from "./RepeatConfig";
-import { typeDef as ListMetadata } from "./ListMetadata";
+import { typeDef as Subscription } from "./Subscription";
 import { resolvers as userResolvers, typeDef as User } from "./User";
-import { ISubscriptionModifier } from "../models/Subscription";
-import { config } from "../config";
 
 const Query = gql`
   type Query {
@@ -156,17 +155,8 @@ const rootResolvers: IResolvers<any, IContext> = {
       if (!user) throw new AuthorizationRequired();
       return packageService.edit(args as IPackageModifier);
     },
-    createDonation: async (parent, { donationCreator, language }, { donationService, payuService, packageService }) => {
-      const donation = await donationService.create(donationCreator as IDonationCreator);
-      const pkg = await packageService.getById(donation.packageId);
-      if (!pkg) throw new Error("If package does not exist, donation service create should have failed.");
-      const formFields = await payuService.getFormContents(donation, pkg, language);
-      return {
-        donation,
-        formUrl: config.get("payu.url"),
-        formFields,
-        package: pkg
-      };
+    createDonation: async (parent, { donationCreator, language }, { donationManagerService }) => {
+      return donationManagerService.createDonation(donationCreator as IDonationCreator, language);
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       if (!user) throw new AuthorizationRequired();
