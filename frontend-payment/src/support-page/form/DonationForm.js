@@ -37,7 +37,7 @@ class AntForm extends Component {
 
       createDonation({
         variables: {
-          donationCreator: fieldValues,
+          donationCreator: { ...fieldValues, agreementsAccepted: undefined },
           language: "TR",
         },
       });
@@ -93,6 +93,7 @@ class AntForm extends Component {
                 <Form.Item style={{ marginBottom: 0 }}>
                   {getFieldDecorator("usingAmex", {
                     valuePropName: "checked",
+                    initialValue: false,
                   })(
                     <Checkbox>
                       Odememi American Express kullanarak yapacagim

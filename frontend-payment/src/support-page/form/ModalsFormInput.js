@@ -41,25 +41,23 @@ const ModalsFormInput = props => {
               message: "Bu secenegin secilmesi zorunludur",
             },
           ],
-        })(
-          <>
-            <Checkbox />{" "}
-            <span
-              style={modalLinkStyles}
-              onClick={() => setTermsOfServiceModalVisible(true)}
-            >
-              Satis Sozlesmesi
-            </span>{" "}
-            ve{" "}
-            <span
-              style={modalLinkStyles}
-              onClick={() => setreturnPolicyModalVisible(true)}
-            >
-              Iade Sartlari
-            </span>
-            'ni okudum, kabul ediyorum.
-          </>,
-        )}
+        })(<Checkbox />)}
+        <span>
+          <span
+            style={modalLinkStyles}
+            onClick={() => setTermsOfServiceModalVisible(true)}
+          >
+            Satis Sozlesmesi
+          </span>{" "}
+          ve{" "}
+          <span
+            style={modalLinkStyles}
+            onClick={() => setreturnPolicyModalVisible(true)}
+          >
+            Iade Sartlari
+          </span>
+          'ni okudum, kabul ediyorum.
+        </span>
       </Form.Item>
     </>
   );
