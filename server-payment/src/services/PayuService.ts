@@ -4,7 +4,7 @@ import { IPackage } from "../models/Package";
 import { format } from 'date-fns'
 import { LanguageCode } from "../models/LanguageCode";
 import { PayuCredentials } from "../models/PayuCredentials";
-import { getUTF8Length } from "../utilities/helpers";
+import { getUTF8Length, isNonProduction } from "../utilities/helpers";
 import { createHmac } from "crypto";
 import { IPayuService } from "../models/PayuService";
 import { config } from "../config";
@@ -64,7 +64,7 @@ export class PayuService implements IPayuService {
     const credentials = this.getCredentials(donation.usingAmex);
     const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant)
     const hash = await this.generateHash(hashInput, credentials.secret);
-    return this.finalizeFormFields(hashInput, donation, hash);
+    return this.finalizeFormFields(hashInput, donation, language, hash);
   }
 
   private createHashInput(donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object {
@@ -82,14 +82,9 @@ export class PayuService implements IPayuService {
       'ORDER_VAT[0]': '0',
       'ORDER_SHIPPING': '',
       'PRICES_CURRENCY': pkg.price.currency,
-      'DISCOUNT': '',
-      'DESTINATION_CITY': '',
-      'DESTINATION_STATE': '',
-      'DESTINATION_COUNTRY': '',
       'PAY_METHOD': '',
       'ORDER_PRICE_TYPE[0]': 'GROSS',
-      'LU_COMPLEX_PDISCOUNT_PERC[0]': '',
-      'INSTALLMENT_OPTIONS': '2,3,4,5,6,7,8,9,10,11,12'
+      'INSTALLMENT_OPTIONS': '1,2,3,4,5,6,7,8,9,10,11,12'
     }
   }
 
@@ -101,8 +96,9 @@ export class PayuService implements IPayuService {
         if (!value) return '0';
         if (Array.isArray(value)) return value.map(this.getResult).join();
         return this.getResult(value)
-      }).join()
+      }).join('')
 
+      console.log(JSON.stringify({input, toBeHashed}, null, 2))
       const hmac = createHmac('md5', secret);
       hmac.setEncoding('hex');
       hmac.end(toBeHashed, 'utf8', () => {
@@ -112,7 +108,7 @@ export class PayuService implements IPayuService {
     });
   }
 
-  private finalizeFormFields = (input: object, donation: IDonation, hash: string) => {
+  private finalizeFormFields = (input: object, donation: IDonation, language: LanguageCode, hash: string) => {
     const splitted = donation.fullName.split(' ');
     const firstName = splitted.slice(0, -1).join(' ');
     const lastName = splitted.slice(-1).join(' ');
@@ -125,6 +121,8 @@ export class PayuService implements IPayuService {
       'BILL_PHONE': '-',
       'BILL_COUNTRYCODE': 'TR',
       'BACK_REF': this.backRef,
+      'LANGUAGE': language,
+      'LU_ENABLE_TOKEN': '1',
       'ORDER_HASH': hash
     }
 

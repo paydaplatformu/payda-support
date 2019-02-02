@@ -128,7 +128,7 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
 
   app.post("/oauth2/token", async (req, res) => {
     const response = await oauth.token(new Request(req), new Response(res));
-    res.json(response);
+    res.send(response);
   });
 
   app.post("/notification", async (req, res) => {

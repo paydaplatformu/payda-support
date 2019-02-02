@@ -1,5 +1,26 @@
 import convict from "convict";
 
+convict.addFormat({
+  name: 'clients-array',
+  coerce: (value: string) => JSON.parse(value),
+  validate: (value: any) => {
+    if (!Array.isArray(value)) {
+      throw new Error('Clients should be an array')
+    }
+    const isValid = value.every(client => [
+      'id',
+      'secret',
+      'grants',
+      'accessTokenLifetime',
+      'refreshTokenLifetime'
+    ].every(key => key in client))
+
+    if (!isValid) {
+      throw new Error('Invalid clients format. Every client should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime')
+    }
+  }
+});
+
 const config = convict({
   environment: {
     doc: "The application environment.",
@@ -29,24 +50,7 @@ const config = convict({
   },
   clients: {
     doc: "Clients",
-    coerce: (value: string) => JSON.parse(value),
-    format: (value: any) => {
-      const parsed = JSON.parse(value);
-      if (!Array.isArray(parsed)) {
-        throw new Error('Clients should be an array')
-      }
-      const isValid = parsed.every(client => [
-        'id',
-        'secret',
-        'grants',
-        'accessTokenLifetime',
-        'refreshTokenLifetime'
-      ].every(key => key in client))
-
-      if (!isValid) {
-        throw new Error('Invalid clients format. Every client should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime')
-      }
-    },
+    format: 'clients-array',
     default: null,
     env: "CLIENTS"
   },

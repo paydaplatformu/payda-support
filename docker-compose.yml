@@ -10,6 +10,12 @@ services:
       - DEFAULT_USER_EMAIL=a@a.com
       - DEFAULT_USER_PASSWORD=123456
       - JWT_SECRET=verysecrettoken
+      - PAYU_BACK_REF=http://localhost:8080/success
+      - PAYU_DEFAULT_CREDENTIALS_MERCHANT=OPU_TEST
+      - PAYU_DEFAULT_CREDENTIALS_SECRET=SECRET_KEY
+      - PAYU_AMEX_CREDENTIALS_MERCHANT=OPU_TEST
+      - PAYU_AMEX_CREDENTIALS_SECRET=SECRET_KEY
+      - CLIENTS=[{"id":"iframe","secret":"123456","grants":["password","refresh_token"],"accessTokenLifetime":3600,"refreshTokenLifetime":213186400}]
     volumes:
       - ./server-payment:/usr/app/
       - /usr/app/node_modules
