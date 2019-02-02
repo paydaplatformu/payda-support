@@ -30,6 +30,7 @@ export const typeDef = gql`
   type DonationCreationResult {
     donation: Donation!
     package: Package!
+    formUrl: String!
     formFields: [FormField!]!
   }
 `;
