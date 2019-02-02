@@ -1,4 +1,4 @@
-export const paydaOrange = `rgba(245, 145, 48, 1)`;
+export const paydaOrange = 'rgba(245, 145, 48, 1)';
 
 export const REPEAT_CONFIG = {
   NONE: "NONE",
