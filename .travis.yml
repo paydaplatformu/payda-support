@@ -11,8 +11,8 @@ before_install:
 - export PATH="$HOME/.yarn/bin:$PATH"
 before_script:
 - cd frontend-payment
-- yarn --pure-lockfile
-- yarn build
+- npm ci
+- npm run build
 - cd ..
 - rm -rf server-payment/frontend-dist/
 - cp -R frontend-payment/build/ server-payment/frontend-dist/
