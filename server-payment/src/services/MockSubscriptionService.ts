@@ -62,7 +62,8 @@ export class MockSubscriptionService implements ISubscriptionService {
     if (!current) return null;
     const next: ISubscription = {
       ...current,
-      ...subscriptionModifier
+      ...subscriptionModifier,
+      lastProcess: (subscriptionModifier.lastProcess || current.lastProcess) as any
     };
     this.subscriptions = this.subscriptions.filter(s => s.id !== subscriptionModifier.id).concat([next]);
     return next;
