@@ -1,4 +1,4 @@
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 
 export interface IDonationCreator {
   fullName: string;
@@ -29,10 +29,10 @@ export interface IDonation {
 }
 
 export interface IDonationEntity {
-  _id: ObjectID;
+  _id: ObjectId;
   fullName: string;
   email: string;
-  packageId: string;
+  packageId: ObjectId;
   paymentConfirmed: boolean;
   date: Date;
   quantity: number;

@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { Collection, Cursor, Db, ObjectID } from "mongodb";
+import { Collection, Cursor, Db, ObjectId } from "mongodb";
 import { BaseEntityService } from "../models/BaseEntityService";
 import { IModifier } from "../models/Modifier";
 import { MongoEntity } from "../models/MongoEntity";
@@ -54,7 +54,7 @@ export abstract class BaseMongoService<
   };
 
   private async getEntityById(id: string): Promise<Entity | null> {
-    return this.collection.findOne({ _id: new ObjectID(id) });
+    return this.collection.findOne({ _id: new ObjectId(id) });
   }
 
   public async getById(id: string): Promise<Model | null> {
@@ -78,7 +78,7 @@ export abstract class BaseMongoService<
 
   public generateCommonFields() {
     return {
-      _id: new ObjectID(),
+      _id: new ObjectId(),
       createdAt: new Date(),
       updatedAt: new Date(),
       isActive: true

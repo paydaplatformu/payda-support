@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Cursor, ObjectID } from "mongodb";
+import { Cursor, ObjectId } from "mongodb";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
 import { Validator } from "../models/Validator";
@@ -14,10 +14,9 @@ export class MongoPackageService
   public creatorValidator: Validator<IPackageCreator> = {};
 
   public getFilteredQuery({ onlyActive, ids }: IPackageFilters): Cursor<IPackageEntity> {
-    // if
     const filters = [
       onlyActive !== undefined ? { isActive: onlyActive } : undefined,
-      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectID(id)) } } : undefined
+      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined);
 
     return this.collection.find({

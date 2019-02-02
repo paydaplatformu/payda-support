@@ -1,4 +1,4 @@
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 import { IMonateryAmount } from "./MonetaryAmount";
 import { IPackageTag } from "./PackageTag";
 import { RepeatConfig } from "./RepeatConfig";
@@ -42,7 +42,7 @@ export interface IPackage {
 }
 
 export interface IPackageEntity {
-  _id: ObjectID;
+  _id: ObjectId;
   defaultTag: IPackageTag;
   reference?: string;
   createdAt: Date;

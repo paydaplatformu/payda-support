@@ -6,5 +6,6 @@ export const TYPES = {
   IMongoDb: Symbol.for("IMongoDb"),
   IAuthentication: Symbol.for("IAuthentication"),
   IPackageService: Symbol.for("IPackageService"),
+  ISubscriptionService: Symbol.for("ISubscriptionService"),
   IDonationService: Symbol.for("IDonationService")
 };

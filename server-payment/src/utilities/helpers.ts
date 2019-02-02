@@ -18,8 +18,8 @@ export const getUTF8Length = (input: string) => {
   // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
   const match = encodeURIComponent(input).match(/%[89ABab]/g);
   return input.length + (match ? match.length : 0);
-}
+};
 
 export const isNonProduction = () => {
-  return ["development", "test", "staging"].includes(config.get("environment"))
-}
+  return ["development", "test", "staging"].includes(config.get("environment"));
+};

@@ -125,8 +125,8 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
     const next: IDonation = {
       ...current,
       paymentConfirmed: true
-    }
+    };
     this.donations = this.donations.filter(d => d.id !== donationId).concat([next]);
     return next;
-  }
+  };
 }

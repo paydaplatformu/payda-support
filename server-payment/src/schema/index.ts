@@ -6,15 +6,20 @@ import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
+import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
 import { typeDef as Donation } from "./Donation";
+import { typeDef as Subscription } from "./Subscription";
 import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as FormField } from "./FormField";
+import { typeDef as LastProcess } from "./LastProcess";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
 import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as RepeatConfig } from "./RepeatConfig";
 import { typeDef as ListMetadata } from "./ListMetadata";
 import { resolvers as userResolvers, typeDef as User } from "./User";
+import { ISubscriptionModifier } from "../models/Subscription";
+import { config } from "../config";
 
 const Query = gql`
   type Query {
@@ -32,6 +37,22 @@ const Query = gql`
       sortField: String
       sortOrder: String
       filter: DonationFilter
+    ): ListMetadata
+
+    Subscription(id: String!): Subscription
+    allSubscriptions(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: String
+      filter: SubscriptionFilter
+    ): [Subscription!]!
+    _allSubscriptionsMeta(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: String
+      filter: SubscriptionFilter
     ): ListMetadata
   }
 
@@ -56,6 +77,8 @@ const Query = gql`
 
     createDonation(donationCreator: DonationCreator!, language: LanguageCode!): DonationCreationResult!
     cleanPendingDonations: Int!
+
+    updateSubscription(id: String!, isActive: Boolean!): Subscription
   }
 `;
 
@@ -91,7 +114,6 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthorizationRequired();
-      if (!user) return { count: packageService.count({ onlyActive: true, ids: filter.ids }) };
       return { count: await packageService.count(filter) };
     },
 
@@ -108,6 +130,21 @@ const rootResolvers: IResolvers<any, IContext> = {
     _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return { count: await donationService.count(filter) };
+    },
+
+    Subscription: (parent, { id }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return subscriptionService.getById(id);
+    },
+    allSubscriptions: (parent, { filter, sortField, sortOrder, page, perPage }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      const pagination = { page, perPage };
+      const sorting = { sortField, sortOrder };
+      return subscriptionService.getAll(filter, pagination, sorting);
+    },
+    _allSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return { count: await subscriptionService.count(filter) };
     }
   },
   Mutation: {
@@ -122,26 +159,34 @@ const rootResolvers: IResolvers<any, IContext> = {
     createDonation: async (parent, { donationCreator, language }, { donationService, payuService, packageService }) => {
       const donation = await donationService.create(donationCreator as IDonationCreator);
       const pkg = await packageService.getById(donation.packageId);
-      if (!pkg) throw new Error('If package does not exist, donation service create should have failed.')
+      if (!pkg) throw new Error("If package does not exist, donation service create should have failed.");
       const formFields = await payuService.getFormContents(donation, pkg, language);
       return {
         donation,
+        formUrl: config.get("payu.url"),
         formFields,
         package: pkg
-      }
+      };
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return donationService.cleanPendingDonations();
+    },
+
+    updateSubscription: (parent, args, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return subscriptionService.edit(args as ISubscriptionModifier);
     }
   }
 };
 
 export const typeDefs = [
   DateType,
+  JsonType,
   RepeatConfig,
   Currency,
   MonetaryAmount,
+  LastProcess,
   LanguageCode,
   FormField,
   PackageTag,
@@ -149,8 +194,9 @@ export const typeDefs = [
   Query,
   Package,
   Donation,
+  Subscription,
   User,
   ListMetadata
 ];
 
-export const resolvers = merge(dateResolvers, rootResolvers, packageResolvers, userResolvers);
+export const resolvers = merge(dateResolvers, jsonResolvers, rootResolvers, packageResolvers, userResolvers);

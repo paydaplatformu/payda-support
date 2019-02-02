@@ -70,6 +70,7 @@ export class MongoDonationService
       ...fromSuper,
       ...creator,
       paymentConfirmed: false,
+      packageId: new ObjectId(creator.packageId),
       date: new Date()
     };
   }
@@ -80,7 +81,7 @@ export class MongoDonationService
       date: entity.date,
       email: entity.email,
       fullName: entity.fullName,
-      packageId: entity.packageId,
+      packageId: entity.packageId.toString(),
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
       usingAmex: entity.usingAmex

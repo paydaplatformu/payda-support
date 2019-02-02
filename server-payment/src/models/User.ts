@@ -1,4 +1,4 @@
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 
 export interface IUserCreator {
   email: string;
@@ -13,7 +13,7 @@ export interface IUser {
 }
 
 export interface IUserEntity {
-  _id: ObjectID;
+  _id: ObjectId;
   email: string;
   createdAt: Date;
   role: string;

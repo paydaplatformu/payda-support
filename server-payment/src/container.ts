@@ -16,6 +16,9 @@ import { MongoPackageService } from "./services/MongoPackageService";
 import { MongoUserService } from "./services/MongoUserService";
 import { PayuService } from "./services/PayuService";
 import { TYPES } from "./types";
+import { ISubscriptionService } from "./models/SubscriptionService";
+import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
+import { MockSubscriptionService } from "./services/MockSubscriptionService";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
@@ -29,6 +32,9 @@ const production = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IPackageService>(TYPES.IPackageService)
     .to(MongoPackageService)
+    .inSingletonScope();
+  bind<ISubscriptionService>(TYPES.ISubscriptionService)
+    .to(MongoSubscriptionService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MongoDonationService)
@@ -50,6 +56,9 @@ const test = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IPackageService>(TYPES.IPackageService)
     .to(MockPackageService)
+    .inSingletonScope();
+  bind<ISubscriptionService>(TYPES.ISubscriptionService)
+    .to(MockSubscriptionService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MockDonationService)
