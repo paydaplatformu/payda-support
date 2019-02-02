@@ -5,8 +5,8 @@ import gql from "graphql-tag";
 import { Form, Select } from "antd";
 
 const query = gql`
-  {
-    allPackages {
+  query AllPackages($sortOrder: String, $sortField: String) {
+    allPackages(sortOrder: $sortOrder, sortField: $sortField) {
       id
       defaultTag {
         code
@@ -23,7 +23,7 @@ const query = gql`
 `;
 
 const PackageSelect = props => (
-  <Query query={query}>
+  <Query query={query} variables={{ sortOrder: "DESC", sortField: "priority" }}>
     {({ loading, error, data }) => {
       if (loading) return <p>Loading...</p>;
       if (error) return <p>Error!</p>;
