@@ -23,7 +23,7 @@ export class PayuService implements IPayuService {
 
   private amexCredentials: PayuCredentials = {
     merchant: config.get("payu.amexCredentials.merchant"),
-    secret: config.get("payu.amexCredentials.merchant")
+    secret: config.get("payu.amexCredentials.secret")
   };
 
   private backRef: string = config.get("payu.backRef");
