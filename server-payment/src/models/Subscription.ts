@@ -8,7 +8,9 @@ export interface ISubscriptionCreator {
 
 export interface ISubscriptionModifier {
   id: string;
-  isActive: boolean;
+  isActive?: boolean;
+  paymentToken?: string;
+  lastProcess?: LastProcess;
 }
 
 export interface ISubscriptionFilters {

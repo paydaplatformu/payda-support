@@ -34,6 +34,7 @@ export class PayuService implements IPayuService {
   }
 
   public async verifyNotification(input: any) {
+    console.log(JSON.stringify(input, null, 2)); // tslint:disable-line
     const { HASH: hash, ...data } = input;
     const { REFNOEXT: donationId, IPN_PID, IPN_DATE, IPN_PNAME } = data;
 
