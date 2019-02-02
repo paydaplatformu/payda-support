@@ -1,4 +1,4 @@
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { config } from "../config";
 import { IDonation, IDonationCreator } from "../models/Donation";
 import { DonationCreationResult } from "../models/DonationCreationResult";
@@ -13,6 +13,7 @@ import { ISubscription } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
 import { TYPES } from "../types";
 
+@injectable()
 export class DonationManagerService implements IDonationManagerService {
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
