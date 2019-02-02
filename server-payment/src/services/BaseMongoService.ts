@@ -24,7 +24,9 @@ export abstract class BaseMongoService<
     this.collection = db.collection((this.constructor as any).collectionName);
   }
 
-  public paginate(cursor: Cursor<Entity>, pagination: PaginationSettings) {
+  public paginate(cursor: Cursor<Entity>, pagination?: PaginationSettings) {
+    if (!pagination) return cursor;
+    if (!pagination.perPage && !pagination.page) return cursor;
     const perPage = pagination.perPage || 10;
     const page = pagination.page || 0;
     return cursor.skip(perPage * page).limit(perPage);
