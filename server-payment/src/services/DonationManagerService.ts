@@ -48,7 +48,6 @@ export class DonationManagerService implements IDonationManagerService {
     if (pkg.repeatConfig !== RepeatConfig.NONE) {
       return this.subscriptionService.create({
         donationId: donation.id,
-        lastProcess: null,
         packageId: pkg.id
       });
     }

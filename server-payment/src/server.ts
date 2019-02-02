@@ -134,7 +134,7 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
   app.post("/notification", async (req, res) => {
     const { returnHash, donationId } = await payuService.verifyNotification(req.body);
     await donationService.confirmPayment(donationId);
-    return returnHash;
+    res.send(returnHash);
   });
 
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));

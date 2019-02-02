@@ -21,7 +21,7 @@ export class MongoSubscriptionService
     ISubscriptionModifier
   >
   implements ISubscriptionService {
-  public static collectionName = "packages";
+  public static collectionName = "subscriptions";
 
   public creatorValidator: Validator<ISubscriptionCreator> = {};
 
@@ -42,19 +42,34 @@ export class MongoSubscriptionService
       ...fromSuper,
       ...creator,
       donationId: new ObjectId(creator.donationId),
-      packageId: new ObjectId(creator.packageId)
+      packageId: new ObjectId(creator.packageId),
+      lastProcess: null,
+      paymentToken: null
     };
   }
 
   public toModel(entity: ISubscriptionEntity): ISubscription {
-    return {
-      id: entity._id.toString(),
-      packageId: entity.packageId.toString(),
-      donationId: entity.packageId.toString(),
-      lastProcess: entity.lastProcess,
-      createdAt: entity.createdAt,
-      isActive: entity.isActive,
-      updatedAt: entity.updatedAt
-    };
+    if (entity.paymentToken) {
+      return {
+        id: entity._id.toString(),
+        packageId: entity.packageId.toString(),
+        donationId: entity.packageId.toString(),
+        lastProcess: entity.lastProcess,
+        createdAt: entity.createdAt,
+        isActive: entity.isActive,
+        updatedAt: entity.updatedAt
+      };
+    } else if (entity.paymentToken === null) {
+      return {
+        id: entity._id.toString(),
+        packageId: entity.packageId.toString(),
+        donationId: entity.packageId.toString(),
+        lastProcess: entity.lastProcess,
+        createdAt: entity.createdAt,
+        isActive: entity.isActive,
+        updatedAt: entity.updatedAt
+      };
+    }
+    throw new Error("Unknown subscription type");
   }
 }

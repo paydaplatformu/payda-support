@@ -50,7 +50,7 @@ export class MockSubscriptionService implements ISubscriptionService {
       updatedAt: new Date(),
       donationId: subscriptionCreator.donationId,
       packageId: subscriptionCreator.packageId,
-      lastProcess: subscriptionCreator.lastProcess,
+      lastProcess: null,
       isActive: true
     };
     this.subscriptions.push(newSubscription);
