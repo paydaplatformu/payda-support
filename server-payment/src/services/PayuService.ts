@@ -1,13 +1,16 @@
 import { createHmac } from "crypto";
-import { format } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { inject, injectable } from "inversify";
 import { config } from "../config";
 import { IDonation } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
+import { LastProcess } from "../models/LastProcess";
 import { IPackage } from "../models/Package";
 import { PayuCredentials } from "../models/PayuCredentials";
 import { IPayuService } from "../models/PayuService";
+import { RepeatConfig } from "../models/RepeatConfig";
+import { ISubscriptionService } from "../models/SubscriptionService";
 import { TYPES } from "../types";
 import { getUTF8Length } from "../utilities/helpers";
 
@@ -15,6 +18,9 @@ import { getUTF8Length } from "../utilities/helpers";
 export class PayuService implements IPayuService {
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
+
+  @inject(TYPES.ISubscriptionService)
+  private subscriptionService: ISubscriptionService = null as any;
 
   private defaultCredentials: PayuCredentials = {
     merchant: config.get("payu.defaultCredentials.merchant"),
@@ -36,16 +42,31 @@ export class PayuService implements IPayuService {
   public async verifyNotification(input: any) {
     console.log(JSON.stringify(input, null, 2)); // tslint:disable-line
     const { HASH: hash, ...data } = input;
-    const { REFNOEXT: donationId, IPN_PID, IPN_DATE, IPN_PNAME } = data;
+    const { REFNOEXT: donationId, TOKEN_HASH: paymentToken } = data;
 
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
+
+    if (paymentToken) {
+      const subscription = await this.subscriptionService.getByDonationId(donationId);
+      if (!subscription) throw new Error("Subscription not found.");
+      const lastProcess: LastProcess = {
+        date: startOfMonth(new Date()),
+        isSuccess: true,
+        result: {
+          reason: "FIRST_PAYMENT",
+          payload: null
+        }
+      };
+      await this.subscriptionService.edit({ id: subscription.id, lastProcess, paymentToken });
+    }
+
     const credentials = this.getCredentials(donation.usingAmex);
 
     const payu = {
-      IPN_PID: IPN_PID[0],
-      IPN_PNAME: IPN_PNAME[0],
-      IPN_DATE,
+      IPN_PID: data["IPN_PID[]"],
+      IPN_PNAME: data["IPN_PNAME[]"],
+      IPN_DATE: data.IPN_DATE,
       DATE: format(new Date(), "YYYYMMDDHHmmss")
     };
 
@@ -64,7 +85,7 @@ export class PayuService implements IPayuService {
     const credentials = this.getCredentials(donation.usingAmex);
     const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
     const hash = await this.generateHash(hashInput, credentials.secret);
-    return this.finalizeFormFields(hashInput, donation, language, hash);
+    return this.finalizeFormFields(hashInput, donation, pkg, language, hash);
   }
 
   private createHashInput(donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object {
@@ -108,10 +129,23 @@ export class PayuService implements IPayuService {
     });
   };
 
-  private finalizeFormFields = (input: object, donation: IDonation, language: LanguageCode, hash: string) => {
+  private finalizeFormFields = (
+    input: object,
+    donation: IDonation,
+    pkg: IPackage,
+    language: LanguageCode,
+    hash: string
+  ) => {
     const splitted = donation.fullName.split(" ");
     const firstName = splitted.slice(0, -1).join(" ");
     const lastName = splitted.slice(-1).join(" ");
+
+    const tokenSettings: object =
+      pkg.repeatConfig !== RepeatConfig.NONE
+        ? {
+            LU_ENABLE_TOKEN: "1"
+          }
+        : {};
 
     const finalObject = {
       ...input,
@@ -122,7 +156,7 @@ export class PayuService implements IPayuService {
       BILL_COUNTRYCODE: "TR",
       BACK_REF: this.backRef,
       LANGUAGE: language,
-      LU_ENABLE_TOKEN: "1",
+      ...tokenSettings,
       ORDER_HASH: hash
     };
 

@@ -48,6 +48,18 @@ export class MongoSubscriptionService
     };
   }
 
+  private async getEntityByDonationId(donationId: string): Promise<ISubscriptionEntity | null> {
+    return this.collection.findOne({ donationId: new ObjectId(donationId) });
+  }
+
+  public async getByDonationId(donationId: string): Promise<ISubscription | null> {
+    const result = await this.getEntityByDonationId(donationId);
+    if (result) {
+      return this.toModel(result);
+    }
+    return null;
+  }
+
   public toModel(entity: ISubscriptionEntity): ISubscription {
     if (entity.paymentToken) {
       return {

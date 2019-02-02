@@ -40,6 +40,9 @@ export class MockSubscriptionService implements ISubscriptionService {
 
   public getById = async (id: string) => this.subscriptions.find(s => s.id === id) || null;
 
+  public getByDonationId = async (donationId: string) =>
+    this.subscriptions.find(s => s.donationId === donationId) || null;
+
   public create = async (subscriptionCreator: ISubscriptionCreator) => {
     const newSubscription: ISubscription = {
       id: Math.random()
