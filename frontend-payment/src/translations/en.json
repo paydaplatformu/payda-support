@@ -1,1 +1,5 @@
-{}
+{
+  "key1": "I am key one",
+  "key2": "I am key two",
+  "key3": "I am key three"
+}

@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "react-admin";
 
-import { TR, EN } from "../../translations";
+import { LANG_CODES } from "../../constants";
 import { REPEAT_CONFIG, CURRENCY } from "../../constants";
 
 const PackageCreate = props => (
@@ -19,7 +19,10 @@ const PackageCreate = props => (
         <div>DEFAULT TAG EKLEME YERI</div>
         <SelectInput
           source="defaultTag.code"
-          choices={[{ id: TR, name: "Turkish" }, { id: EN, name: "English" }]}
+          choices={[
+            { id: LANG_CODES.TR, name: "Turkish" },
+            { id: LANG_CODES.EN, name: "English" },
+          ]}
         />
         <TextInput source="defaultTag.name" />
         <TextInput source="defaultTag.description" />
@@ -49,7 +52,10 @@ const PackageCreate = props => (
         <SimpleFormIterator>
           <SelectInput
             source="code"
-            choices={[{ id: TR, name: "Turkish" }, { id: EN, name: "English" }]}
+            choices={[
+              { id: LANG_CODES.TR, name: "Turkish" },
+              { id: LANG_CODES.EN, name: "English" },
+            ]}
           />
           <TextInput source="name" />
           <TextInput source="description" />

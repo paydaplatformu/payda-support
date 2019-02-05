@@ -1,4 +1,4 @@
-export const paydaOrange = 'rgba(245, 145, 48, 1)';
+export const paydaOrange = "rgba(245, 145, 48, 1)";
 
 export const REPEAT_CONFIG = {
   NONE: "NONE",
@@ -10,4 +10,9 @@ export const REPEAT_CONFIG = {
 export const CURRENCY = {
   TRY: "TRY",
   USD: "USD",
+};
+
+export const LANG_CODES = {
+  TR: "tr",
+  EN: "en",
 };

@@ -4,7 +4,7 @@ import { Form, Checkbox } from "antd";
 import TermsOfServiceModal from "./TermsOfServiceModal";
 import ReturnPolicyModal from "./ReturnPolicyModal";
 
-import { paydaOrange } from "../../constants";
+import { paydaOrange } from "../../../../constants";
 
 const modalLinkStyles = {
   padding: 0,

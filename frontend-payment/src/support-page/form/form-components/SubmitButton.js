@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "antd";
 
-import { paydaOrange } from "../../constants";
+import { paydaOrange } from "../../../constants";
 
 const style = {
   backgroundColor: paydaOrange,

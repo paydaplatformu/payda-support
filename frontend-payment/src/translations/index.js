@@ -1,22 +1,37 @@
-import React from "react";
+import React, { useReducer } from "react";
+
+import { LANG_CODES } from "../constants";
 
 import en from "./en.json";
 import tr from "./tr.json";
 
-export const TR = "TR";
-export const EN = "EN";
+export const TranslationContext = React.createContext({
+  langCode: LANG_CODES.TR,
+  translate: key => tr[key] || key,
+});
 
-/* eslint-disable */
-const __translate = (langCode, translationKey) => {
-  switch (langCode) {
-    case TR:
-      return en[translationKey];
-    case EN:
-      return tr[translationKey];
-    default:
-      return translationKey;
-  }
-};
-/* eslint-enable */
+export function TranslationContextProvider({ children }) {
+  const initalState = {
+    langCode: LANG_CODES.TR,
+    translate: key => tr[key] || key,
+  };
 
-export const TranslationContext = React.createContext();
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "setTurkish":
+        return { ...initalState };
+      case "setEnglish":
+        return { langCode: LANG_CODES.EN, translate: key => en[key] || key };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initalState);
+
+  return (
+    <TranslationContext.Provider value={{ ...state, dispatch }}>
+      {children}
+    </TranslationContext.Provider>
+  );
+}

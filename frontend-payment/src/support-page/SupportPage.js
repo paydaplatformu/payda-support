@@ -2,14 +2,13 @@ import "antd/dist/antd.css";
 
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
-
 import { Row, Col } from "antd";
 
 import { paydaOrange } from "../constants";
 
-import AntForm from "./form/DonationForm";
-
 import Title from "./Title";
+import DonationFormWithGql from "./form/DonationFormWithGql";
+import LanguageButtons from "./LanguageButtons";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -30,8 +29,9 @@ const SupportPage = () => (
       <Col xs={24} md={{ span: 12, offset: 6 }}>
         <Title />
         <StyledFormContainer>
-          <AntForm />
+          <DonationFormWithGql />
         </StyledFormContainer>
+        <LanguageButtons />
       </Col>
     </Row>
   </>
