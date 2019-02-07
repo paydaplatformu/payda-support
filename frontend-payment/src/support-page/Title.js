@@ -1,41 +1,21 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useContext } from "react";
+import { TranslationContext } from "../translations";
 
-import { paydaOrange } from "../constants";
+const headingStyle = { textAlign: "center", color: "#ffffff" };
 
-const StyledTitleContainer = styled.div`
-  padding: 50px 30px;
-  text-align: center;
-  background-color: ${paydaOrange};
-`;
+const Title = () => {
+  const { translate } = useContext(TranslationContext);
 
-const StyledHeading = styled.p`
-  margin: 0;
-  color: #ffffff;
-
-  @media (max-width: 768px) {
-    font-size: 32px;
-    font-weight: 600;
-  }
-`;
-
-const StyledDescription = styled.p`
-  @media (max-width: 768px) {
-    font-size: 16px;
-    font-weight: 300;
-  }
-
-  color: #ffffff;
-`;
-
-const Title = () => (
-  <StyledTitleContainer>
-    <StyledHeading>Payda'ya destek olun</StyledHeading>
-    <StyledDescription>
-      Eğer siz de Payda’ya destek vermek istiyorsanız aşağıdaki formu
-      kullanabilirsiniz.
-    </StyledDescription>
-  </StyledTitleContainer>
-);
+  return (
+    <div>
+      <h1 style={{ ...headingStyle, fontSize: 36 }}>
+        {translate("support_page_title")}
+      </h1>
+      <h4 style={{ ...headingStyle, fontSize: 18 }}>
+        {translate("support_page_description")}
+      </h4>
+    </div>
+  );
+};
 
 export default Title;
