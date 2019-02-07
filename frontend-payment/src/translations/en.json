@@ -10,5 +10,9 @@
   "and": "and",
   "terms_and_conditions": "Terms and Conditions",
   "refund_policy": "Refund Policy",
-  "read_and_accept": "I've read and accept the "
+  "read_and_accept": "I've read and accept the ",
+  "packageid_validation_error": "Please select a package",
+  "fullname_validation_error": "Please enter your full name",
+  "email_validation_error": "Please enter a valid email address",
+  "agreements_accepted_validation_error": "You have to accept these to make a donation"
 }

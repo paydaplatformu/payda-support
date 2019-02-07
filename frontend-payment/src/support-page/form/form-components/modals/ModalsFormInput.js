@@ -25,6 +25,14 @@ const ModalsFormInput = props => {
 
   const { translate, langCode } = useContext(TranslationContext);
 
+  const validateCheckBox = (rule, value, callback) => {
+    if (!value) {
+      callback(new Error(translate("agreements_accepted_validation_error")));
+    }
+
+    callback();
+  };
+
   return (
     <>
       <TermsOfServiceModal
@@ -41,7 +49,7 @@ const ModalsFormInput = props => {
           rules: [
             {
               required: true,
-              message: "Bu secenegin secilmesi zorunludur",
+              validator: validateCheckBox,
             },
           ],
         })(<Checkbox />)}

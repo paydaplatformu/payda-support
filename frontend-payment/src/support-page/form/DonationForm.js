@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Form, Input, InputNumber, Checkbox } from "antd";
 
 import { TranslationContext } from "../../translations";
@@ -10,10 +10,20 @@ import ModalsFormInput from "./form-components/modals/ModalsFormInput";
 const DonationFormInner = props => {
   const {
     createDonation,
-    form: { validateFields, getFieldDecorator },
+    form: {
+      validateFields,
+      getFieldDecorator,
+      setFields,
+      resetFields,
+      ...rest
+    },
   } = props;
 
-  const { translate } = useContext(TranslationContext);
+  const { translate, langCode } = useContext(TranslationContext);
+
+  useEffect(() => {
+    resetFields();
+  }, [langCode]);
 
   const onSubmitForm = e => {
     e.preventDefault();
@@ -43,9 +53,11 @@ const DonationFormInner = props => {
           rules: [
             {
               required: true,
-              message: translate("fullname_required_error"),
+              pattern: /(\w.+\s).+/i,
+              message: translate("fullname_validation_error"),
             },
           ],
+          validateTrigger: "onBlur",
         })(<Input placeholder={translate("supporter_name")} size="large" />)}
       </Form.Item>
       <Form.Item>
@@ -53,9 +65,11 @@ const DonationFormInner = props => {
           rules: [
             {
               required: true,
-              message: "Lutfen e-posta adresinizi giriniz",
+              pattern: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i,
+              message: translate("email_validation_error"),
             },
           ],
+          validateTrigger: "onBlur",
         })(<Input placeholder={translate("email_address")} size="large" />)}
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>

@@ -40,7 +40,10 @@ const PackageSelect = props => {
             <Form.Item>
               {props.getFieldDecorator("packageId", {
                 rules: [
-                  { required: true, message: "Lutfen bir paket seciniz" },
+                  {
+                    required: true,
+                    message: translate("packageid_validation_error"),
+                  },
                 ],
               })(
                 <Select placeholder={translate("select_package")} size="large">

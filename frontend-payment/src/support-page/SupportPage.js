@@ -26,7 +26,7 @@ const SupportPage = () => (
   <>
     <GlobalStyle />
     <Row>
-      <Col xs={24} md={{ span: 12, offset: 6 }}>
+      <Col xs={24} md={{ span: 14, offset: 5 }}>
         <Title />
         <StyledFormContainer>
           <DonationFormWithGql />

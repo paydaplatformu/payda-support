@@ -1,5 +1,4 @@
 {
-  "fullname_required_error": "Lütfen isminizi giriniz",
   "support_now": "Destek Ol!",
   "pay_using_amex": "Ödememi American Express kullanarak yapacağım",
   "email_address": "E-posta Adresi",
@@ -11,5 +10,9 @@
   "and": "ve",
   "terms_and_conditions": "Satış Sözleşmesi",
   "refund_policy": "İade Şartları",
-  "read_and_accept": "'nı okudum ve kabul ediyorum."
+  "read_and_accept": "'nı okudum ve kabul ediyorum.",
+  "packageid_validation_error": "Lütfen bir paket seçiniz",
+  "fullname_validation_error": "Lütfen isminizi ve soyisminizi giriniz",
+  "email_validation_error": "Lütfen geçerli bir e-posta adresi giriniz",
+  "agreements_accepted_validation_error": "Bağış yapabilmek için bu seçeneğin seçilmesi gerekmektedir"
 }
