@@ -36,28 +36,26 @@ const PackageSelect = props => {
         if (error) return <p>Error!</p>;
 
         return (
-          <>
-            <Form.Item>
-              {props.getFieldDecorator("packageId", {
-                rules: [
-                  {
-                    required: true,
-                    message: translate("packageid_validation_error"),
-                  },
-                ],
-              })(
-                <Select placeholder={translate("select_package")} size="large">
-                  {data.allPackages.map(
-                    ({ id, defaultTag: { name, description } }) => (
-                      <Select.Option key={id} value={id}>
-                        {name} - {description}
-                      </Select.Option>
-                    ),
-                  )}
-                </Select>,
-              )}
-            </Form.Item>
-          </>
+          <Form.Item style={{ width: "100%", marginRight: 10 }}>
+            {props.getFieldDecorator("packageId", {
+              rules: [
+                {
+                  required: true,
+                  message: translate("packageid_validation_error"),
+                },
+              ],
+            })(
+              <Select placeholder={translate("select_package")} size="large">
+                {data.allPackages.map(
+                  ({ id, defaultTag: { name, description } }) => (
+                    <Select.Option key={id} value={id}>
+                      {name} - {description}
+                    </Select.Option>
+                  ),
+                )}
+              </Select>,
+            )}
+          </Form.Item>
         );
       }}
     </Query>

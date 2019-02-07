@@ -2,21 +2,20 @@ import React, { useContext, useEffect } from "react";
 import { Form, Input, InputNumber, Checkbox } from "antd";
 
 import { TranslationContext } from "../../translations";
+import { LANG_CODES } from "../../constants";
 
 import SubmitButton from "./form-components/SubmitButton";
 import PackageSelect from "./form-components/PackageSelect";
 import ModalsFormInput from "./form-components/modals/ModalsFormInput";
 
+const packageSelectQuantityStyle = {
+  display: "flex",
+};
+
 const DonationFormInner = props => {
   const {
     createDonation,
-    form: {
-      validateFields,
-      getFieldDecorator,
-      setFields,
-      resetFields,
-      ...rest
-    },
+    form: { validateFields, getFieldDecorator, resetFields },
   } = props;
 
   const { translate, langCode } = useContext(TranslationContext);
@@ -40,14 +39,24 @@ const DonationFormInner = props => {
     });
   };
 
+  const formatQuantity = value =>
+    langCode === LANG_CODES.TR ? `${value} Adet` : `Quantity: ${value}`;
+
   return (
     <Form onSubmit={onSubmitForm}>
-      <PackageSelect getFieldDecorator={getFieldDecorator} />
-      <Form.Item label={translate("quantity")} style={{ display: "flex" }}>
-        {getFieldDecorator("quantity", { initialValue: 1 })(
-          <InputNumber min={1} size="large" />,
-        )}
-      </Form.Item>
+      <div style={packageSelectQuantityStyle}>
+        <PackageSelect getFieldDecorator={getFieldDecorator} />
+        <Form.Item>
+          {getFieldDecorator("quantity", { initialValue: 1 })(
+            <InputNumber
+              min={1}
+              size="large"
+              style={langCode === LANG_CODES.EN ? { minWidth: 120 } : undefined}
+              formatter={formatQuantity}
+            />,
+          )}
+        </Form.Item>
+      </div>
       <Form.Item>
         {getFieldDecorator("fullName", {
           rules: [

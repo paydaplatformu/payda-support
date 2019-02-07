@@ -20,6 +20,7 @@ const StyledFormContainer = styled.div`
   padding: 20px;
   background-color: #fff;
   border-radius: 3px;
+  margin: 20px 0;
 `;
 
 const SupportPage = () => (
@@ -27,8 +28,8 @@ const SupportPage = () => (
     <GlobalStyle />
     <Row>
       <Col xs={24} md={{ span: 14, offset: 5 }}>
-        <Title />
         <StyledFormContainer>
+          <Title />
           <DonationFormWithGql />
         </StyledFormContainer>
         <LanguageButtons />
