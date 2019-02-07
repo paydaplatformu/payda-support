@@ -1,3 +1,15 @@
 {
-  "fullname_required_error": "Lütfen isminizi giriniz"
+  "fullname_required_error": "Lütfen isminizi giriniz",
+  "support_now": "Destek Ol!",
+  "pay_using_amex": "Ödememi American Express kullanarak yapacağım",
+  "email_address": "E-posta Adresi",
+  "supporter_name": "Destekleyen Kişi",
+  "quantity": "Adet",
+  "select_package": "Lütfen bağış paketi seçiniz",
+  "support_page_title": "Payda'ya destek olun",
+  "support_page_description": "Eğer siz de Payda’ya destek vermek istiyorsanız aşağıdaki formu kullanabilirsiniz.",
+  "and": "ve",
+  "terms_and_conditions": "Satış Sözleşmesi",
+  "refund_policy": "İade Şartları",
+  "read_and_accept": "'nı okudum ve kabul ediyorum."
 }

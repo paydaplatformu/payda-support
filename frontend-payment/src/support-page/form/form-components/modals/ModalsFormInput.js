@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Form, Checkbox } from "antd";
+
+import { TranslationContext } from "../../../../translations";
+import { paydaOrange, LANG_CODES } from "../../../../constants";
 
 import TermsOfServiceModal from "./TermsOfServiceModal";
 import ReturnPolicyModal from "./ReturnPolicyModal";
-
-import { paydaOrange } from "../../../../constants";
 
 const modalLinkStyles = {
   padding: 0,
@@ -18,9 +19,11 @@ const ModalsFormInput = props => {
     false,
   );
 
-  const [returnPolicyModalVisible, setreturnPolicyModalVisible] = useState(
+  const [returnPolicyModalVisible, setReturnPolicyModalVisible] = useState(
     false,
   );
+
+  const { translate, langCode } = useContext(TranslationContext);
 
   return (
     <>
@@ -30,7 +33,7 @@ const ModalsFormInput = props => {
       />
       <ReturnPolicyModal
         visible={returnPolicyModalVisible}
-        dismissModal={() => setreturnPolicyModalVisible(false)}
+        dismissModal={() => setReturnPolicyModalVisible(false)}
       />
       <Form.Item style={{ marginBottom: 40 }}>
         {props.getFieldDecorator("agreementsAccepted", {
@@ -43,20 +46,21 @@ const ModalsFormInput = props => {
           ],
         })(<Checkbox />)}
         <span>
+          {langCode === LANG_CODES.EN ? translate("read_and_accept") : null}
           <span
             style={modalLinkStyles}
             onClick={() => setTermsOfServiceModalVisible(true)}
           >
-            Satis Sozlesmesi
-          </span>{" "}
-          ve{" "}
+            {translate("terms_and_conditions")}
+          </span>
+          {` ${translate("and")} `}
           <span
             style={modalLinkStyles}
-            onClick={() => setreturnPolicyModalVisible(true)}
+            onClick={() => setReturnPolicyModalVisible(true)}
           >
-            Iade Sartlari
+            {translate("refund_policy")}
           </span>
-          'ni okudum, kabul ediyorum.
+          {langCode === LANG_CODES.TR ? translate("read_and_accept") : null}
         </span>
       </Form.Item>
     </>

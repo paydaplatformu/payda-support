@@ -33,7 +33,7 @@ const DonationFormInner = props => {
   return (
     <Form onSubmit={onSubmitForm}>
       <PackageSelect getFieldDecorator={getFieldDecorator} />
-      <Form.Item label="Adet" style={{ display: "flex" }}>
+      <Form.Item label={translate("quantity")} style={{ display: "flex" }}>
         {getFieldDecorator("quantity", { initialValue: 1 })(
           <InputNumber min={1} size="large" />,
         )}
@@ -46,7 +46,7 @@ const DonationFormInner = props => {
               message: translate("fullname_required_error"),
             },
           ],
-        })(<Input placeholder="Destekleyen Kisi" size="large" />)}
+        })(<Input placeholder={translate("supporter_name")} size="large" />)}
       </Form.Item>
       <Form.Item>
         {getFieldDecorator("email", {
@@ -56,18 +56,18 @@ const DonationFormInner = props => {
               message: "Lutfen e-posta adresinizi giriniz",
             },
           ],
-        })(<Input placeholder="E-posta Adresi" size="large" />)}
+        })(<Input placeholder={translate("email_address")} size="large" />)}
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>
         {getFieldDecorator("usingAmex", {
           valuePropName: "checked",
           initialValue: false,
-        })(<Checkbox>Odememi American Express kullanarak yapacagim</Checkbox>)}
+        })(<Checkbox>{translate("pay_using_amex")}</Checkbox>)}
       </Form.Item>
       <ModalsFormInput getFieldDecorator={getFieldDecorator} />
       <Form.Item>
         <SubmitButton htmlType="submit" size="large" block>
-          Destek Ol!
+          {translate("support_now")}
         </SubmitButton>
       </Form.Item>
     </Form>

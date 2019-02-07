@@ -1,5 +1,14 @@
 {
-  "key1": "I am key one",
-  "key2": "I am key two",
-  "key3": "I am key three"
+  "support_now": "Support Now!",
+  "pay_using_amex": "I want to pay by using American Express",
+  "email_address": "Email Address",
+  "supporter_name": "Supporter Name",
+  "quantity": "Quantity",
+  "select_package": "Please select a donation package",
+  "support_page_title": "Support Payda, Now!",
+  "support_page_description": "To support Payda, you may use the form below.",
+  "and": "and",
+  "terms_and_conditions": "Terms and Conditions",
+  "refund_policy": "Refund Policy",
+  "read_and_accept": "I've read and accept the "
 }
