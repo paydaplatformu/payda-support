@@ -33,7 +33,7 @@ const DonationFormInner = props => {
       createDonation({
         variables: {
           donationCreator: { ...fieldValues, agreementsAccepted: undefined },
-          language: "TR",
+          language: langCode.toUpperCase(),
         },
       });
     });
