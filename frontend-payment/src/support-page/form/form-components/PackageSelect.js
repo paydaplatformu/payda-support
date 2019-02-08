@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { Form, Select } from "antd";
+import { Form, Select, Spin } from "antd";
 
 import { TranslationContext } from "../../../translations";
 
@@ -37,36 +37,45 @@ const PackageSelect = props => {
   };
 
   return (
-    <Query
-      query={query}
-      variables={{ sortOrder: "DESC", sortField: "priority" }}
-    >
-      {({ loading, error, data }) => {
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error!</p>;
+    <Form.Item style={{ width: "100%", marginRight: 10 }}>
+      {props.getFieldDecorator("packageId", {
+        rules: [
+          {
+            required: true,
+            message: translate("packageid_validation_error"),
+          },
+        ],
+      })(
+        <Query
+          query={query}
+          variables={{ sortOrder: "DESC", sortField: "priority" }}
+        >
+          {({ loading, error, data }) => {
+            if (loading)
+              return (
+                <Select
+                  placeholder={translate("select_package")}
+                  size="large"
+                  disabled
+                  loading
+                />
+              );
 
-        return (
-          <Form.Item style={{ width: "100%", marginRight: 10 }}>
-            {props.getFieldDecorator("packageId", {
-              rules: [
-                {
-                  required: true,
-                  message: translate("packageid_validation_error"),
-                },
-              ],
-            })(
+            if (error) return <p>Error!</p>;
+
+            return (
               <Select placeholder={translate("select_package")} size="large">
                 {data.allPackages.map(pack => (
                   <Select.Option key={pack.id} value={pack.id}>
                     {getPackageNameAndDescription(pack)}
                   </Select.Option>
                 ))}
-              </Select>,
-            )}
-          </Form.Item>
-        );
-      }}
-    </Query>
+              </Select>
+            );
+          }}
+        </Query>,
+      )}
+    </Form.Item>
   );
 };
 
