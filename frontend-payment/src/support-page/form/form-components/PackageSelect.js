@@ -37,45 +37,41 @@ const PackageSelect = props => {
   };
 
   return (
-    <Form.Item style={{ width: "100%", marginRight: 10 }}>
-      {props.getFieldDecorator("packageId", {
-        rules: [
-          {
-            required: true,
-            message: translate("packageid_validation_error"),
-          },
-        ],
-      })(
-        <Query
-          query={query}
-          variables={{ sortOrder: "DESC", sortField: "priority" }}
-        >
-          {({ loading, error, data }) => {
-            if (loading)
-              return (
-                <Select
-                  placeholder={translate("select_package")}
-                  size="large"
-                  disabled
-                  loading
-                />
-              );
+    <Query
+      query={query}
+      variables={{ sortOrder: "DESC", sortField: "priority" }}
+    >
+      {({ loading, error, data }) => {
+        if (error) return <p>Error!</p>;
 
-            if (error) return <p>Error!</p>;
-
-            return (
-              <Select placeholder={translate("select_package")} size="large">
-                {data.allPackages.map(pack => (
-                  <Select.Option key={pack.id} value={pack.id}>
-                    {getPackageNameAndDescription(pack)}
-                  </Select.Option>
-                ))}
-              </Select>
-            );
-          }}
-        </Query>,
-      )}
-    </Form.Item>
+        return (
+          <Form.Item style={{ width: "100%", marginRight: 10 }}>
+            {props.getFieldDecorator("packageId", {
+              rules: [
+                {
+                  required: true,
+                  message: translate("packageid_validation_error"),
+                },
+              ],
+            })(
+              <Select
+                placeholder={translate("select_package")}
+                size="large"
+                loading={loading}
+                disabled={loading}
+              >
+                {!loading &&
+                  data.allPackages.map(pack => (
+                    <Select.Option key={pack.id} value={pack.id}>
+                      {getPackageNameAndDescription(pack)}
+                    </Select.Option>
+                  ))}
+              </Select>,
+            )}
+          </Form.Item>
+        );
+      }}
+    </Query>
   );
 };
 
