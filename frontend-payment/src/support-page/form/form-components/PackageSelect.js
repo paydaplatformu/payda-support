@@ -24,7 +24,17 @@ const query = gql`
 `;
 
 const PackageSelect = props => {
-  const { translate } = useContext(TranslationContext);
+  const { translate, langCode } = useContext(TranslationContext);
+
+  const getPackageTag = pack =>
+    (pack.tags && pack.tags.find(tag => tag.code === langCode.toUpperCase())) ||
+    pack.defaultTag;
+
+  const getPackageNameAndDescription = pack => {
+    const packageTag = getPackageTag(pack);
+
+    return `${packageTag.name} - ${packageTag.description}`;
+  };
 
   return (
     <Query
@@ -46,13 +56,11 @@ const PackageSelect = props => {
               ],
             })(
               <Select placeholder={translate("select_package")} size="large">
-                {data.allPackages.map(
-                  ({ id, defaultTag: { name, description } }) => (
-                    <Select.Option key={id} value={id}>
-                      {name} - {description}
-                    </Select.Option>
-                  ),
-                )}
+                {data.allPackages.map(pack => (
+                  <Select.Option key={pack.id} value={pack.id}>
+                    {getPackageNameAndDescription(pack)}
+                  </Select.Option>
+                ))}
               </Select>,
             )}
           </Form.Item>
