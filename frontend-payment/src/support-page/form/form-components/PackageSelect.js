@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { Form, Select, Spin } from "antd";
+import { Form, Select } from "antd";
 
 import { TranslationContext } from "../../../translations";
 

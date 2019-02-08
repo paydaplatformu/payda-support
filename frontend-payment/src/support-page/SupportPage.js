@@ -14,6 +14,16 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${paydaOrange};
   }
+
+  .ant-spin-dot > i {
+    background-color: ${paydaOrange};
+  }
+
+  .ant-spin-text {
+    color: ${paydaOrange};
+    font-size: 16px;
+    margin-top: 20px;
+  }
 `;
 
 const StyledFormContainer = styled.div`
