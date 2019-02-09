@@ -89,7 +89,7 @@ export class PayuService implements IPayuService {
     };
 
     const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
-    console.log(response.data);
+    console.log(response.data); // tslint:disable-line
     const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
 
     const status = !result || !result.length || result.length !== 2;

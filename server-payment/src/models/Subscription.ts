@@ -64,4 +64,3 @@ export interface PendingSubscriptionEntity extends ISubscriptionEntityBase {
 }
 
 export type ISubscriptionEntity = InitiatedSubscriptionEntity | PendingSubscriptionEntity;
-
