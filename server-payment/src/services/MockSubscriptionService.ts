@@ -51,6 +51,7 @@ export class MockSubscriptionService implements ISubscriptionService {
         .substr(0, 5),
       createdAt: new Date(),
       updatedAt: new Date(),
+      language: subscriptionCreator.language,
       donationId: subscriptionCreator.donationId,
       packageId: subscriptionCreator.packageId,
       lastProcess: null,

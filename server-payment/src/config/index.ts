@@ -103,11 +103,17 @@ const config = convict({
     }
   },
   payu: {
-    url: {
+    luUrl: {
       doc: "Payu lu url",
       format: "url",
       default: "https://secure.payu.com.tr/order/lu.php",
       env: "PAYU_URL"
+    },
+    aluUrl: {
+      doc: "Payu alu url",
+      format: "url",
+      default: "https://secure.payu.com.tr/order/alu/v3",
+      env: "PAYU_ALU_URL"
     },
     backRef: {
       doc: "Payu backref",

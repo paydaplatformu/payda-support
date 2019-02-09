@@ -67,6 +67,7 @@ export class MongoSubscriptionService
         packageId: entity.packageId.toString(),
         donationId: entity.packageId.toString(),
         lastProcess: entity.lastProcess,
+        language: entity.language,
         createdAt: entity.createdAt,
         isActive: entity.isActive,
         updatedAt: entity.updatedAt
@@ -77,6 +78,7 @@ export class MongoSubscriptionService
         packageId: entity.packageId.toString(),
         donationId: entity.packageId.toString(),
         lastProcess: entity.lastProcess,
+        language: entity.language,
         createdAt: entity.createdAt,
         isActive: entity.isActive,
         updatedAt: entity.updatedAt

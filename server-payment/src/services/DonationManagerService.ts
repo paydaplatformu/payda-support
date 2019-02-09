@@ -34,22 +34,27 @@ export class DonationManagerService implements IDonationManagerService {
     const donation = await this.donationService.create(donationCreator as IDonationCreator);
     const pkg = await this.packageService.getById(donation.packageId);
     if (!pkg) throw new Error("If package does not exist, donation service create should have failed.");
-    const subscription = await this.getSubscription(donation, pkg);
+    const subscription = await this.getSubscription(donation, pkg, language);
     const formFields = await this.payuService.getFormContents(donation, pkg, language);
     return {
       donation,
       subscription,
-      formUrl: config.get("payu.url"),
+      formUrl: config.get("payu.luUrl"),
       formFields,
       package: pkg
     };
   }
 
-  private async getSubscription(donation: IDonation, pkg: IPackage): Promise<ISubscription | undefined> {
+  private async getSubscription(
+    donation: IDonation,
+    pkg: IPackage,
+    language: LanguageCode
+  ): Promise<ISubscription | undefined> {
     if (pkg.repeatConfig !== RepeatConfig.NONE) {
       return this.subscriptionService.create({
         donationId: donation.id,
-        packageId: pkg.id
+        packageId: pkg.id,
+        language
       });
     }
     return undefined;

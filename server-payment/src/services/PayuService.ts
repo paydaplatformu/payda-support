@@ -1,21 +1,28 @@
+import axios from "axios";
 import { createHmac } from "crypto";
 import { format, startOfMonth } from "date-fns";
 import { inject, injectable } from "inversify";
+import * as qs from "querystring";
 import { config } from "../config";
 import { IDonation } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
-import { LastProcess } from "../models/LastProcess";
 import { IPackage } from "../models/Package";
+import { IPackageService } from "../models/PackageService";
+import { PaymentProcess } from "../models/PaymentProcess";
 import { PayuCredentials } from "../models/PayuCredentials";
 import { IPayuService } from "../models/PayuService";
 import { RepeatConfig } from "../models/RepeatConfig";
+import { ISubscription } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
 import { TYPES } from "../types";
-import { getUTF8Length } from "../utilities/helpers";
+import { getUTF8Length, splitName } from "../utilities/helpers";
 
 @injectable()
 export class PayuService implements IPayuService {
+  @inject(TYPES.IPackageService)
+  private packageService: IPackageService = null as any;
+
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
 
@@ -39,10 +46,74 @@ export class PayuService implements IPayuService {
     return this.defaultCredentials;
   }
 
+  public async chargeUsingToken(subscription: ISubscription, paymentToken: string) {
+    const pkg = await this.packageService.getById(subscription.packageId);
+    const donation = await this.donationService.getById(subscription.donationId);
+    if (!pkg || !donation) throw new Error("Invalid subscription. No package or donation.");
+    const credentials = this.getCredentials(donation.usingAmex);
+    const ref = this.getReference(pkg, donation);
+    const tag = pkg.tags.find(t => t.code === subscription.language) || pkg.defaultTag;
+    const { firstName, lastName } = splitName(donation.fullName);
+
+    const hashInput = {
+      BILL_COUNTRYCODE: "TR",
+      BILL_EMAIL: donation.email,
+      BILL_FNAME: firstName,
+      BILL_LNAME: lastName,
+      BILL_PHONE: "-",
+      CC_TOKEN: paymentToken,
+      LANGUAGE: subscription.language,
+      MERCHANT: credentials.merchant,
+      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:MM:SS"),
+      "ORDER_PCODE[0]": pkg.id,
+      "ORDER_PINFO[0]": tag.description || "",
+      "ORDER_PNAME[0]": tag.name,
+      "ORDER_PRICE_TYPE[0]": "GROSS",
+      "ORDER_PRICE[0]": pkg.price.amount,
+      "ORDER_QTY[0]": donation.quantity.toString(),
+      ORDER_REF: ref,
+      ORDER_SHIPPING: "",
+      "ORDER_VAT[0]": "0",
+      PAY_METHOD: "",
+      PRICES_CURRENCY: pkg.price.currency
+    };
+    const hash = await this.generateHash(hashInput, credentials.secret);
+    const body = {
+      ...hashInput,
+      ORDER_HASH: hash
+    };
+    const requestConfig = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    };
+
+    const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
+    console.log(response.data);
+    const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
+
+    const status = !result || !result.length || result.length !== 2;
+
+    await this.subscriptionService.edit({
+      id: subscription.id,
+      lastProcess: {
+        date: new Date(),
+        isSuccess: status,
+        result: response.data
+      }
+    });
+
+    return {
+      status,
+      body: response.data || ""
+    };
+  }
+
   public async verifyNotification(input: any) {
-    console.log(JSON.stringify(input, null, 2)); // tslint:disable-line
     const { HASH: hash, ...data } = input;
-    const { REFNOEXT: donationId, TOKEN_HASH: paymentToken } = data;
+    const { REFNOEXT: reference, TOKEN_HASH: paymentToken } = data;
+
+    const [donationId] = reference.split(".");
 
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
@@ -50,7 +121,7 @@ export class PayuService implements IPayuService {
     if (paymentToken) {
       const subscription = await this.subscriptionService.getByDonationId(donationId);
       if (!subscription) throw new Error("Subscription not found.");
-      const lastProcess: LastProcess = {
+      const lastProcess: PaymentProcess = {
         date: startOfMonth(new Date()),
         isSuccess: true,
         result: {
@@ -90,9 +161,11 @@ export class PayuService implements IPayuService {
 
   private createHashInput(donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object {
     const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
+    const ref = this.getReference(pkg, donation);
+
     return {
       MERCHANT: merchant,
-      ORDER_REF: donation.id,
+      ORDER_REF: ref,
       ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:MM:SS"),
       "ORDER_PNAME[0]": tag.name,
       "ORDER_PCODE[0]": pkg.id,
@@ -107,6 +180,9 @@ export class PayuService implements IPayuService {
       INSTALLMENT_OPTIONS: "1,2,3,4,5,6,7,8,9,10,11,12"
     };
   }
+
+  private getReference = (pkg: IPackage, donation: IDonation) =>
+    pkg.repeatConfig !== RepeatConfig.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
 
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
 
@@ -136,10 +212,7 @@ export class PayuService implements IPayuService {
     language: LanguageCode,
     hash: string
   ) => {
-    const splitted = donation.fullName.split(" ");
-    const firstName = splitted.slice(0, -1).join(" ");
-    const lastName = splitted.slice(-1).join(" ");
-
+    const { firstName, lastName } = splitName(donation.fullName);
     const tokenSettings: object =
       pkg.repeatConfig !== RepeatConfig.NONE
         ? {

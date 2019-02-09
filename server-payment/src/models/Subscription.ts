@@ -1,16 +1,18 @@
 import { ObjectId } from "mongodb";
-import { LastProcess } from "./LastProcess";
+import { LanguageCode } from "./LanguageCode";
+import { PaymentProcess } from "./PaymentProcess";
 
 export interface ISubscriptionCreator {
   packageId: string;
   donationId: string;
+  language: LanguageCode;
 }
 
 export interface ISubscriptionModifier {
   id: string;
   isActive?: boolean;
   paymentToken?: string;
-  lastProcess?: LastProcess;
+  lastProcess?: PaymentProcess;
 }
 
 export interface ISubscriptionFilters {
@@ -22,14 +24,15 @@ export interface ISubscriptionBase {
   id: string;
   packageId: string;
   donationId: string;
-  lastProcess: LastProcess | null;
+  lastProcess: PaymentProcess | null;
+  language: LanguageCode;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface InitiatedSubscription extends ISubscriptionBase {
-  lastProcess: LastProcess;
+  lastProcess: PaymentProcess;
 }
 
 export interface PendingSubscription extends ISubscriptionBase {
@@ -43,14 +46,15 @@ export interface ISubscriptionEntityBase {
   paymentToken: string | null;
   packageId: ObjectId;
   donationId: ObjectId;
-  lastProcess: LastProcess | null;
+  lastProcess: PaymentProcess | null;
+  language: LanguageCode;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface InitiatedSubscriptionEntity extends ISubscriptionEntityBase {
-  lastProcess: LastProcess;
+  lastProcess: PaymentProcess;
   paymentToken: string;
 }
 

@@ -23,3 +23,13 @@ export const getUTF8Length = (input: string) => {
 export const isNonProduction = () => {
   return ["development", "test", "staging"].includes(config.get("environment"));
 };
+
+export const splitName = (fullName: string) => {
+  const splitted = fullName.split(" ");
+  const firstName = splitted.slice(0, -1).join(" ");
+  const lastName = splitted.slice(-1).join(" ");
+  return {
+    firstName,
+    lastName
+  };
+};

@@ -13,7 +13,7 @@ export const typeDef = gql`
     id: String!
     packageId: String!
     donationId: String!
-    lastProcess: LastProcess
+    lastProcess: PaymentProcess
     isActive: Boolean!
     createdAt: Date!
     updatedAt: Date!

@@ -11,7 +11,7 @@ import { typeDef as Donation } from "./Donation";
 import { typeDef as FormField } from "./FormField";
 import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
 import { typeDef as LanguageCode } from "./LanguageCode";
-import { typeDef as LastProcess } from "./LastProcess";
+import { typeDef as PaymentProcess } from "./PaymentProcess";
 import { typeDef as ListMetadata } from "./ListMetadata";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
@@ -47,6 +47,22 @@ const Query = gql`
       filter: SubscriptionFilter
     ): [Subscription!]!
     _allSubscriptionsMeta(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: String
+      filter: SubscriptionFilter
+    ): ListMetadata
+
+    ChargableSubscription(id: String!): Subscription
+    allChargableSubscriptions(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: String
+      filter: SubscriptionFilter
+    ): [Subscription!]!
+    _allChargableSubscriptionsMeta(
       page: Int
       perPage: Int
       sortField: String
@@ -144,6 +160,26 @@ const rootResolvers: IResolvers<any, IContext> = {
     _allSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return { count: await subscriptionService.count(filter) };
+    },
+
+    // TODO: implement
+    ChargableSubscription: (parent, { id }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return subscriptionService.getById(id);
+    },
+    allChargableSubscriptions: (
+      parent,
+      { filter, sortField, sortOrder, page, perPage },
+      { subscriptionService, user }
+    ) => {
+      if (!user) throw new AuthorizationRequired();
+      const pagination = { page, perPage };
+      const sorting = { sortField, sortOrder };
+      return subscriptionService.getAll(filter, pagination, sorting);
+    },
+    _allChargableSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return { count: await subscriptionService.count(filter) };
     }
   },
   Mutation: {
@@ -176,7 +212,7 @@ export const typeDefs = [
   RepeatConfig,
   Currency,
   MonetaryAmount,
-  LastProcess,
+  PaymentProcess,
   LanguageCode,
   FormField,
   PackageTag,

@@ -1,4 +1,4 @@
-export interface LastProcess {
+export interface PaymentProcess {
   date: Date;
   result: {
     [t: string]: any;
