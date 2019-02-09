@@ -5,6 +5,7 @@ import { Spin } from "antd";
 
 import DonationFormInner from "./DonationForm";
 import PayUForm from "./PayUForm";
+import { TranslationContext } from "../../translations";
 
 const CREATE_DONATION = gql`
   mutation CreateDonation(
@@ -36,13 +37,17 @@ class DonationForm extends Component {
 
           return (
             <>
-              <Spin
-                size="large"
-                tip="PayU'ya yönlendiriliyorsunuz"
-                spinning={loading || !!data}
-              >
-                <DonationFormInner createDonation={createDonation} />
-              </Spin>
+              <TranslationContext.Consumer>
+                {({ translate }) => (
+                  <Spin
+                    size="large"
+                    tip={translate("redirection_message")}
+                    spinning={loading || !!data}
+                  >
+                    <DonationFormInner createDonation={createDonation} />
+                  </Spin>
+                )}
+              </TranslationContext.Consumer>
               {data && (
                 <PayUForm
                   formFields={this.getFormFieldsFromData(data)}
