@@ -1,6 +1,9 @@
 import { injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
+import { PaginationSettings } from "../models/PaginationSettings";
+import { SortingSettings } from "../models/SortingSettings";
 import {
+  IRunningSubscription,
   ISubscription,
   ISubscriptionCreator,
   ISubscriptionEntity,
@@ -8,6 +11,7 @@ import {
   ISubscriptionModifier
 } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
+import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
 
@@ -25,9 +29,16 @@ export class MongoSubscriptionService
 
   public creatorValidator: Validator<ISubscriptionCreator> = {};
 
-  public getFilteredQuery({ onlyActive, ids }: ISubscriptionFilters): Cursor<ISubscriptionEntity> {
+  public getRunningSubscriptions(
+    pagination: PaginationSettings,
+    sorting: SortingSettings
+  ): Promise<IRunningSubscription[]> {
+    return this.getAll({ status: SubscriptionStatus.RUNNING }, pagination, sorting) as Promise<IRunningSubscription[]>;
+  }
+
+  public getFilteredQuery({ ids, status }: ISubscriptionFilters): Cursor<ISubscriptionEntity> {
     const filters = [
-      onlyActive !== undefined ? { isActive: onlyActive } : undefined,
+      status !== undefined ? { status } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined);
 
@@ -41,9 +52,11 @@ export class MongoSubscriptionService
     return {
       ...fromSuper,
       ...creator,
+      status: SubscriptionStatus.CREATED,
       donationId: new ObjectId(creator.donationId),
       packageId: new ObjectId(creator.packageId),
-      lastProcess: null,
+      processHistory: [],
+      deactivationReason: null,
       paymentToken: null
     };
   }
@@ -61,29 +74,16 @@ export class MongoSubscriptionService
   }
 
   public toModel(entity: ISubscriptionEntity): ISubscription {
-    if (entity.paymentToken) {
-      return {
-        id: entity._id.toString(),
-        packageId: entity.packageId.toString(),
-        donationId: entity.packageId.toString(),
-        lastProcess: entity.lastProcess,
-        language: entity.language,
-        createdAt: entity.createdAt,
-        isActive: entity.isActive,
-        updatedAt: entity.updatedAt
-      };
-    } else if (entity.paymentToken === null) {
-      return {
-        id: entity._id.toString(),
-        packageId: entity.packageId.toString(),
-        donationId: entity.packageId.toString(),
-        lastProcess: entity.lastProcess,
-        language: entity.language,
-        createdAt: entity.createdAt,
-        isActive: entity.isActive,
-        updatedAt: entity.updatedAt
-      };
-    }
-    throw new Error("Unknown subscription type");
+    return {
+      id: entity._id.toString(),
+      packageId: entity.packageId.toString(),
+      donationId: entity.packageId.toString(),
+      processHistory: entity.processHistory,
+      deactivationReason: entity.deactivationReason as any,
+      status: entity.status as any,
+      language: entity.language,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt
+    };
   }
 }

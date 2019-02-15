@@ -7,6 +7,7 @@ import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
+import { typeDef as DeactivationReason } from "./DeactivationReason";
 import { typeDef as Donation } from "./Donation";
 import { typeDef as FormField } from "./FormField";
 import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
@@ -214,6 +215,7 @@ export const typeDefs = [
   MonetaryAmount,
   PaymentProcess,
   LanguageCode,
+  DeactivationReason,
   FormField,
   PackageTag,
   SchemaDefinition,
