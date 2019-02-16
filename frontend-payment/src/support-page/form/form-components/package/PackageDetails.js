@@ -27,7 +27,11 @@ const PackageDetails = props => {
       <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
         {packages &&
           packages.map(pack => (
-            <div key={pack.id}>
+            <div key={pack.id} style={{ margin: "10px 0" }}>
+              <img
+                src={pack.image}
+                alt={getPackageNameAndDescription(pack, langCode)}
+              />
               {getPackageNameAndDescription(pack, langCode)}
             </div>
           ))}
