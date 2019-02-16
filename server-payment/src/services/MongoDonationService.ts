@@ -1,3 +1,4 @@
+import { subHours } from "date-fns";
 import { inject, injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
@@ -56,7 +57,10 @@ export class MongoDonationService
   }
 
   public async cleanPendingDonations(): Promise<number> {
-    const result = await this.collection.deleteMany({ paymentConfirmed: false });
+    const result = await this.collection.deleteMany({
+      paymentConfirmed: false,
+      date: { $lt: subHours(new Date(), 1) }
+    });
     return result.deletedCount || 0;
   }
 
