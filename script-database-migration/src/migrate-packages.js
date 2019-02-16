@@ -52,7 +52,6 @@ const { connect } = require("./utils/mongo");
     await targetCollection.deleteMany()
     await targetCollection.insert(updatedPackages)
 
-    console.log(pgks, updatedPackages);
     sourceClient.close();
     targetClient.close();
     process.exit(0);
