@@ -3,9 +3,10 @@ import { Form, Input, InputNumber, Checkbox } from "antd";
 
 import { TranslationContext } from "../../translations";
 import { LANG_CODES } from "../../constants";
+import { PackageContextProvider } from "./form-components/package/PackageContext";
 
 import SubmitButton from "./form-components/SubmitButton";
-import PackageSelect from "./form-components/PackageSelect";
+import PackageSelect from "./form-components/package/PackageSelect";
 import ModalsFormInput from "./form-components/modals/ModalsFormInput";
 
 const packageSelectQuantityStyle = {
@@ -45,7 +46,9 @@ const DonationFormInner = props => {
   return (
     <Form onSubmit={onSubmitForm}>
       <div style={packageSelectQuantityStyle}>
-        <PackageSelect getFieldDecorator={getFieldDecorator} />
+        <PackageContextProvider>
+          <PackageSelect getFieldDecorator={getFieldDecorator} />
+        </PackageContextProvider>
         <Form.Item>
           {getFieldDecorator("quantity", { initialValue: 1 })(
             <InputNumber
