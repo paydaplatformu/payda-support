@@ -12,6 +12,7 @@ export const typeDef = gql`
     fullName: String!
     email: String!
     packageId: String!
+    notes: String
     quantity: Int!
     usingAmex: Boolean!
   }
@@ -21,6 +22,7 @@ export const typeDef = gql`
     fullName: String!
     email: String!
     packageId: String!
+    notes: String
     paymentConfirmed: Boolean!
     date: Date!
     usingAmex: Boolean!

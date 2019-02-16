@@ -6,6 +6,7 @@ export interface IDonationCreator {
   packageId: string;
   quantity: number;
   usingAmex: boolean;
+  notes?: string;
 }
 
 export interface IDonationModifier {
@@ -22,6 +23,7 @@ export interface IDonation {
   fullName: string;
   email: string;
   packageId: string;
+  notes?: string;
   paymentConfirmed: boolean;
   date: Date;
   quantity: number;
@@ -33,6 +35,7 @@ export interface IDonationEntity {
   fullName: string;
   email: string;
   packageId: ObjectId;
+  notes?: string;
   paymentConfirmed: boolean;
   date: Date;
   quantity: number;

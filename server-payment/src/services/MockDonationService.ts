@@ -43,6 +43,7 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
         email: "donator1@gmail.com",
         fullName: "First donator",
         packageId: "p1",
+        notes: "blablaba",
         paymentConfirmed: true,
         quantity: 1,
         usingAmex: false
@@ -82,6 +83,7 @@ export class MockDonationService extends BaseEntityService<IDonationCreator> imp
       email: donationCreator.email,
       fullName: donationCreator.fullName,
       packageId: donationCreator.packageId,
+      notes: donationCreator.notes,
       date: new Date(),
       paymentConfirmed: false,
       quantity: donationCreator.quantity,
