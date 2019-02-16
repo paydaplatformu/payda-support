@@ -60,15 +60,3 @@ const { connect } = require("./utils/mongo");
     process.exit(1);
   }
 })();
-
-// _id: ObjectId;
-// defaultTag: IPackageTag;
-// reference?: string;
-// createdAt: Date;
-// updatedAt: Date;
-// repeatConfig: RepeatConfig;
-// image?: string;
-// price: IMonateryAmount;
-// priority: number;
-// tags: IPackageTag[];
-// isActive: boolean;
