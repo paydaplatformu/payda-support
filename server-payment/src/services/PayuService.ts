@@ -68,23 +68,28 @@ export class PayuService implements IPayuService {
       BILL_FNAME: firstName,
       BILL_LNAME: lastName,
       BILL_PHONE: "-",
+      CC_NUMBER: "",
+      EXP_MONTH: "",
+      EXP_YEAR: "",
+      CC_CVV: "",
+      CC_OWNER: "",
       CC_TOKEN: subscription.paymentToken,
       LANGUAGE: subscription.language,
       MERCHANT: credentials.merchant,
-      ORDER_DATE: format(new Date(), "YYYY-MM-DD HH:MM:SS"),
+      ORDER_DATE: format(new Date(), "YYYY-MM-DD HH:mm:ss"),
       "ORDER_PCODE[0]": pkg.id,
       "ORDER_PINFO[0]": tag.description || "",
       "ORDER_PNAME[0]": tag.name,
       "ORDER_PRICE_TYPE[0]": "GROSS",
       "ORDER_PRICE[0]": pkg.price.amount,
       "ORDER_QTY[0]": donation.quantity.toString(),
-      ORDER_REF: ref,
+      ORDER_REF: ref || null,
       ORDER_SHIPPING: "",
       "ORDER_VAT[0]": "0",
       PAY_METHOD: "CCVISAMC",
       PRICES_CURRENCY: pkg.price.currency
     };
-    const hash = await this.generateHash(hashInput, credentials.secret);
+    const hash = await this.generateHash(hashInput, credentials.secret, true);
     const body = {
       ...hashInput,
       ORDER_HASH: hash
@@ -185,8 +190,8 @@ export class PayuService implements IPayuService {
 
     return {
       MERCHANT: merchant,
-      ORDER_REF: ref,
-      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:MM:SS"),
+      ORDER_REF: ref || null,
+      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:mm:ss"),
       "ORDER_PNAME[0]": tag.name,
       "ORDER_PCODE[0]": pkg.id,
       "ORDER_PINFO[0]": tag.description || "",
@@ -211,9 +216,12 @@ export class PayuService implements IPayuService {
 
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
 
-  private generateHash = (input: object, secret: string) => {
+  private generateHash = (input: object, secret: string, shouldSort: boolean = false) => {
     return new Promise<string>(resolve => {
-      const toBeHashed = Object.values(input)
+      const keys = Object.keys(input);
+      const sortHandled = shouldSort ? keys.sort() : keys;
+      const toBeHashed = sortHandled
+        .map(key => (input as any)[key])
         .map(value => {
           if (!value) return "0";
           if (Array.isArray(value)) return value.map(this.getResult).join();
