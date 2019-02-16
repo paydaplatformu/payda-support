@@ -95,6 +95,12 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
   });
 
   /**
+   * Serve images
+   */
+
+  app.use("/static", express.static(path.resolve(__dirname, "static")));
+
+  /**
    * Rest of the routes are managed by frontend
    */
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
