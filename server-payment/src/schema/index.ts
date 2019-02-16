@@ -7,6 +7,7 @@ import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
+import { typeDef as DeactivationReason } from "./DeactivationReason";
 import { typeDef as Donation } from "./Donation";
 import { typeDef as FormField } from "./FormField";
 import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
@@ -18,6 +19,8 @@ import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as PaymentProcess } from "./PaymentProcess";
 import { typeDef as RepeatConfig } from "./RepeatConfig";
 import { typeDef as Subscription } from "./Subscription";
+import { typeDef as SubscriptionChargeResult } from "./SubscriptionChargeResult";
+import { typeDef as SubscriptionStatus } from "./SubscriptionStatus";
 import { resolvers as userResolvers, typeDef as User } from "./User";
 
 const Query = gql`
@@ -94,6 +97,8 @@ const Query = gql`
     cleanPendingDonations: Int!
 
     updateSubscription(id: String!, isActive: Boolean!): Subscription
+
+    chargeSubscription(id: String!): SubscriptionChargeResult!
   }
 `;
 
@@ -162,10 +167,9 @@ const rootResolvers: IResolvers<any, IContext> = {
       return { count: await subscriptionService.count(filter) };
     },
 
-    // TODO: implement
     ChargableSubscription: (parent, { id }, { subscriptionService, user }) => {
       if (!user) throw new AuthorizationRequired();
-      return subscriptionService.getById(id);
+      return subscriptionService.getRunningSubscriptionById(id);
     },
     allChargableSubscriptions: (
       parent,
@@ -175,11 +179,11 @@ const rootResolvers: IResolvers<any, IContext> = {
       if (!user) throw new AuthorizationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      return subscriptionService.getAll(filter, pagination, sorting);
+      return subscriptionService.getRunningSubscriptions(pagination, sorting);
     },
-    _allChargableSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
+    _allChargableSubscriptionsMeta: async (parent, filters, { subscriptionService, user }) => {
       if (!user) throw new AuthorizationRequired();
-      return { count: await subscriptionService.count(filter) };
+      return { count: await subscriptionService.countRunningSubscriptions() };
     }
   },
   Mutation: {
@@ -202,6 +206,11 @@ const rootResolvers: IResolvers<any, IContext> = {
     updateSubscription: (parent, args, { subscriptionService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return subscriptionService.edit(args as ISubscriptionModifier);
+    },
+
+    chargeSubscription: (parent, { id }, { payuService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return payuService.chargeUsingToken(id);
     }
   }
 };
@@ -214,8 +223,11 @@ export const typeDefs = [
   MonetaryAmount,
   PaymentProcess,
   LanguageCode,
+  DeactivationReason,
+  SubscriptionStatus,
   FormField,
   PackageTag,
+  SubscriptionChargeResult,
   SchemaDefinition,
   Query,
   Package,

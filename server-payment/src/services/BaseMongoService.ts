@@ -55,7 +55,7 @@ export abstract class BaseMongoService<
     return query.count();
   };
 
-  private async getEntityById(id: string): Promise<Entity | null> {
+  public async getEntityById(id: string): Promise<Entity | null> {
     return this.collection.findOne({ _id: new ObjectId(id) });
   }
 

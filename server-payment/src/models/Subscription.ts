@@ -1,6 +1,8 @@
 import { ObjectId } from "mongodb";
+import { DeactivationReason } from "./DeactivationReason";
 import { LanguageCode } from "./LanguageCode";
 import { PaymentProcess } from "./PaymentProcess";
+import { SubscriptionStatus } from "./SubscriptionStatus";
 
 export interface ISubscriptionCreator {
   packageId: string;
@@ -10,57 +12,80 @@ export interface ISubscriptionCreator {
 
 export interface ISubscriptionModifier {
   id: string;
-  isActive?: boolean;
-  paymentToken?: string;
-  lastProcess?: PaymentProcess;
+  status?: SubscriptionStatus;
+  paymentToken?: string | null;
+  processHistory?: PaymentProcess[];
+  deactivationReason?: DeactivationReason | null;
 }
 
 export interface ISubscriptionFilters {
   ids?: string[];
-  onlyActive?: boolean;
+  status?: SubscriptionStatus;
 }
 
 export interface ISubscriptionBase {
   id: string;
+  status: SubscriptionStatus;
   packageId: string;
   donationId: string;
-  lastProcess: PaymentProcess | null;
+  processHistory: PaymentProcess[];
   language: LanguageCode;
-  isActive: boolean;
+  deactivationReason: DeactivationReason | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface InitiatedSubscription extends ISubscriptionBase {
-  lastProcess: PaymentProcess;
+export interface ICreatedSubscription extends ISubscriptionBase {
+  status: SubscriptionStatus.CREATED;
+  deactivationReason: null;
 }
 
-export interface PendingSubscription extends ISubscriptionBase {
-  lastProcess: null;
+export interface IRunningSubscription extends ISubscriptionBase {
+  status: SubscriptionStatus.RUNNING;
+  deactivationReason: null;
 }
 
-export type ISubscription = InitiatedSubscription | PendingSubscription;
+export interface ICancelledSubscription extends ISubscriptionBase {
+  status: SubscriptionStatus.CANCELLED;
+  deactivationReason: DeactivationReason;
+}
+
+export type ISubscription =
+  | ICreatedSubscription
+  | IRunningSubscription
+  | ICancelledSubscription;
 
 export interface ISubscriptionEntityBase {
   _id: ObjectId;
   paymentToken: string | null;
   packageId: ObjectId;
   donationId: ObjectId;
-  lastProcess: PaymentProcess | null;
+  processHistory: PaymentProcess[];
   language: LanguageCode;
-  isActive: boolean;
+  deactivationReason: DeactivationReason | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface InitiatedSubscriptionEntity extends ISubscriptionEntityBase {
-  lastProcess: PaymentProcess;
-  paymentToken: string;
-}
-
-export interface PendingSubscriptionEntity extends ISubscriptionEntityBase {
-  lastProcess: null;
+export interface ICreatedSubscriptionEntity extends ISubscriptionEntityBase {
+  status: SubscriptionStatus.CREATED;
+  deactivationReason: null;
   paymentToken: null;
 }
 
-export type ISubscriptionEntity = InitiatedSubscriptionEntity | PendingSubscriptionEntity;
+export interface IRunningSubscriptionEntity extends ISubscriptionEntityBase {
+  status: SubscriptionStatus.RUNNING;
+  deactivationReason: null;
+  paymentToken: string;
+}
+
+export interface ICancelledSubscriptionEntity extends ISubscriptionEntityBase {
+  status: SubscriptionStatus.CANCELLED;
+  deactivationReason: DeactivationReason;
+  paymentToken: null;
+}
+
+export type ISubscriptionEntity =
+  | ICreatedSubscriptionEntity
+  | IRunningSubscriptionEntity
+  | ICancelledSubscriptionEntity;

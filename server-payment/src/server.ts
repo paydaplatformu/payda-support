@@ -1,13 +1,10 @@
-import { ContextFunction } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-express";
-import retry from "async-retry";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
 import express, { Express } from "express";
 import "express-async-errors";
 import { Container } from "inversify";
-import { Db } from "mongodb";
-import OAuthServer, { Request, Response, Token } from "oauth2-server";
+import OAuthServer, { Request, Response } from "oauth2-server";
 import path from "path";
 import { config } from "./config";
 import { production, test } from "./container";
@@ -18,9 +15,8 @@ import { InvalidInput, ValidationError } from "./models/Errors";
 import { IPayuService } from "./models/PayuService";
 import { IUserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
-import { IContextProvider } from "./schema/context";
-import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { TYPES } from "./types";
+import { bindMongoDb, createAdminUser, createGraphQLContext } from "./utilities/server";
 
 const log = console.log; // tslint:disable-line
 
@@ -41,64 +37,16 @@ const container = new Container();
 const profile = getProfile(environment);
 container.load(profile);
 
-const getToken = (authenticationModel: IAuthentication) => async (
-  header: string | undefined
-): Promise<Token | null> => {
-  if (header) {
-    try {
-      const token = await authenticationModel.getAccessToken(header.replace("Bearer ", ""));
-      return token || null;
-    } catch {
-      return null;
-    }
-  }
-  return null;
-};
-
 export const createServer = async (callback?: (error: any, app: Express) => any) => {
-  if (container.isBound(MongoDbConnectionProvider)) {
-    const mongoDbConnectionProvider = container.get<MongoDbConnectionProvider>(MongoDbConnectionProvider);
-    const db = await retry(async () => await mongoDbConnectionProvider.getConnection(), {
-      retries: 100,
-      onRetry: error => {
-        log(error);
-      }
-    });
-    container.bind<Db>(TYPES.IMongoDb).toConstantValue(db);
-    log(chalk.green("\n  Database connected"));
-  }
-
   const userService = container.get<IUserService>(TYPES.IUserService);
   const model = container.get<IAuthentication>(TYPES.IAuthentication);
   const payuService = container.get<IPayuService>(TYPES.IPayuService);
   const donationService = container.get<IDonationService>(TYPES.IDonationService);
 
-  const userCount = await userService.getUserCount();
-  if (userCount === 0) {
-    await userService.create({
-      email: config.get("defaultUser.email"),
-      password: config.get("defaultUser.password")
-    });
-  }
+  await bindMongoDb(container, log);
+  await createAdminUser(userService);
 
-
-  const context: ContextFunction = async ({ req }) => {
-    const token = await getToken(model)(req.get("Authorization"));
-
-    const authorizationData = token
-      ? {
-          user: token.user,
-          scope: token.scope,
-          client: token.client
-        }
-      : {};
-
-    const tools = container.get<IContextProvider>(TYPES.IContextProvider);
-    return {
-      ...tools,
-      ...authorizationData
-    };
-  };
+  const context = createGraphQLContext(container, model);
 
   const server = new ApolloServer({
     context,
@@ -114,35 +62,48 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     }
   });
 
-
   const app: Express = express();
 
   const oauth = new OAuthServer({
-    model: model as any
+    model
   });
 
+  /**
+   * Express middlewares
+   */
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   server.applyMiddleware({ app });
   app.use(errorHandler);
 
+  /**
+   * Authentication
+   */
   app.post("/oauth2/token", async (req, res) => {
     const response = await oauth.token(new Request(req), new Response(res));
     res.send(response);
   });
 
+  /**
+   * Payu Endpoints
+   */
   app.post("/notification", async (req, res) => {
     const { returnHash, donationId } = await payuService.verifyNotification(req.body);
     await donationService.confirmPayment(donationId);
     res.send(returnHash);
   });
 
+  /**
+   * Rest of the routes are managed by frontend
+   */
   app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
-  // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../frontend-dist", "index.html"));
   });
 
+  /**
+   * Start application
+   */
   return app.listen(port, host, () => {
     log(
       `\n  ${chalk.gray("App is running at")} ${chalk.cyan("http://%s:%d")} ${chalk.gray("in")} ${chalk.blue(

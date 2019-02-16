@@ -13,8 +13,8 @@ import { PaymentProcess } from "../models/PaymentProcess";
 import { PayuCredentials } from "../models/PayuCredentials";
 import { IPayuService } from "../models/PayuService";
 import { RepeatConfig } from "../models/RepeatConfig";
-import { ISubscription } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
+import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
 import { getUTF8Length, splitName } from "../utilities/helpers";
 
@@ -46,10 +46,16 @@ export class PayuService implements IPayuService {
     return this.defaultCredentials;
   }
 
-  public async chargeUsingToken(subscription: ISubscription, paymentToken: string) {
-    const pkg = await this.packageService.getById(subscription.packageId);
-    const donation = await this.donationService.getById(subscription.donationId);
+  public async chargeUsingToken(subscriptionId: string) {
+    const subscription = await this.subscriptionService.getEntityById(subscriptionId);
+
+    if (!subscription) throw new Error("Invalid input, no subscription found.");
+    if (!subscription.paymentToken) throw new Error("Invalid input, subscription cannot be charged.");
+
+    const pkg = await this.packageService.getById(subscription.packageId.toString());
+    const donation = await this.donationService.getById(subscription.donationId.toString());
     if (!pkg || !donation) throw new Error("Invalid subscription. No package or donation.");
+
     const credentials = this.getCredentials(donation.usingAmex);
     const ref = this.getReference(pkg, donation);
     const tag = pkg.tags.find(t => t.code === subscription.language) || pkg.defaultTag;
@@ -61,7 +67,7 @@ export class PayuService implements IPayuService {
       BILL_FNAME: firstName,
       BILL_LNAME: lastName,
       BILL_PHONE: "-",
-      CC_TOKEN: paymentToken,
+      CC_TOKEN: subscription.paymentToken,
       LANGUAGE: subscription.language,
       MERCHANT: credentials.merchant,
       ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:MM:SS"),
@@ -94,13 +100,22 @@ export class PayuService implements IPayuService {
 
     const status = !result || !result.length || result.length !== 2;
 
-    await this.subscriptionService.edit({
-      id: subscription.id,
-      lastProcess: {
-        date: new Date(),
-        isSuccess: status,
-        result: response.data
+    const currentProcessHistory = subscription.processHistory;
+    const lastProcess = {
+      date: new Date(),
+      isSuccess: status,
+      result: {
+        reason: "REGULAR_PAYMENT",
+        payload: response.data
       }
+    };
+
+    await this.subscriptionService.edit({
+      id: subscription._id.toString(),
+      processHistory: [...currentProcessHistory, lastProcess],
+      paymentToken: subscription.paymentToken,
+      deactivationReason: null,
+      status: SubscriptionStatus.RUNNING
     });
 
     return {
@@ -129,7 +144,12 @@ export class PayuService implements IPayuService {
           payload: null
         }
       };
-      await this.subscriptionService.edit({ id: subscription.id, lastProcess, paymentToken });
+      await this.subscriptionService.edit({
+        id: subscription.id,
+        processHistory: [lastProcess],
+        paymentToken,
+        status: SubscriptionStatus.RUNNING
+      });
     }
 
     const credentials = this.getCredentials(donation.usingAmex);
