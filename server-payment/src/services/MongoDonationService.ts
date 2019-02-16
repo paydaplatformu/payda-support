@@ -86,6 +86,7 @@ export class MongoDonationService
       email: entity.email,
       fullName: entity.fullName,
       packageId: entity.packageId.toString(),
+      notes: entity.notes,
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
       usingAmex: entity.usingAmex
