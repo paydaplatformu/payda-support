@@ -2,6 +2,7 @@
 
 const program = require("commander");
 const { connect } = require("./utils/mongo");
+const { imageUrl } = require("./utils/migration");
 
 (async () => {
   try {
@@ -40,7 +41,7 @@ const { connect } = require("./utils/mongo");
       createdAt: pkg.created_at,
       updatedAt: pkg.updated_at,
       repeatConfig: "NONE",
-      image: pkg.image,
+      image: imageUrl(pkg.image),
       price: {
         currency: pkg.price.currency,
         amount: pkg.price.value
@@ -50,7 +51,7 @@ const { connect } = require("./utils/mongo");
     }))
 
     await targetCollection.deleteMany()
-    await targetCollection.insert(updatedPackages)
+    await targetCollection.insertMany(updatedPackages)
 
     sourceClient.close();
     targetClient.close();
