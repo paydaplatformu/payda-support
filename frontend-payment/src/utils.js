@@ -14,8 +14,5 @@ export const getPackageDescription = (pack, langCode) => {
   return packageTag.description;
 };
 
-export const getPackageNameAndDescription = (pack, langCode) => {
-  const packageTag = getPackageTag(pack, langCode);
-
-  return `${packageTag.name} - ${packageTag.description}`;
-};
+export const getPackageHasDescription = (pack, langCode) =>
+  !!getPackageDescription(pack, langCode);
