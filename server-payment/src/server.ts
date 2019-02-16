@@ -38,12 +38,13 @@ const profile = getProfile(environment);
 container.load(profile);
 
 export const createServer = async (callback?: (error: any, app: Express) => any) => {
+  await bindMongoDb(container, log);
+
   const userService = container.get<IUserService>(TYPES.IUserService);
   const model = container.get<IAuthentication>(TYPES.IAuthentication);
   const payuService = container.get<IPayuService>(TYPES.IPayuService);
   const donationService = container.get<IDonationService>(TYPES.IDonationService);
 
-  await bindMongoDb(container, log);
   await createAdminUser(userService);
 
   const context = createGraphQLContext(container, model);
