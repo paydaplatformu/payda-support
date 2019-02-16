@@ -31,8 +31,8 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": "10.13.0",
-    "yarn": "1.12.3"
+    "node": "^10.12.0",
+    "yarn": "^1.12.3"
   },
   "devDependencies": {
     "terser": "^3.14.1"
