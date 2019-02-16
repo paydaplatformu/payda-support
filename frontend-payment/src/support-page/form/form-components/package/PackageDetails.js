@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
-import { Modal } from "antd";
+import { Modal, Collapse } from "antd";
 
 import { paydaOrange } from "../../../../constants";
 import { TranslationContext } from "../../../../translations";
-import { getPackageNameAndDescription } from "../../../../utils";
+import { getPackageName, getPackageDescription } from "../../../../utils";
 import { PackageContext } from "./PackageContext";
 
 const modalLinkStyles = {
@@ -25,16 +25,22 @@ const PackageDetails = props => {
         onClick={() => setVisible(true)}
       >{`* ${translate("package_details")}`}</span>
       <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
-        {packages &&
-          packages.map(pack => (
-            <div key={pack.id} style={{ margin: "10px 0" }}>
-              <img
-                src={pack.image}
-                alt={getPackageNameAndDescription(pack, langCode)}
-              />
-              {getPackageNameAndDescription(pack, langCode)}
-            </div>
-          ))}
+        <Collapse bordered={false}>
+          {packages &&
+            packages.map(pack => (
+              <Collapse.Panel
+                key={pack.id}
+                header={<b>{getPackageName(pack, langCode)}</b>}
+              >
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <img src={pack.image} alt={getPackageName(pack, langCode)} />
+                  <div style={{ marginTop: 20 }}>
+                    {getPackageDescription(pack, langCode)}
+                  </div>
+                </div>
+              </Collapse.Panel>
+            ))}
+        </Collapse>
       </Modal>
     </>
   );
