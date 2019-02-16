@@ -1,5 +1,5 @@
 {
-  "name": "script-database-migration",
+  "name": "script-database",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
