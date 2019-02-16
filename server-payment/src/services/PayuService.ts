@@ -71,7 +71,7 @@ export class PayuService implements IPayuService {
       CC_TOKEN: subscription.paymentToken,
       LANGUAGE: subscription.language,
       MERCHANT: credentials.merchant,
-      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:MM:SS"),
+      ORDER_DATE: format(new Date(), "YYYY-MM-DD HH:MM:SS"),
       "ORDER_PCODE[0]": pkg.id,
       "ORDER_PINFO[0]": tag.description || "",
       "ORDER_PNAME[0]": tag.name,
@@ -96,7 +96,6 @@ export class PayuService implements IPayuService {
     };
 
     const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
-    console.log(response.data); // tslint:disable-line
     const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
 
     const status = !result || !result.length || result.length !== 2;
