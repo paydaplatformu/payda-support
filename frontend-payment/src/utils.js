@@ -8,6 +8,12 @@ export const getPackageName = (pack, langCode) => {
   return packageTag.name;
 };
 
+export const getPackageDescription = (pack, langCode) => {
+  const packageTag = getPackageTag(pack, langCode);
+
+  return packageTag.description;
+};
+
 export const getPackageNameAndDescription = (pack, langCode) => {
   const packageTag = getPackageTag(pack, langCode);
 
