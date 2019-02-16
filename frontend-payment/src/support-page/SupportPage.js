@@ -24,6 +24,11 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16px;
     margin-top: 20px;
   }
+
+  .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header, .ant-collapse .ant-collapse-item-disabled > .ant-collapse-header > .arrow {
+    color: rgba(0,0,0,0.85);
+    margin-left: 28px;
+  }
 `;
 
 const StyledFormContainer = styled.div`

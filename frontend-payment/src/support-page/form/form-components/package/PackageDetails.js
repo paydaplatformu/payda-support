@@ -3,7 +3,11 @@ import { Modal, Collapse } from "antd";
 
 import { paydaOrange } from "../../../../constants";
 import { TranslationContext } from "../../../../translations";
-import { getPackageName, getPackageDescription } from "../../../../utils";
+import {
+  getPackageName,
+  getPackageDescription,
+  getPackageHasDescription,
+} from "../../../../utils";
 import { PackageContext } from "./PackageContext";
 
 const modalLinkStyles = {
@@ -27,19 +31,31 @@ const PackageDetails = props => {
       <Modal visible={visible} onCancel={() => setVisible(false)} footer={null}>
         <Collapse bordered={false}>
           {packages &&
-            packages.map(pack => (
-              <Collapse.Panel
-                key={pack.id}
-                header={<b>{getPackageName(pack, langCode)}</b>}
-              >
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <img src={pack.image} alt={getPackageName(pack, langCode)} />
-                  <div style={{ marginTop: 20 }}>
-                    {getPackageDescription(pack, langCode)}
+            packages.map(pack => {
+              const packageName = getPackageName(pack, langCode);
+              const packageHasDescription = getPackageHasDescription(
+                pack,
+                langCode,
+              );
+
+              return (
+                <Collapse.Panel
+                  key={pack.id}
+                  header={<b>{packageName}</b>}
+                  disabled={!packageHasDescription}
+                  showArrow={packageHasDescription}
+                >
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    {pack.image ? (
+                      <img src={pack.image} alt={packageName} />
+                    ) : null}
+                    <div style={{ marginTop: 20 }}>
+                      {getPackageDescription(pack, langCode)}
+                    </div>
                   </div>
-                </div>
-              </Collapse.Panel>
-            ))}
+                </Collapse.Panel>
+              );
+            })}
         </Collapse>
       </Modal>
     </>
