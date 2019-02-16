@@ -4,6 +4,7 @@ import { format, startOfMonth } from "date-fns";
 import { inject, injectable } from "inversify";
 import * as qs from "querystring";
 import { config } from "../config";
+import { DeactivationReason } from "../models/DeactivationReason";
 import { IDonation } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
@@ -80,7 +81,7 @@ export class PayuService implements IPayuService {
       ORDER_REF: ref,
       ORDER_SHIPPING: "",
       "ORDER_VAT[0]": "0",
-      PAY_METHOD: "",
+      PAY_METHOD: "CCVISAMC",
       PRICES_CURRENCY: pkg.price.currency
     };
     const hash = await this.generateHash(hashInput, credentials.secret);
@@ -114,8 +115,8 @@ export class PayuService implements IPayuService {
       id: subscription._id.toString(),
       processHistory: [...currentProcessHistory, lastProcess],
       paymentToken: subscription.paymentToken,
-      deactivationReason: null,
-      status: SubscriptionStatus.RUNNING
+      deactivationReason: status ? null : DeactivationReason.ERROR,
+      status: status ? SubscriptionStatus.RUNNING : SubscriptionStatus.CANCELLED
     });
 
     return {
@@ -195,11 +196,16 @@ export class PayuService implements IPayuService {
       "ORDER_VAT[0]": "0",
       ORDER_SHIPPING: "",
       PRICES_CURRENCY: pkg.price.currency,
-      PAY_METHOD: "",
+      PAY_METHOD: this.getPayMethod(pkg),
       "ORDER_PRICE_TYPE[0]": "GROSS",
-      INSTALLMENT_OPTIONS: "1,2,3,4,5,6,7,8,9,10,11,12"
+      INSTALLMENT_OPTIONS: this.getInstallmentOptions(pkg)
     };
   }
+
+  private getPayMethod = (pkg: IPackage) => (pkg.repeatConfig !== RepeatConfig.NONE ? "CCVISAMC" : "");
+
+  private getInstallmentOptions = (pkg: IPackage) =>
+    pkg.repeatConfig !== RepeatConfig.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
 
   private getReference = (pkg: IPackage, donation: IDonation) =>
     pkg.repeatConfig !== RepeatConfig.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
