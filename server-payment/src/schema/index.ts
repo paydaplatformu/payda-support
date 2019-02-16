@@ -99,6 +99,8 @@ const Query = gql`
     updateSubscription(id: String!, isActive: Boolean!): Subscription
 
     chargeSubscription(id: String!): SubscriptionChargeResult!
+
+    cancelSubscription(is: String!): Subscription
   }
 `;
 
@@ -211,6 +213,11 @@ const rootResolvers: IResolvers<any, IContext> = {
     chargeSubscription: (parent, { id }, { payuService, user }) => {
       if (!user) throw new AuthorizationRequired();
       return payuService.chargeUsingToken(id);
+    },
+
+    cancelSubscription: (parent, { id }, { subscriptionService, user }) => {
+      if (!user) throw new AuthorizationRequired();
+      return subscriptionService.cancelSubscription(id);
     }
   }
 };

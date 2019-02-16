@@ -50,10 +50,7 @@ export interface ICancelledSubscription extends ISubscriptionBase {
   deactivationReason: DeactivationReason;
 }
 
-export type ISubscription =
-  | ICreatedSubscription
-  | IRunningSubscription
-  | ICancelledSubscription;
+export type ISubscription = ICreatedSubscription | IRunningSubscription | ICancelledSubscription;
 
 export interface ISubscriptionEntityBase {
   _id: ObjectId;
