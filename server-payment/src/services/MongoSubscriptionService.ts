@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
+import { DeactivationReason } from "../models/DeactivationReason";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
 import {
@@ -28,6 +29,10 @@ export class MongoSubscriptionService
   public static collectionName = "subscriptions";
 
   public creatorValidator: Validator<ISubscriptionCreator> = {};
+
+  public cancelSubscription(id: string) {
+    return this.edit({ id, status: SubscriptionStatus.CANCELLED, deactivationReason: DeactivationReason.USER_REQUEST });
+  }
 
   public getRunningSubscriptions(
     pagination: PaginationSettings,

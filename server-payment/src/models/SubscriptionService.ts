@@ -24,4 +24,5 @@ export interface ISubscriptionService {
   getByDonationId(donationId: string): Promise<ISubscription | null>;
   create(SubscriptionCreator: ISubscriptionCreator): Promise<ISubscription>;
   edit(SubscriptionModifier: ISubscriptionModifier): Promise<ISubscription | null>;
+  cancelSubscription(id: string): Promise<ISubscription | null>;
 }

@@ -1,4 +1,5 @@
 import { injectable } from "inversify";
+import { DeactivationReason } from "../models/DeactivationReason";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
 import {
@@ -18,6 +19,9 @@ export class MockSubscriptionService implements ISubscriptionService {
   constructor() {
     this.subscriptions = [];
   }
+
+  public cancelSubscription = async (id: string) =>
+    this.edit({ id, status: SubscriptionStatus.CANCELLED, deactivationReason: DeactivationReason.USER_REQUEST });
 
   public getRunningSubscriptions = async (
     pagination: PaginationSettings,
