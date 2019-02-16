@@ -98,7 +98,7 @@ export class PayuService implements IPayuService {
     const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
     const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
 
-    const status = !result || !result.length || result.length !== 2;
+    const status = result && result.length && result.length === 2 && result[1] === "SUCCESS" ? true : false;
 
     const currentProcessHistory = subscription.processHistory;
     const lastProcess = {
