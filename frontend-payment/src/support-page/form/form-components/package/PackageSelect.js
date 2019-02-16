@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Form, Select } from "antd";
 
-import { getPackageNameAndDescription } from "../../../../utils";
+import { getPackageName } from "../../../../utils";
 import { TranslationContext } from "../../../../translations";
 import { PackageContext } from "./PackageContext";
 
@@ -31,7 +31,7 @@ const PackageSelect = props => {
             {!loading &&
               packages.map(pack => (
                 <Select.Option key={pack.id} value={pack.id}>
-                  {getPackageNameAndDescription(pack, langCode)}
+                  {getPackageName(pack, langCode)}
                 </Select.Option>
               ))}
           </Select>,
