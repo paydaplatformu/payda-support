@@ -5,7 +5,6 @@ import {
   IRunningSubscription,
   ISubscription,
   ISubscriptionCreator,
-  ISubscriptionEntity,
   ISubscriptionFilters,
   ISubscriptionModifier
 } from "../models/Subscription";
@@ -27,8 +26,18 @@ export class MockSubscriptionService implements ISubscriptionService {
     return this.getAll({ status: SubscriptionStatus.RUNNING }, pagination, sorting) as Promise<IRunningSubscription[]>;
   };
 
+  public countRunningSubscriptions = async (): Promise<number> => {
+    return this.count({ status: SubscriptionStatus.RUNNING });
+  };
+
   public getEntityById = async (id: string): Promise<any> => {
     return this.getById(id);
+  };
+
+  public getRunningSubscriptionById = async (id: string): Promise<IRunningSubscription | null> => {
+    const entity = await this.getById(id);
+    if (!entity || entity.status !== SubscriptionStatus.RUNNING) return null;
+    return entity;
   };
 
   public getAll = async (

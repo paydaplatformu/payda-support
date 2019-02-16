@@ -36,6 +36,17 @@ export class MongoSubscriptionService
     return this.getAll({ status: SubscriptionStatus.RUNNING }, pagination, sorting) as Promise<IRunningSubscription[]>;
   }
 
+  public async getRunningSubscriptionById(id: string): Promise<IRunningSubscription | null> {
+    const entity = await this.collection.findOne({ _id: new ObjectId(id), status: SubscriptionStatus.RUNNING });
+    if (!entity) return null;
+    if (entity.status !== SubscriptionStatus.RUNNING) return null;
+    return this.toModel(entity) as IRunningSubscription;
+  }
+
+  public countRunningSubscriptions(): Promise<number> {
+    return this.count({ status: SubscriptionStatus.RUNNING });
+  }
+
   public getFilteredQuery({ ids, status }: ISubscriptionFilters): Cursor<ISubscriptionEntity> {
     const filters = [
       status !== undefined ? { status } : undefined,

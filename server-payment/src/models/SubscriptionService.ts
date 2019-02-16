@@ -15,7 +15,9 @@ export interface ISubscriptionService {
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<ISubscription[]>;
+  getRunningSubscriptionById(id: string): Promise<IRunningSubscription | null>;
   getRunningSubscriptions(pagination: PaginationSettings, sorting: SortingSettings): Promise<IRunningSubscription[]>;
+  countRunningSubscriptions(): Promise<number>;
   count(filters: ISubscriptionFilters): Promise<number>;
   getById(id: string): Promise<ISubscription | null>;
   getEntityById(id: string): Promise<ISubscriptionEntity | null>;

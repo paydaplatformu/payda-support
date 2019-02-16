@@ -4,12 +4,12 @@ import chalk from "chalk";
 import { Container } from "inversify";
 import { Db } from "mongodb";
 import { config } from "../config";
+import { IAuthentication } from "../models/Authentication";
 import { IUserService } from "../models/UserService";
+import { IContextProvider } from "../schema/context";
 import { MongoDbConnectionProvider } from "../services/MongoDbConnectionProvider";
 import { TYPES } from "../types";
 import { createTokenGetter } from "./helpers";
-import { IAuthentication } from "../models/Authentication";
-import { IContextProvider } from "../schema/context";
 
 export const bindMongoDb = async (container: Container, log: any) => {
   if (container.isBound(MongoDbConnectionProvider)) {
