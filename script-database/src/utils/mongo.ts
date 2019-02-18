@@ -1,6 +1,6 @@
-const MongoClient = require("mongodb").MongoClient;
+import { MongoClient, Collection } from 'mongodb';
 
-exports.connect = url =>
+export const connect = (url: string): Promise<MongoClient> =>
   new Promise((resolve, reject) => {
     const client = new MongoClient(url, { useNewUrlParser: true });
     client.connect(function(err) {
@@ -10,9 +10,9 @@ exports.connect = url =>
     });
   });
 
-exports.copyStream = (source, target) =>
+export const copyStream = (source: Collection, target: Collection) =>
   new Promise((resolve, reject) => {
-    target.deleteMany().then(() => {
+    target.deleteMany({}).then(() => {
       const cursor = source.find();
 
       cursor.on("data", document => {
