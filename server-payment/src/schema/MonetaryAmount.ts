@@ -1,12 +1,12 @@
 import { gql } from "apollo-server-core";
 
 export const typeDef = gql`
-  input MonateryAmountInput {
+  input MonetaryAmountInput {
     currency: Currency!
     amount: Float!
   }
 
-  type MonateryAmount {
+  type MonetaryAmount {
     currency: Currency!
     amount: Float!
   }

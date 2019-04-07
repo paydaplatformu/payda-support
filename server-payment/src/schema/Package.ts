@@ -19,7 +19,7 @@ export const typeDef = gql`
     repeatConfig: RepeatConfig!
     donationCount: Int!
     image: String
-    price: MonateryAmount!
+    price: MonetaryAmount!
     isCustomizable: Boolean!
     isCustom: Boolean!
     priority: Int
