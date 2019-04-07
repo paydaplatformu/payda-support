@@ -1,6 +1,6 @@
 import { Currency } from "./Currency";
 
-export interface IMonateryAmount {
+export interface IMonetaryAmount {
   currency: Currency;
   amount: number;
 }

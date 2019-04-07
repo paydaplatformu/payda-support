@@ -80,7 +80,7 @@ const Query = gql`
       reference: String
       repeatConfig: RepeatConfig!
       image: String
-      price: MonateryAmountInput!
+      price: MonetaryAmountInput!
       priority: Int!
       tags: [PackageTagInput!]
     ): Package!

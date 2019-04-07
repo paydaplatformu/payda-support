@@ -7,7 +7,7 @@ import { PaginationSettings } from "../models/PaginationSettings";
 import { RepeatConfig } from "../models/RepeatConfig";
 import { SortingSettings } from "../models/SortingSettings";
 import { sortAndPaginate } from "../utilities/helpers";
-import { IMonateryAmount } from "../models/MonetaryAmount";
+import { IMonetaryAmount } from "../models/MonetaryAmount";
 
 @injectable()
 export class MockPackageService implements IPackageService {
@@ -162,6 +162,6 @@ export class MockPackageService implements IPackageService {
     return next;
   };
 
-  public isCustomPrice = (originalPrice: IMonateryAmount, price: IMonateryAmount) =>
+  public isCustomPrice = (originalPrice: IMonetaryAmount, price: IMonetaryAmount) =>
     originalPrice.amount === price.amount && originalPrice.currency === price.currency;
 }

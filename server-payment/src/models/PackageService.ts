@@ -1,4 +1,4 @@
-import { IMonateryAmount } from "./MonetaryAmount";
+import { IMonetaryAmount } from "./MonetaryAmount";
 import { IPackage, IPackageCreator, IPackageFilters, IPackageModifier } from "./Package";
 import { PaginationSettings } from "./PaginationSettings";
 import { SortingSettings } from "./SortingSettings";
@@ -9,5 +9,5 @@ export interface IPackageService {
   getById(id: string): Promise<IPackage | null>;
   create(packageCreator: IPackageCreator): Promise<IPackage>;
   edit(packageModifier: IPackageModifier): Promise<IPackage | null>;
-  isCustomPrice(originalPrice: IMonateryAmount, price: IMonateryAmount): boolean;
+  isCustomPrice(originalPrice: IMonetaryAmount, price: IMonetaryAmount): boolean;
 }

@@ -4,7 +4,7 @@ import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageMod
 import { IPackageService } from "../models/PackageService";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
-import { IMonateryAmount } from "../models/MonetaryAmount";
+import { IMonetaryAmount } from "../models/MonetaryAmount";
 
 @injectable()
 export class MongoPackageService
@@ -52,7 +52,7 @@ export class MongoPackageService
     };
   }
 
-  public isCustomPrice(originalPrice: IMonateryAmount, price: IMonateryAmount) {
+  public isCustomPrice(originalPrice: IMonetaryAmount, price: IMonetaryAmount) {
     return originalPrice.amount === price.amount && originalPrice.currency === price.currency;
   }
 }
