@@ -7,6 +7,7 @@ import { PaginationSettings } from "../models/PaginationSettings";
 import { RepeatConfig } from "../models/RepeatConfig";
 import { SortingSettings } from "../models/SortingSettings";
 import { sortAndPaginate } from "../utilities/helpers";
+import { IMonateryAmount } from "../models/MonetaryAmount";
 
 @injectable()
 export class MockPackageService implements IPackageService {
@@ -27,6 +28,8 @@ export class MockPackageService implements IPackageService {
           amount: 10000,
           currency: Currency.TRY
         },
+        isCustomizable: false,
+        isCustom: false,
         priority: 2,
         repeatConfig: RepeatConfig.NONE,
         tags: [
@@ -50,6 +53,8 @@ export class MockPackageService implements IPackageService {
           amount: 23,
           currency: Currency.TRY
         },
+        isCustomizable: false,
+        isCustom: false,
         priority: 32,
         repeatConfig: RepeatConfig.WEEKLY,
         tags: [{ code: LanguageCode.TR, name: "Dizüstü Bilgisayar" }],
@@ -80,6 +85,8 @@ export class MockPackageService implements IPackageService {
           amount: 150,
           currency: Currency.TRY
         },
+        isCustomizable: true,
+        isCustom: false,
         priority: 32,
         repeatConfig: RepeatConfig.WEEKLY,
         tags: [
@@ -131,6 +138,8 @@ export class MockPackageService implements IPackageService {
         .substr(0, 5),
       defaultTag: packageCreator.defaultTag,
       price: packageCreator.price,
+      isCustomizable: packageCreator.isCustomizable,
+      isCustom: packageCreator.isCustom,
       priority: packageCreator.priority,
       repeatConfig: packageCreator.repeatConfig,
       tags: packageCreator.tags,
@@ -152,4 +161,7 @@ export class MockPackageService implements IPackageService {
     this.packages = this.packages.filter(p => p.id !== packageModifier.id).concat([next]);
     return next;
   };
+
+  public isCustomPrice = (originalPrice: IMonateryAmount, price: IMonateryAmount) =>
+    originalPrice.amount === price.amount && originalPrice.currency === price.currency;
 }

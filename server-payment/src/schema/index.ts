@@ -191,7 +191,10 @@ const rootResolvers: IResolvers<any, IContext> = {
   Mutation: {
     createPackage: (parent, args, { packageService, user }) => {
       if (!user) throw new AuthorizationRequired();
-      return packageService.create(args as IPackageCreator);
+      return packageService.create({
+        ...(args as IPackageCreator),
+        isCustom: false
+      });
     },
     updatePackage: (parent, args, { packageService, user }) => {
       if (!user) throw new AuthorizationRequired();

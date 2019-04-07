@@ -1,9 +1,11 @@
 import { ObjectId } from "mongodb";
+import { IMonateryAmount } from "./MonetaryAmount";
 
 export interface IDonationCreator {
   fullName: string;
   email: string;
   packageId: string;
+  customPrice?: IMonateryAmount;
   quantity: number;
   usingAmex: boolean;
   notes?: string;

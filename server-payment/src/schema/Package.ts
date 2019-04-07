@@ -20,9 +20,11 @@ export const typeDef = gql`
     donationCount: Int!
     image: String
     price: MonateryAmount!
+    isCustomizable: Boolean!
+    isCustom: Boolean!
     priority: Int
     tags: [PackageTag!]!
-    isActive: Boolean
+    isActive: Boolean!
   }
 `;
 
