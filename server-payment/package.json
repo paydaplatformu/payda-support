@@ -63,10 +63,12 @@
     "clean": "rm -rf dist/",
     "copy:static": "node scripts/copy-static-folder",
     "prebuild": "yarn clean",
-    "postbuild": "yarn copy:static"
+    "postbuild": "yarn copy:static",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "engines": {
     "node": ">=10.13.0",
     "yarn": ">=1.12.3"
-  }
+  },
+  "heroku-run-build-script": true
 }
