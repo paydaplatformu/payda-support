@@ -9,6 +9,8 @@ export interface IPackageCreator {
   repeatConfig: RepeatConfig;
   image?: string;
   price: IMonateryAmount;
+  isCustomizable: boolean;
+  isCustom: boolean;
   priority: number;
   tags: IPackageTag[];
 }
@@ -36,6 +38,8 @@ export interface IPackage {
   repeatConfig: RepeatConfig;
   image?: string;
   price: IMonateryAmount;
+  isCustomizable: boolean;
+  isCustom: boolean;
   priority: number;
   tags: IPackageTag[];
   isActive: boolean;
@@ -50,6 +54,8 @@ export interface IPackageEntity {
   repeatConfig: RepeatConfig;
   image?: string;
   price: IMonateryAmount;
+  isCustomizable: boolean;
+  isCustom: boolean;
   priority: number;
   tags: IPackageTag[];
   isActive: boolean;

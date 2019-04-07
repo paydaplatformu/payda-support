@@ -31,9 +31,8 @@ export class DonationManagerService implements IDonationManagerService {
     donationCreator: IDonationCreator,
     language: LanguageCode
   ): Promise<DonationCreationResult> {
+    const pkg = await this.getPackageForDonationCreator(donationCreator);
     const donation = await this.donationService.create(donationCreator as IDonationCreator);
-    const pkg = await this.packageService.getById(donation.packageId);
-    if (!pkg) throw new Error("If package does not exist, donation service create should have failed.");
     const subscription = await this.getSubscription(donation, pkg, language);
     const formFields = await this.payuService.getFormContents(donation, pkg, language);
     return {
@@ -43,6 +42,28 @@ export class DonationManagerService implements IDonationManagerService {
       formFields,
       package: pkg
     };
+  }
+
+  private async getPackageForDonationCreator(donationCreator: IDonationCreator) {
+    const pkg = await this.packageService.getById(donationCreator.packageId);
+    if (!pkg) throw new Error("Package does not exist, cannot create donation.");
+
+    if (pkg.isCustomizable && donationCreator.customPrice) {
+      if (this.packageService.isCustomPrice(pkg.price, donationCreator.customPrice)) {
+        return this.packageService.create({
+          isCustomizable: false,
+          defaultTag: pkg.defaultTag,
+          image: pkg.image,
+          price: donationCreator.customPrice,
+          priority: pkg.priority,
+          reference: pkg.reference,
+          repeatConfig: pkg.repeatConfig,
+          tags: pkg.tags,
+          isCustom: true
+        });
+      }
+    }
+    return pkg;
   }
 
   private async getSubscription(

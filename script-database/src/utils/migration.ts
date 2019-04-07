@@ -32,7 +32,8 @@ export const convertPackage = (pkg: any) => ({
   },
   priority: pkg.priority,
   isActive: true,
-  isCustom: false
+  isCustom: false,
+  isCustomizable: false
 });
 
 interface IDonationEntity {
@@ -64,7 +65,6 @@ export const setPackage = (packages: Collection) => (donation: any) => {
   return from(packages.findOne({ _id: id })).pipe(
     flatMap((pkg: any) => {
       if (!pkg) {
-
         const newPackage = {
           _id: id,
           defaultTag: {
@@ -84,13 +84,14 @@ export const setPackage = (packages: Collection) => (donation: any) => {
           },
           priority: 1,
           isActive: false,
-          isCustom: false
-        }
+          isCustom: false,
+          isCustomizable: false
+        };
 
         const convertedPackage = donation.package._id && {
           ...convertPackage(donation.package),
           isActive: false
-        }
+        };
 
         const updated = donation.package._id ? convertedPackage : newPackage;
 

@@ -1,13 +1,11 @@
 import { subHours } from "date-fns";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
 import { IDonation, IDonationCreator, IDonationEntity, IDonationFilters, IDonationModifier } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { FieldErrorCode } from "../models/Errors";
-import { IPackageService } from "../models/PackageService";
 import { Validator } from "../models/Validator";
-import { TYPES } from "../types";
 import { BaseMongoService } from "./BaseMongoService";
 
 @injectable()
@@ -15,9 +13,6 @@ export class MongoDonationService
   extends BaseMongoService<IDonationEntity, IDonation, IDonationFilters, IDonationCreator, IDonationModifier>
   implements IDonationService {
   public static collectionName = "donations";
-
-  @inject(TYPES.IPackageService)
-  private packageService: IPackageService = null as any;
 
   public creatorValidator: Validator<IDonationCreator> = {
     email: async value => {
@@ -27,11 +22,6 @@ export class MongoDonationService
     fullName: async value => {
       if (!isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME];
       else if (!isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL];
-      return null;
-    },
-    packageId: async value => {
-      const donationPackage = await this.packageService.getById(value);
-      if (!donationPackage) return [FieldErrorCode.PACKAGE_DOES_NOT_EXIST];
       return null;
     },
     quantity: async value => {
