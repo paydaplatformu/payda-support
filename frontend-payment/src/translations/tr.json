@@ -16,5 +16,6 @@
   "email_validation_error": "Lütfen geçerli bir e-posta adresi giriniz",
   "agreements_accepted_validation_error": "Bağış yapabilmek için bu seçeneğin seçilmesi gerekmektedir",
   "redirection_message": "PayU'ya yönlendiriliyorsunuz",
-  "package_details": "Paketlerin detaylarını görüntülemek için tıklayınız"
+  "package_details": "Paketlerin detaylarını görüntülemek için tıklayınız",
+  "notes": "Bağışınıza eklemek istediğiniz not"
 }

@@ -84,6 +84,15 @@ const DonationFormInner = props => {
           validateTrigger: "onBlur",
         })(<Input placeholder={translate("email_address")} size="large" />)}
       </Form.Item>
+      <Form.Item>
+        {getFieldDecorator("notes")(
+          <Input.TextArea
+            placeholder={translate("notes")}
+            size="large"
+            rows={4}
+          />,
+        )}
+      </Form.Item>
       <Form.Item style={{ marginBottom: 0 }}>
         {getFieldDecorator("usingAmex", {
           valuePropName: "checked",
