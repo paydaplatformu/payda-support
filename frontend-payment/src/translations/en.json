@@ -16,5 +16,6 @@
   "email_validation_error": "Please enter a valid email address",
   "agreements_accepted_validation_error": "You have to accept these to make a donation",
   "redirection_message": "You are being redirected to PayU",
-  "package_details": "Please click to see details of the packages"
+  "package_details": "Please click to see details of the packages",
+  "notes": "Additional notes for your donation"
 }
