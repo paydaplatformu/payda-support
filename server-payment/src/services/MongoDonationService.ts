@@ -27,6 +27,10 @@ export class MongoDonationService
     quantity: async value => {
       if (value <= 0) return [FieldErrorCode.INVALID_QUANTITY];
       return null;
+    },
+    customPrice: async value => {
+      if (value && value.amount <= 0) return [FieldErrorCode.INVALID_AMOUNT];
+      return null;
     }
   };
 
