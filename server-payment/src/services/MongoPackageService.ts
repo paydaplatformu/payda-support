@@ -58,6 +58,6 @@ export class MongoPackageService
   }
 
   public isCustomPrice(originalPrice: IMonetaryAmount, price: IMonetaryAmount) {
-    return originalPrice.amount === price.amount && originalPrice.currency === price.currency;
+    return !(originalPrice.amount === price.amount && originalPrice.currency === price.currency);
   }
 }

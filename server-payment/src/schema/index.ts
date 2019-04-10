@@ -1,7 +1,7 @@
 import { gql, IResolvers } from "apollo-server-express";
 import { merge } from "lodash";
 import { IDonationCreator } from "../models/Donation";
-import { AuthorizationError, AuthorizationRequired } from "../models/Errors";
+import { AuthorizationError, AuthorizationRequired, InvalidInput, FieldErrorCode } from "../models/Errors";
 import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
