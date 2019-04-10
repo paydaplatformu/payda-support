@@ -31,7 +31,8 @@ const PackageSelect = props => {
             {!loading &&
               packages.map(pack => (
                 <Select.Option key={pack.id} value={pack.id}>
-                  {getPackageName(pack, langCode)}
+                  {getPackageName(pack, langCode)} - {pack.price.amount}
+                  {pack.price.currency}
                 </Select.Option>
               ))}
           </Select>,

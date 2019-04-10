@@ -17,6 +17,10 @@ const query = gql`
         name
         description
       }
+      price {
+        currency
+        amount
+      }
     }
   }
 `;
