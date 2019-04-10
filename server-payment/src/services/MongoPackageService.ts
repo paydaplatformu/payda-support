@@ -1,10 +1,10 @@
 import { injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
+import { IMonetaryAmount } from "../models/MonetaryAmount";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
-import { IMonetaryAmount } from "../models/MonetaryAmount";
 
 @injectable()
 export class MongoPackageService
@@ -14,9 +14,14 @@ export class MongoPackageService
 
   public creatorValidator: Validator<IPackageCreator> = {};
 
-  public getFilteredQuery({ onlyActive, ids }: IPackageFilters): Cursor<IPackageEntity> {
+  public getDefaultFilters(): IPackageFilters {
+    return { onlyActive: true, ids: undefined, isCustom: false };
+  }
+
+  public getFilteredQuery({ onlyActive, ids, isCustom }: IPackageFilters): Cursor<IPackageEntity> {
     const filters = [
       onlyActive !== undefined ? { isActive: onlyActive } : undefined,
+      isCustom !== undefined ? { isCustom } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined);
 

@@ -6,7 +6,6 @@ This module keeps track of donations, packages and subscriptions.
 
 This project includes 2 different implementations of the data layer components.
 Running this project in PRODUCTION or STAGING environment set by NODE_ENV will result into the usage of MongoDB.
-DEVELOPMENT or TEST environments will use the mocked in-memory implementation.
 
 For better staging, a docker-compose file is supplied in the root directory.
 
