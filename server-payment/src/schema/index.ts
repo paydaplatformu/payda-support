@@ -125,13 +125,19 @@ const rootResolvers: IResolvers<any, IContext> = {
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
     allPackages: (
       parent,
-      { filter: { onlyActive, ids } = { onlyActive: true, ids: undefined }, sortField, sortOrder, page, perPage },
+      {
+        filter: { onlyActive, ids, isCustom } = { onlyActive: true, ids: undefined, isCustom: false },
+        sortField,
+        sortOrder,
+        page,
+        perPage
+      },
       { packageService, user }
     ) => {
       if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      if (!user) return packageService.getAll({ onlyActive: true, ids }, pagination, sorting);
+      if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
       return packageService.getAll({ onlyActive, ids }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {

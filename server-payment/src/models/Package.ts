@@ -27,6 +27,7 @@ export interface IPackageModifier {
 export interface IPackageFilters {
   ids?: string[];
   onlyActive?: boolean;
+  isCustom?: boolean;
 }
 
 export interface IPackage {

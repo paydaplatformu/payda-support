@@ -1,10 +1,13 @@
-import { MongoClient, Collection } from 'mongodb';
+import { MongoClient, Collection } from "mongodb";
 
 export const connect = (url: string): Promise<MongoClient> =>
   new Promise((resolve, reject) => {
     const client = new MongoClient(url, { useNewUrlParser: true });
     client.connect(function(err) {
-      if (err) return reject(err);
+      if (err) {
+        console.error({ err, url });
+        return reject(err);
+      }
       console.log("Connected successfully to server");
       return resolve(client);
     });

@@ -10,10 +10,6 @@ import { IUserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
 import { DonationManagerService } from "./services/DonationManagerService";
 import { JwtAuthentication } from "./services/JwtAuthentication";
-import { MockDonationService } from "./services/MockDonationService";
-import { MockPackageService } from "./services/MockPackageService";
-import { MockSubscriptionService } from "./services/MockSubscriptionService";
-import { MockUserService } from "./services/MockUserService";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { MongoDonationService } from "./services/MongoDonationService";
 import { MongoPackageService } from "./services/MongoPackageService";
@@ -57,16 +53,16 @@ const test = new ContainerModule(bind => {
     .to(JwtAuthentication)
     .inSingletonScope();
   bind<IUserService>(TYPES.IUserService)
-    .to(MockUserService)
+    .to(MongoUserService)
     .inSingletonScope();
   bind<IPackageService>(TYPES.IPackageService)
-    .to(MockPackageService)
+    .to(MongoPackageService)
     .inSingletonScope();
   bind<ISubscriptionService>(TYPES.ISubscriptionService)
-    .to(MockSubscriptionService)
+    .to(MongoSubscriptionService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
-    .to(MockDonationService)
+    .to(MongoDonationService)
     .inSingletonScope();
   bind<IPayuService>(TYPES.IPayuService)
     .to(PayuService)
