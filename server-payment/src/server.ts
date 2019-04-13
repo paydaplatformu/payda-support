@@ -1,6 +1,7 @@
 import { ApolloServer } from "apollo-server-express";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
+import cors from "cors";
 import express, { Express } from "express";
 import "express-async-errors";
 import { Container } from "inversify";
@@ -72,6 +73,8 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
   /**
    * Express middlewares
    */
+  app.use(cors());
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   server.applyMiddleware({ app });

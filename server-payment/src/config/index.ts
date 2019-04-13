@@ -94,12 +94,12 @@ const config = convict({
     accessTokenLifetime: {
       doc: "Access token lifetime in seconds (clients setting overrides this value)",
       format: "int",
-      default: 60 * 60
+      default: 24 * 60 * 60
     },
     refreshTokenLifetime: {
       doc: "Refresh token lifetime in seconds (clients setting overrides this value)",
       format: "int",
-      default: 24 * 60 * 60
+      default: 3 * 24 * 60 * 60
     }
   },
   payu: {
