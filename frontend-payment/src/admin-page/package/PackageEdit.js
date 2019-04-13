@@ -7,11 +7,11 @@ import {
   DisabledInput,
   NumberInput,
   SelectInput,
-  TextInput,
+  TextInput
 } from "react-admin";
 
 import { LANG_CODES } from "../../constants";
-import { REPEAT_CONFIG, CURRENCY } from "../../constants";
+import { repeatConfigChoices, currencyChoices } from "../../utils";
 
 const PackageEdit = props => (
   <Edit {...props}>
@@ -23,7 +23,7 @@ const PackageEdit = props => (
           source="defaultTag.code"
           choices={[
             { id: LANG_CODES.TR, name: "Turkish" },
-            { id: LANG_CODES.EN, name: "English" },
+            { id: LANG_CODES.EN, name: "English" }
           ]}
         />
         <TextInput source="defaultTag.name" />
@@ -33,22 +33,11 @@ const PackageEdit = props => (
       <SelectInput
         label="Repeat"
         source="repeatConfig"
-        choices={[
-          { id: REPEAT_CONFIG.NONE, name: "None" },
-          { id: REPEAT_CONFIG.WEEKLY, name: "Weekly" },
-          { id: REPEAT_CONFIG.MONTHLY, name: "Monthly" },
-          { id: REPEAT_CONFIG.YEARLY, name: "Yearly" },
-        ]}
+        choices={repeatConfigChoices}
       />
       <TextInput source="image" />
       <NumberInput source="price.amount" />
-      <SelectInput
-        source="price.currency"
-        choices={[
-          { id: CURRENCY.TRY, name: "TRY" },
-          { id: CURRENCY.USD, name: "USD" },
-        ]}
-      />
+      <SelectInput source="price.currency" choices={currencyChoices} />
       <NumberInput source="priority" />
       <ArrayInput source="tags">
         <SimpleFormIterator>
@@ -56,7 +45,7 @@ const PackageEdit = props => (
             source="code"
             choices={[
               { id: LANG_CODES.TR, name: "Turkish" },
-              { id: LANG_CODES.EN, name: "English" },
+              { id: LANG_CODES.EN, name: "English" }
             ]}
           />
           <TextInput source="name" />
