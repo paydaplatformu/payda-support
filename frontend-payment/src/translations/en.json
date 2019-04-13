@@ -19,5 +19,7 @@
   "package_details": "Please click to see details of the packages",
   "notes": "Additional notes for your donation",
   "custom_amount_placeholder": "Amount of donation",
-  "custom_currency_placeholder": "Currency"
+  "custom_currency_placeholder": "Currency",
+  "thank_you_page_title": "Thank You!",
+  "thank_you_page_description": "We'd like to say thank you for support and donation."
 }
