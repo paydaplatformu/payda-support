@@ -11,15 +11,15 @@ export const TranslationContext = React.createContext({
 });
 
 export function TranslationContextProvider({ children }) {
-  const initalState = {
+  const initialState = {
     langCode: LANG_CODES.TR,
     translate: key => tr[key] || key,
   };
 
-  const reducer = (state, action) => {
+  const reducer = (state = initialState, action) => {
     switch (action.type) {
       case "setTurkish":
-        return { ...initalState };
+        return { ...initialState };
       case "setEnglish":
         return { langCode: LANG_CODES.EN, translate: key => en[key] || key };
       default:
@@ -27,7 +27,7 @@ export function TranslationContextProvider({ children }) {
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, initalState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <TranslationContext.Provider value={{ ...state, dispatch }}>

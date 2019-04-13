@@ -17,5 +17,7 @@
   "agreements_accepted_validation_error": "Bağış yapabilmek için bu seçeneğin seçilmesi gerekmektedir",
   "redirection_message": "PayU'ya yönlendiriliyorsunuz",
   "package_details": "Paketlerin detaylarını görüntülemek için tıklayınız",
-  "notes": "Bağışınıza eklemek istediğiniz not"
+  "notes": "Bağışınıza eklemek istediğiniz not",
+  "custom_amount_placeholder": "Bağış miktarı",
+  "custom_currency_placeholder": "Para birimi"
 }

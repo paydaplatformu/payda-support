@@ -17,5 +17,7 @@
   "agreements_accepted_validation_error": "You have to accept these to make a donation",
   "redirection_message": "You are being redirected to PayU",
   "package_details": "Please click to see details of the packages",
-  "notes": "Additional notes for your donation"
+  "notes": "Additional notes for your donation",
+  "custom_amount_placeholder": "Amount of donation",
+  "custom_currency_placeholder": "Currency"
 }
