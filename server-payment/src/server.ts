@@ -1,4 +1,4 @@
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, AuthenticationError, UserInputError } from "apollo-server-express";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
 import cors from "cors";
@@ -12,7 +12,7 @@ import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { IAuthentication } from "./models/Authentication";
 import { IDonationService } from "./models/DonationService";
-import { InvalidInput, ValidationError } from "./models/Errors";
+import { AuthorizationRequired, ValidationError } from "./models/Errors";
 import { IPayuService } from "./models/PayuService";
 import { IUserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
@@ -57,7 +57,9 @@ export const createServer = async (callback?: (error: any, app: Express) => any)
     introspection: true,
     formatError: (error: any) => {
       if (error instanceof ValidationError) {
-        return new InvalidInput(error.invalidFields);
+        return new UserInputError(error.message, error.invalidFields);
+      } else if (error instanceof AuthorizationRequired) {
+        return new AuthenticationError(error.message);
       }
       console.error(error);
       return error;
