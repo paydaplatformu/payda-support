@@ -2,22 +2,21 @@ export const paydaOrange = "rgba(245, 145, 48, 1)";
 
 export const REPEAT_CONFIG = {
   NONE: "NONE",
-  WEEKLY: "WEEKLY",
   MONTHLY: "MONTHLY",
-  YEARLY: "YEARLY",
+  YEARLY: "YEARLY"
 };
 
 export const CURRENCY = {
   TRY: "TRY",
-  USD: "USD",
+  USD: "USD"
 };
 
 export const LANG_CODES = {
   TR: "tr",
-  EN: "en",
+  EN: "en"
 };
 
 export const RECURRENCY_TRANSLATION_KEYS = {
   MONTHLY: "recurring_monthly",
-  YEARLY: "recurring_yearly",
+  YEARLY: "recurring_yearly"
 };
