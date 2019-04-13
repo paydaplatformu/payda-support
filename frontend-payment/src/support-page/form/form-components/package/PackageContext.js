@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -21,6 +21,13 @@ const query = gql`
         currency
         amount
       }
+      isCustomizable
+    }
+    __type(name: "Currency") {
+      name
+      enumValues {
+        name
+      }
     }
   }
 `;
@@ -28,6 +35,24 @@ const query = gql`
 export const PackageContext = React.createContext();
 
 export const PackageContextProvider = ({ children }) => {
+  const initialState = {
+    selectedPackage: {},
+  };
+
+  const reducer = (state = initialState, action) => {
+    switch (action.type) {
+      case "selectPackage":
+        return { ...state, selectedPackage: action.payload };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const selectPackage = selectedPackage =>
+    dispatch({ type: "selectPackage", payload: selectedPackage });
+
   return (
     <Query
       query={query}
@@ -38,7 +63,14 @@ export const PackageContextProvider = ({ children }) => {
 
         return (
           <PackageContext.Provider
-            value={{ loading, packages: data.allPackages }}
+            value={{
+              loading,
+              packages: data.allPackages,
+              availableCurrencies:
+                data.__type && data.__type.enumValues.map(c => c.name),
+              selectedPackage: state && state.selectedPackage,
+              selectPackage,
+            }}
           >
             {children}
           </PackageContext.Provider>
