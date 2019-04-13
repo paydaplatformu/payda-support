@@ -19,5 +19,7 @@
   "package_details": "Paketlerin detaylarını görüntülemek için tıklayınız",
   "notes": "Bağışınıza eklemek istediğiniz not",
   "custom_amount_placeholder": "Bağış miktarı",
-  "custom_currency_placeholder": "Para birimi"
+  "custom_currency_placeholder": "Para birimi",
+  "thank_you_page_title": "Teşekkürler!",
+  "thank_you_page_description": "Desteğiniz ve bağışınız için teşekkür ederiz."
 }
