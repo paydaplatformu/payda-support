@@ -7,11 +7,8 @@ import { PackageContextProvider } from "./form-components/package/PackageContext
 
 import SubmitButton from "./form-components/SubmitButton";
 import PackageSelect from "./form-components/package/PackageSelect";
+import PackageCustomize from "./form-components/package/PackageCustomize";
 import ModalsFormInput from "./form-components/modals/ModalsFormInput";
-
-const packageSelectQuantityStyle = {
-  display: "flex",
-};
 
 const DonationFormInner = props => {
   const {
@@ -45,9 +42,12 @@ const DonationFormInner = props => {
 
   return (
     <Form onSubmit={onSubmitForm}>
-      <div style={packageSelectQuantityStyle}>
+      <div style={{ display: "flex" }}>
         <PackageContextProvider>
-          <PackageSelect getFieldDecorator={getFieldDecorator} />
+          <div style={{ width: "100%", marginRight: 10 }}>
+            <PackageSelect getFieldDecorator={getFieldDecorator} />
+            <PackageCustomize getFieldDecorator={getFieldDecorator} />
+          </div>
         </PackageContextProvider>
         <Form.Item>
           {getFieldDecorator("quantity", { initialValue: 1 })(
