@@ -5,9 +5,9 @@ import { Validator } from "./Validator";
 
 @injectable()
 export abstract class BaseEntityService<Creator> {
-  public abstract creatorValidator: Validator<Creator>;
+  protected abstract creatorValidator: Validator<Creator>;
 
-  public async validate(input: Creator) {
+  protected validate = async (input: Creator) => {
     const promises = Object.entries(this.creatorValidator).map(([field, validationFunction]) => {
       const value = (input as any)[field].toString();
       return (validationFunction as any)(value);
@@ -22,5 +22,5 @@ export abstract class BaseEntityService<Creator> {
 
     if (errors.length === 0) return null;
     return errors;
-  }
+  };
 }

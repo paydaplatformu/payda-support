@@ -5,6 +5,7 @@ import { IDonationManagerService } from "./models/DonationManagerService";
 import { IDonationService } from "./models/DonationService";
 import { IPackageService } from "./models/PackageService";
 import { IPayuService } from "./models/PayuService";
+import { ISubscriptionManagerService } from "./models/SubscriptionManagerService";
 import { ISubscriptionService } from "./models/SubscriptionService";
 import { IUserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
@@ -16,6 +17,7 @@ import { MongoPackageService } from "./services/MongoPackageService";
 import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
 import { MongoUserService } from "./services/MongoUserService";
 import { PayuService } from "./services/PayuService";
+import { SubscriptionManagerService } from "./services/SubscriptionManagerService";
 import { TYPES } from "./types";
 
 const production = new ContainerModule(bind => {
@@ -39,6 +41,9 @@ const production = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IPayuService>(TYPES.IPayuService)
     .to(PayuService)
+    .inSingletonScope();
+  bind<ISubscriptionManagerService>(TYPES.ISubscriptionManagerService)
+    .to(SubscriptionManagerService)
     .inSingletonScope();
   bind<IDonationManagerService>(TYPES.IDonationManagerService)
     .to(DonationManagerService)
@@ -69,6 +74,9 @@ const test = new ContainerModule(bind => {
     .inSingletonScope();
   bind<IDonationManagerService>(TYPES.IDonationManagerService)
     .to(DonationManagerService)
+    .inSingletonScope();
+  bind<ISubscriptionManagerService>(TYPES.ISubscriptionManagerService)
+    .to(SubscriptionManagerService)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)

@@ -28,6 +28,7 @@ export interface IPackageFilters {
   ids?: string[];
   onlyActive?: boolean;
   isCustom?: boolean;
+  repeatConfig?: RepeatConfig;
 }
 
 export interface IPackage {

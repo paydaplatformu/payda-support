@@ -8,5 +8,6 @@ export const TYPES = {
   IPackageService: Symbol.for("IPackageService"),
   ISubscriptionService: Symbol.for("ISubscriptionService"),
   IDonationService: Symbol.for("IDonationService"),
-  IDonationManagerService: Symbol.for("IDonationManagerService")
+  IDonationManagerService: Symbol.for("IDonationManagerService"),
+  ISubscriptionManagerService: Symbol.for("ISubscriptionManagerService")
 };

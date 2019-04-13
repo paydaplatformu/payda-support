@@ -3,6 +3,7 @@ import { Cursor, ObjectId } from "mongodb";
 import { IMonetaryAmount } from "../models/MonetaryAmount";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
+import { RepeatConfig } from "../models/RepeatConfig";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
 
@@ -10,27 +11,9 @@ import { BaseMongoService } from "./BaseMongoService";
 export class MongoPackageService
   extends BaseMongoService<IPackageEntity, IPackage, IPackageFilters, IPackageCreator, IPackageModifier>
   implements IPackageService {
-  public static collectionName = "packages";
+  protected static collectionName = "packages";
 
-  public creatorValidator: Validator<IPackageCreator> = {};
-
-  public getDefaultFilters(): IPackageFilters {
-    return { onlyActive: true, ids: undefined, isCustom: false };
-  }
-
-  public getFilteredQuery({ onlyActive, ids, isCustom }: IPackageFilters): Cursor<IPackageEntity> {
-    const filters = [
-      onlyActive !== undefined ? { isActive: onlyActive } : undefined,
-      isCustom !== undefined ? { isCustom } : undefined,
-      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
-    ].filter(el => el !== undefined);
-
-    return this.collection.find({
-      $and: filters
-    });
-  }
-
-  public async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {
+  protected async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {
     const fromSuper = await super.createEntity(creator);
     return {
       ...fromSuper,
@@ -38,8 +21,18 @@ export class MongoPackageService
       tags: fromSuper.tags || []
     };
   }
+  protected creatorValidator: Validator<IPackageCreator> = {};
 
-  public toModel(entity: IPackageEntity): IPackage {
+  protected getFilters = ({ onlyActive, ids, isCustom, repeatConfig }: IPackageFilters): object[] => {
+    return [
+      onlyActive !== undefined ? { isActive: onlyActive } : undefined,
+      isCustom !== undefined ? { isCustom } : undefined,
+      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      repeatConfig !== undefined ? { repeatConfig } : undefined
+    ].filter(el => el !== undefined) as any;
+  };
+
+  protected toModel = (entity: IPackageEntity): IPackage => {
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,
@@ -55,9 +48,17 @@ export class MongoPackageService
       tags: entity.tags,
       updatedAt: entity.updatedAt
     };
-  }
+  };
 
-  public isCustomPrice(originalPrice: IMonetaryAmount, price: IMonetaryAmount) {
+  public getByRepeatConfig = (repeatConfig: RepeatConfig): Promise<IPackage[]> => {
+    return this.getAll({ repeatConfig });
+  };
+
+  public getDefaultFilters = (): IPackageFilters => {
+    return { onlyActive: true, ids: undefined, isCustom: false };
+  };
+
+  public isCustomPrice = (originalPrice: IMonetaryAmount, price: IMonetaryAmount) => {
     return !(originalPrice.amount === price.amount && originalPrice.currency === price.currency);
-  }
+  };
 }

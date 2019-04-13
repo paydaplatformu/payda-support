@@ -9,6 +9,7 @@ import { ISubscriptionService } from "../models/SubscriptionService";
 import { IUser } from "../models/User";
 import { IUserService } from "../models/UserService";
 import { TYPES } from "../types";
+import { ISubscriptionManagerService } from "../models/SubscriptionManagerService";
 
 export const Type = Symbol.for("IContextProvider");
 
@@ -19,6 +20,7 @@ export interface IContextProvider {
   userService: IUserService;
   payuService: IPayuService;
   donationManagerService: IDonationManagerService;
+  subscriptionManagerService: ISubscriptionManagerService;
 }
 
 export interface IContext {
@@ -28,6 +30,7 @@ export interface IContext {
   userService: IUserService;
   payuService: IPayuService;
   donationManagerService: IDonationManagerService;
+  subscriptionManagerService: ISubscriptionManagerService;
   user: IUser;
   client: Client;
   scope?: string;
@@ -52,4 +55,7 @@ export class ContextProvider implements IContextProvider {
 
   @inject(TYPES.IDonationManagerService)
   public donationManagerService: IDonationManagerService = null as any;
+
+  @inject(TYPES.ISubscriptionManagerService)
+  public subscriptionManagerService: ISubscriptionManagerService = null as any;
 }

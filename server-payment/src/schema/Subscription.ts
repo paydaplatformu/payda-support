@@ -7,6 +7,7 @@ export const typeDef = gql`
   input SubscriptionFilter {
     ids: [String!]
     onlyActive: Boolean
+    repeatConfig: RepeatConfig
   }
 
   type Subscription {

@@ -21,30 +21,13 @@ export class DonationManagerService implements IDonationManagerService {
   @inject(TYPES.IPackageService)
   private packageService: IPackageService = null as any;
 
-  @inject(TYPES.ISubscriptionService)
-  private subscriptionService: ISubscriptionService = null as any;
-
   @inject(TYPES.IPayuService)
   private payuService: IPayuService = null as any;
 
-  public async createDonation(
-    donationCreator: IDonationCreator,
-    language: LanguageCode
-  ): Promise<DonationCreationResult> {
-    const pkg = await this.getPackageForDonationCreator(donationCreator);
-    const donation = await this.donationService.create(donationCreator as IDonationCreator);
-    const subscription = await this.getSubscription(donation, pkg, language);
-    const formFields = await this.payuService.getFormContents(donation, pkg, language);
-    return {
-      donation,
-      subscription,
-      formUrl: config.get("payu.luUrl"),
-      formFields,
-      package: pkg
-    };
-  }
+  @inject(TYPES.ISubscriptionService)
+  private subscriptionService: ISubscriptionService = null as any;
 
-  private async getPackageForDonationCreator(donationCreator: IDonationCreator) {
+  private getPackageForDonationCreator = async (donationCreator: IDonationCreator) => {
     const pkg = await this.packageService.getById(donationCreator.packageId);
     if (!pkg) throw new Error("Package does not exist, cannot create donation.");
 
@@ -64,13 +47,13 @@ export class DonationManagerService implements IDonationManagerService {
       }
     }
     return pkg;
-  }
+  };
 
-  private async getSubscription(
+  private getSubscription = async (
     donation: IDonation,
     pkg: IPackage,
     language: LanguageCode
-  ): Promise<ISubscription | undefined> {
+  ): Promise<ISubscription | undefined> => {
     if (pkg.repeatConfig !== RepeatConfig.NONE) {
       return this.subscriptionService.create({
         donationId: donation.id,
@@ -79,5 +62,22 @@ export class DonationManagerService implements IDonationManagerService {
       });
     }
     return undefined;
-  }
+  };
+
+  public createDonation = async (
+    donationCreator: IDonationCreator,
+    language: LanguageCode
+  ): Promise<DonationCreationResult> => {
+    const pkg = await this.getPackageForDonationCreator(donationCreator);
+    const donation = await this.donationService.create(donationCreator as IDonationCreator);
+    const subscription = await this.getSubscription(donation, pkg, language);
+    const formFields = await this.payuService.getFormContents(donation, pkg, language);
+    return {
+      donation,
+      subscription,
+      formUrl: config.get("payu.luUrl"),
+      formFields,
+      package: pkg
+    };
+  };
 }
