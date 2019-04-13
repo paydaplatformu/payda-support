@@ -16,3 +16,8 @@ export const LANG_CODES = {
   TR: "tr",
   EN: "en",
 };
+
+export const RECURRENCY_TRANSLATION_KEYS = {
+  MONTHLY: "recurring_monthly",
+  YEARLY: "recurring_yearly",
+};
