@@ -21,5 +21,7 @@
   "custom_amount_placeholder": "Bağış miktarı",
   "custom_currency_placeholder": "Para birimi",
   "thank_you_page_title": "Teşekkürler!",
-  "thank_you_page_description": "Desteğiniz ve bağışınız için teşekkür ederiz."
+  "thank_you_page_description": "Desteğiniz ve bağışınız için teşekkür ederiz.",
+  "recurring_monthly": "(Ayda bir defa)",
+  "recurring_yearly": "(Yılda bir defa)"
 }
