@@ -1,7 +1,7 @@
 import { gql, IResolvers } from "apollo-server-express";
 import { merge } from "lodash";
 import { IDonationCreator } from "../models/Donation";
-import { AuthorizationError, AuthorizationRequired, InvalidInput, FieldErrorCode } from "../models/Errors";
+import { AuthorizationError, AuthorizationRequired } from "../models/Errors";
 import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
@@ -138,7 +138,7 @@ const rootResolvers: IResolvers<any, IContext> = {
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
-      return packageService.getAll({ onlyActive, ids }, pagination, sorting);
+      return packageService.getAll({ onlyActive, ids, isCustom }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthorizationRequired();
@@ -175,23 +175,27 @@ const rootResolvers: IResolvers<any, IContext> = {
       return { count: await subscriptionService.count(filter) };
     },
 
-    ChargableSubscription: (parent, { id }, { subscriptionService, user }) => {
+    ChargableSubscription: (parent, { id, repeatConfig }, { subscriptionManagerService, user }) => {
       if (!user) throw new AuthorizationRequired();
-      return subscriptionService.getRunningSubscriptionById(id);
+      return subscriptionManagerService.getChargableSubscriptionById(id, repeatConfig);
     },
     allChargableSubscriptions: (
       parent,
-      { filter, sortField, sortOrder, page, perPage },
-      { subscriptionService, user }
+      { filter: { repeatConfig, ...restFilters }, sortField, sortOrder, page, perPage },
+      { subscriptionManagerService, user }
     ) => {
       if (!user) throw new AuthorizationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      return subscriptionService.getRunningSubscriptions(pagination, sorting);
+      return subscriptionManagerService.getChargableSubscriptions(repeatConfig, restFilters, pagination, sorting);
     },
-    _allChargableSubscriptionsMeta: async (parent, filters, { subscriptionService, user }) => {
+    _allChargableSubscriptionsMeta: async (
+      parent,
+      { repeatConfig, ...restFilters },
+      { subscriptionManagerService, user }
+    ) => {
       if (!user) throw new AuthorizationRequired();
-      return { count: await subscriptionService.countRunningSubscriptions() };
+      return { count: await subscriptionManagerService.countChargableSubscriptions(repeatConfig, restFilters) };
     }
   },
   Mutation: {

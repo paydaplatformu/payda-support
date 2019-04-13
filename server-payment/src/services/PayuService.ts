@@ -21,37 +21,125 @@ import { getUTF8Length, splitName } from "../utilities/helpers";
 
 @injectable()
 export class PayuService implements IPayuService {
-  @inject(TYPES.IPackageService)
-  private packageService: IPackageService = null as any;
-
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
 
+  @inject(TYPES.IPackageService)
+  private packageService: IPackageService = null as any;
+
   @inject(TYPES.ISubscriptionService)
   private subscriptionService: ISubscriptionService = null as any;
+
+  private amexCredentials: PayuCredentials = {
+    merchant: config.get("payu.amexCredentials.merchant"),
+    secret: config.get("payu.amexCredentials.secret")
+  };
+  private backRef: string = config.get("payu.backRef");
+
+  private createHashInput = (donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object => {
+    const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
+    const ref = this.getReference(pkg, donation);
+
+    return {
+      MERCHANT: merchant,
+      ORDER_REF: ref || null,
+      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:mm:ss"),
+      "ORDER_PNAME[0]": tag.name,
+      "ORDER_PCODE[0]": pkg.id,
+      "ORDER_PINFO[0]": tag.description || "",
+      "ORDER_PRICE[0]": pkg.price.amount,
+      "ORDER_QTY[0]": donation.quantity.toString(),
+      "ORDER_VAT[0]": "0",
+      ORDER_SHIPPING: "",
+      PRICES_CURRENCY: pkg.price.currency,
+      PAY_METHOD: this.getPayMethod(pkg),
+      "ORDER_PRICE_TYPE[0]": "GROSS",
+      INSTALLMENT_OPTIONS: this.getInstallmentOptions(pkg)
+    };
+  };
 
   private defaultCredentials: PayuCredentials = {
     merchant: config.get("payu.defaultCredentials.merchant"),
     secret: config.get("payu.defaultCredentials.secret")
   };
 
-  private amexCredentials: PayuCredentials = {
-    merchant: config.get("payu.amexCredentials.merchant"),
-    secret: config.get("payu.amexCredentials.secret")
+  private finalizeFormFields = (
+    input: object,
+    donation: IDonation,
+    pkg: IPackage,
+    language: LanguageCode,
+    hash: string
+  ) => {
+    const { firstName, lastName } = splitName(donation.fullName);
+    const tokenSettings: object =
+      pkg.repeatConfig !== RepeatConfig.NONE
+        ? {
+            LU_ENABLE_TOKEN: "1"
+          }
+        : {};
+
+    const finalObject = {
+      ...input,
+      BILL_FNAME: firstName,
+      BILL_LNAME: lastName,
+      BILL_EMAIL: donation.email,
+      BILL_PHONE: "-",
+      BILL_COUNTRYCODE: "TR",
+      BACK_REF: this.backRef,
+      LANGUAGE: language,
+      ...tokenSettings,
+      ORDER_HASH: hash
+    };
+
+    return Object.entries(finalObject).map(([key, value]) => ({
+      key,
+      value: value.toString()
+    }));
   };
 
-  private backRef: string = config.get("payu.backRef");
+  private generateHash = (input: object, secret: string, shouldSort: boolean = false) => {
+    return new Promise<string>(resolve => {
+      const keys = Object.keys(input);
+      const sortHandled = shouldSort ? keys.sort() : keys;
+      const toBeHashed = sortHandled
+        .map(key => (input as any)[key])
+        .map(value => {
+          if (!value) return "0";
+          if (Array.isArray(value)) return value.map(this.getResult).join();
+          return this.getResult(value);
+        })
+        .join("");
 
-  private getCredentials(isAmex: boolean) {
+      const hmac = createHmac("md5", secret);
+      hmac.setEncoding("hex");
+      hmac.end(toBeHashed, "utf8", () => {
+        const hash = hmac.read();
+        return resolve(hash.toString());
+      });
+    });
+  };
+
+  private getCredentials = (isAmex: boolean) => {
     if (isAmex) return this.amexCredentials;
     return this.defaultCredentials;
-  }
+  };
 
-  public async chargeUsingToken(subscriptionId: string) {
-    const subscription = await this.subscriptionService.getEntityById(subscriptionId);
+  private getInstallmentOptions = (pkg: IPackage) =>
+    pkg.repeatConfig !== RepeatConfig.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
+
+  private getPayMethod = (pkg: IPackage) => (pkg.repeatConfig !== RepeatConfig.NONE ? "CCVISAMC" : "");
+
+  private getReference = (pkg: IPackage, donation: IDonation) =>
+    pkg.repeatConfig !== RepeatConfig.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
+
+  private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
+
+  public chargeUsingToken = async (subscriptionId: string) => {
+    const subscription = await this.subscriptionService.getById(subscriptionId);
+    const paymentToken = await this.subscriptionService.getPaymentTokenById(subscriptionId);
 
     if (!subscription) throw new Error("Invalid input, no subscription found.");
-    if (!subscription.paymentToken) throw new Error("Invalid input, subscription cannot be charged.");
+    if (!paymentToken) throw new Error("Invalid input, subscription cannot be charged.");
 
     const pkg = await this.packageService.getById(subscription.packageId.toString());
     const donation = await this.donationService.getById(subscription.donationId.toString());
@@ -73,7 +161,7 @@ export class PayuService implements IPayuService {
       EXP_YEAR: "",
       CC_CVV: "",
       CC_OWNER: "",
-      CC_TOKEN: subscription.paymentToken,
+      CC_TOKEN: paymentToken,
       LANGUAGE: subscription.language,
       MERCHANT: credentials.merchant,
       ORDER_DATE: format(new Date(), "YYYY-MM-DD HH:mm:ss"),
@@ -116,9 +204,9 @@ export class PayuService implements IPayuService {
     };
 
     await this.subscriptionService.edit({
-      id: subscription._id.toString(),
+      id: subscription.id,
       processHistory: [...currentProcessHistory, lastProcess],
-      paymentToken: subscription.paymentToken,
+      paymentToken,
       deactivationReason: status ? null : DeactivationReason.ERROR,
       status: status ? SubscriptionStatus.RUNNING : SubscriptionStatus.CANCELLED
     });
@@ -127,9 +215,16 @@ export class PayuService implements IPayuService {
       status,
       body: response.data || ""
     };
-  }
+  };
 
-  public async verifyNotification(input: any) {
+  public getFormContents = async (donation: IDonation, pkg: IPackage, language: LanguageCode) => {
+    const credentials = this.getCredentials(donation.usingAmex);
+    const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
+    const hash = await this.generateHash(hashInput, credentials.secret);
+    return this.finalizeFormFields(hashInput, donation, pkg, language, hash);
+  };
+
+  public verifyNotification = async (input: any) => {
     const { HASH: hash, ...data } = input;
     const { REFNOEXT: reference, TOKEN_HASH: paymentToken } = data;
 
@@ -175,100 +270,5 @@ export class PayuService implements IPayuService {
       donationId: donation.id,
       returnHash: "<epayment>" + payu.DATE + "|" + returnHash + "</epayment>"
     };
-  }
-
-  public async getFormContents(donation: IDonation, pkg: IPackage, language: LanguageCode) {
-    const credentials = this.getCredentials(donation.usingAmex);
-    const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
-    const hash = await this.generateHash(hashInput, credentials.secret);
-    return this.finalizeFormFields(hashInput, donation, pkg, language, hash);
-  }
-
-  private createHashInput(donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object {
-    const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
-    const ref = this.getReference(pkg, donation);
-
-    return {
-      MERCHANT: merchant,
-      ORDER_REF: ref || null,
-      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:mm:ss"),
-      "ORDER_PNAME[0]": tag.name,
-      "ORDER_PCODE[0]": pkg.id,
-      "ORDER_PINFO[0]": tag.description || "",
-      "ORDER_PRICE[0]": pkg.price.amount,
-      "ORDER_QTY[0]": donation.quantity.toString(),
-      "ORDER_VAT[0]": "0",
-      ORDER_SHIPPING: "",
-      PRICES_CURRENCY: pkg.price.currency,
-      PAY_METHOD: this.getPayMethod(pkg),
-      "ORDER_PRICE_TYPE[0]": "GROSS",
-      INSTALLMENT_OPTIONS: this.getInstallmentOptions(pkg)
-    };
-  }
-
-  private getPayMethod = (pkg: IPackage) => (pkg.repeatConfig !== RepeatConfig.NONE ? "CCVISAMC" : "");
-
-  private getInstallmentOptions = (pkg: IPackage) =>
-    pkg.repeatConfig !== RepeatConfig.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
-
-  private getReference = (pkg: IPackage, donation: IDonation) =>
-    pkg.repeatConfig !== RepeatConfig.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
-
-  private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
-
-  private generateHash = (input: object, secret: string, shouldSort: boolean = false) => {
-    return new Promise<string>(resolve => {
-      const keys = Object.keys(input);
-      const sortHandled = shouldSort ? keys.sort() : keys;
-      const toBeHashed = sortHandled
-        .map(key => (input as any)[key])
-        .map(value => {
-          if (!value) return "0";
-          if (Array.isArray(value)) return value.map(this.getResult).join();
-          return this.getResult(value);
-        })
-        .join("");
-
-      const hmac = createHmac("md5", secret);
-      hmac.setEncoding("hex");
-      hmac.end(toBeHashed, "utf8", () => {
-        const hash = hmac.read();
-        return resolve(hash.toString());
-      });
-    });
-  };
-
-  private finalizeFormFields = (
-    input: object,
-    donation: IDonation,
-    pkg: IPackage,
-    language: LanguageCode,
-    hash: string
-  ) => {
-    const { firstName, lastName } = splitName(donation.fullName);
-    const tokenSettings: object =
-      pkg.repeatConfig !== RepeatConfig.NONE
-        ? {
-            LU_ENABLE_TOKEN: "1"
-          }
-        : {};
-
-    const finalObject = {
-      ...input,
-      BILL_FNAME: firstName,
-      BILL_LNAME: lastName,
-      BILL_EMAIL: donation.email,
-      BILL_PHONE: "-",
-      BILL_COUNTRYCODE: "TR",
-      BACK_REF: this.backRef,
-      LANGUAGE: language,
-      ...tokenSettings,
-      ORDER_HASH: hash
-    };
-
-    return Object.entries(finalObject).map(([key, value]) => ({
-      key,
-      value: value.toString()
-    }));
   };
 }
