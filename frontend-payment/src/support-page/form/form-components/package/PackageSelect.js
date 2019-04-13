@@ -1,9 +1,15 @@
 import React, { useContext } from "react";
 import { Form, Select } from "antd";
 
-import { getPackageName } from "../../../../utils";
 import { TranslationContext } from "../../../../translations";
 import { PackageContext } from "./PackageContext";
+
+import {
+  getPackageName,
+  getPackagePriceText,
+  isPackageRecurrent,
+  getPackageRecurrencyTranslationKey,
+} from "../../../../utils";
 
 import PackageDetails from "./PackageDetails";
 
@@ -34,8 +40,12 @@ const PackageSelect = props => {
             {!loading &&
               packages.map(pack => (
                 <Select.Option key={pack.id} value={pack.id}>
-                  {getPackageName(pack, langCode)} - {pack.price.amount}
-                  {pack.price.currency}
+                  {getPackageName(pack, langCode)} - {getPackagePriceText(pack)}{" "}
+                  {isPackageRecurrent(pack.repeatConfig)
+                    ? translate(
+                        getPackageRecurrencyTranslationKey(pack.repeatConfig),
+                      )
+                    : null}
                 </Select.Option>
               ))}
           </Select>,

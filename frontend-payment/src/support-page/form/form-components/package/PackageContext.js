@@ -22,6 +22,7 @@ const query = gql`
         amount
       }
       isCustomizable
+      repeatConfig
     }
     __type(name: "Currency") {
       name
