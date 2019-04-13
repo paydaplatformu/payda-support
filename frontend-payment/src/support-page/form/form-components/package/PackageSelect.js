@@ -9,7 +9,7 @@ import PackageDetails from "./PackageDetails";
 
 const PackageSelect = props => {
   const { translate, langCode } = useContext(TranslationContext);
-  const { loading, packages } = useContext(PackageContext);
+  const { loading, packages, selectPackage } = useContext(PackageContext);
 
   return (
     <div style={{ width: "100%", marginRight: 10 }}>
@@ -27,6 +27,9 @@ const PackageSelect = props => {
             size="large"
             loading={loading}
             disabled={loading}
+            onSelect={value =>
+              selectPackage(packages.find(p => p.id === value))
+            }
           >
             {!loading &&
               packages.map(pack => (
