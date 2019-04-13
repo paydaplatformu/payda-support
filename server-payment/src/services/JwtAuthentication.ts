@@ -130,7 +130,7 @@ export class JwtAuthentication implements IAuthentication {
    *
    */
   public async verifyScope(token: Token, scope: string | string[]): Promise<boolean> {
-    return true;
+    return scope === "admin" || (Array.isArray(scope) && scope.includes("scope") && scope.length === 0);
   }
 
   /**
