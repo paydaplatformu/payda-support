@@ -21,5 +21,7 @@
   "custom_amount_placeholder": "Amount of donation",
   "custom_currency_placeholder": "Currency",
   "thank_you_page_title": "Thank You!",
-  "thank_you_page_description": "We'd like to say thank you for support and donation."
+  "thank_you_page_description": "We'd like to say thank you for support and donation.",
+  "recurring_monthly": "(Once per month)",
+  "recurring_yearly": "(Once per year)"
 }
