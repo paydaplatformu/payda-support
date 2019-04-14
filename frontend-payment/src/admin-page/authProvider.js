@@ -1,5 +1,5 @@
 import qs from "qs";
-import { AUTH_LOGIN, AUTH_LOGOUT } from "react-admin";
+import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR } from "react-admin";
 import { baseURL } from "../constants";
 
 export default (type, params) => {
@@ -13,11 +13,11 @@ export default (type, params) => {
         client_secret: "123456",
         username,
         password,
-        scope: "admin",
+        scope: "admin"
       }),
       headers: new Headers({
-        "Content-Type": "application/x-www-form-urlencoded",
-      }),
+        "Content-Type": "application/x-www-form-urlencoded"
+      })
     });
     return fetch(request)
       .then(response => {
@@ -30,7 +30,17 @@ export default (type, params) => {
         localStorage.setItem("accessToken", accessToken);
       });
   }
-
+  if (type === AUTH_ERROR) {
+    if (params.graphQLErrors) {
+      const authenticationError = params.graphQLErrors.find(
+        error => error.extensions.code === "UNAUTHENTICATED"
+      );
+      if (authenticationError) {
+        localStorage.removeItem("accessToken");
+        return Promise.reject();
+      }
+    }
+  }
   if (type === AUTH_LOGOUT) {
     localStorage.removeItem("accessToken");
     return Promise.resolve();
