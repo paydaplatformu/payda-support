@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { Currency } from "./Currency";
 import { IMonetaryAmount } from "./MonetaryAmount";
 import { IPackageTag } from "./PackageTag";
 import { RepeatConfig } from "./RepeatConfig";
@@ -27,8 +28,11 @@ export interface IPackageModifier {
 export interface IPackageFilters {
   ids?: string[];
   onlyActive?: boolean;
-  isCustom?: boolean;
+  showCustom?: boolean;
   repeatConfig?: RepeatConfig;
+  amount?: number;
+  currency?: Currency;
+  search?: string;
 }
 
 export interface IPackage {

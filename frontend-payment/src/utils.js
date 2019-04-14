@@ -55,5 +55,6 @@ export const repeatConfigChoices = [
 ];
 
 export const currencyChoices = [
-  [{ id: CURRENCY.TRY, name: "TRY" }, { id: CURRENCY.USD, name: "USD" }]
+  { id: CURRENCY.TRY, name: "TRY" },
+  { id: CURRENCY.USD, name: "USD" }
 ];

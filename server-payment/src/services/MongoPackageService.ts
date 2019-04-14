@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Cursor, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { IMonetaryAmount } from "../models/MonetaryAmount";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
@@ -13,6 +13,13 @@ export class MongoPackageService
   implements IPackageService {
   protected static collectionName = "packages";
 
+  protected async initiate(): Promise<void> {
+    const hasSearchIndex = await this.collection.indexExists("search");
+    if (!hasSearchIndex) {
+      await this.collection.createIndex({ "defaultTag.name": "text", reference: "text" }, { name: "search" });
+    }
+  }
+
   protected async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {
     const fromSuper = await super.createEntity(creator);
     return {
@@ -23,12 +30,23 @@ export class MongoPackageService
   }
   protected creatorValidator: Validator<IPackageCreator> = {};
 
-  protected getFilters = ({ onlyActive, ids, isCustom, repeatConfig }: IPackageFilters): object[] => {
+  protected getFilters = ({
+    onlyActive,
+    ids,
+    showCustom,
+    repeatConfig,
+    amount,
+    currency,
+    search
+  }: IPackageFilters): object[] => {
     return [
-      onlyActive !== undefined ? { isActive: onlyActive } : undefined,
-      isCustom !== undefined ? { isCustom } : undefined,
+      onlyActive === true ? { isActive: true } : undefined,
+      showCustom !== true ? { isCustom: false } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
-      repeatConfig !== undefined ? { repeatConfig } : undefined
+      repeatConfig !== undefined ? { repeatConfig } : undefined,
+      amount !== undefined ? { "price.amount": amount } : undefined,
+      currency !== undefined ? { "price.currency": currency } : undefined,
+      search !== undefined ? { $text: { $search: search } } : undefined
     ].filter(el => el !== undefined) as any;
   };
 
@@ -55,7 +73,7 @@ export class MongoPackageService
   };
 
   public getDefaultFilters = (): IPackageFilters => {
-    return { onlyActive: true, ids: undefined, isCustom: false };
+    return { onlyActive: true, ids: undefined, showCustom: false };
   };
 
   public isCustomPrice = (originalPrice: IMonetaryAmount, price: IMonetaryAmount) => {

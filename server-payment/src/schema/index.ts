@@ -126,7 +126,14 @@ const rootResolvers: IResolvers<any, IContext> = {
     allPackages: (
       parent,
       {
-        filter: { onlyActive, ids, isCustom } = { onlyActive: true, ids: undefined, isCustom: false },
+        filter: { onlyActive, ids, showCustom, amount, currency, search } = {
+          onlyActive: true,
+          ids: undefined,
+          amount: undefined,
+          currency: undefined,
+          showCustom: false,
+          search: undefined
+        },
         sortField,
         sortOrder,
         page,
@@ -138,7 +145,7 @@ const rootResolvers: IResolvers<any, IContext> = {
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
-      return packageService.getAll({ onlyActive, ids, isCustom }, pagination, sorting);
+      return packageService.getAll({ onlyActive, ids, showCustom, amount, currency, search }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();

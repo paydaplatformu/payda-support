@@ -8,6 +8,11 @@ export const typeDef = gql`
   input PackageFilter {
     ids: [String!]
     onlyActive: Boolean
+    showCustom: Boolean
+    repeatConfig: RepeatConfig
+    amount: Float
+    currency: Currency
+    search: String
   }
 
   type Package {

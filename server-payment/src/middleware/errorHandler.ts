@@ -1,6 +1,6 @@
 import { ErrorRequestHandler } from "express";
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.error(err.stack);
-  next(err);
+export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  console.error(error.stack);
+  next(error);
 };

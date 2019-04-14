@@ -19,6 +19,10 @@ export abstract class BaseMongoService<
 
   protected collection: Collection<Entity>;
 
+  protected initiate(): Promise<void> {
+    return Promise.resolve();
+  }
+
   protected async createEntity(creator: Creator): Promise<Entity> {
     return ({
       ...creator,
