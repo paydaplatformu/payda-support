@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import { Admin, Resource } from "react-admin";
-import ApolloClient from "apollo-boost";
 import buildGraphQLProvider from "ra-data-graphql-simple";
 
 import { DonationList } from "./donation";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
-
-const client = new ApolloClient({
-  uri: "https://payda-support-v2.herokuapp.com/graphql",
-  // uri: "http://192.168.178.39:8080/graphql",
-});
+import authProvider from "./authProvider";
+import { client } from "./dataProvider";
 
 class AdminPage extends Component {
   state = { provider: null };
@@ -26,7 +22,7 @@ class AdminPage extends Component {
     }
 
     return (
-      <Admin dataProvider={this.state.provider}>
+      <Admin dataProvider={this.state.provider} authProvider={authProvider}>
         <Resource name="Donation" list={DonationList} />
         <Resource
           name="Package"
