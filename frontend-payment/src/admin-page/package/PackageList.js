@@ -22,16 +22,15 @@ import {
 const PackageFilter = props => (
   <Filter {...props}>
     <BooleanInput label="Only Active" source="onlyActive" alwaysOn />
-    <BooleanInput label="Show Custom" source="isCustom" />
-    <TextInput label="Id" source="id" />
-    <TextInput label="Ref" source="reference" />
-    <TextInput label="Name" source="name" />
-    <NumberInput label="Price" source="price.amount" />
+    <TextInput label="Search" source="search" alwaysOn />
     <SelectInput
-      label="Currency"
-      source="price.currency"
-      choices={currencyChoices}
+      label="Repeat Interval"
+      source="repeatConfig"
+      choices={repeatConfigChoices}
     />
+    <NumberInput label="Amount" source="amount" />
+    <SelectInput label="Currency" source="currency" choices={currencyChoices} />
+    <BooleanInput label="Show Custom" source="showCustom" />
   </Filter>
 );
 
@@ -41,7 +40,7 @@ const PackageList = props => (
     perPage={25}
     sort={{ field: "priority", order: "DESC" }}
     filters={<PackageFilter />}
-    filterDefaultValues={{ onlyActive: true, isCustom: false }}
+    filterDefaultValues={{ onlyActive: true, showCustom: false }}
   >
     <Datagrid rowClick="edit">
       <TextField label="Id" source="id" />

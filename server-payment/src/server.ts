@@ -38,96 +38,108 @@ const container = new Container();
 const profile = getProfile(environment);
 container.load(profile);
 
-export const createServer = async (callback?: (error: any, app: Express) => any) => {
-  await bindMongoDb(container, log);
+export const createServer = async (callback?: (error?: any, app?: Express) => any) => {
+  try {
+    await bindMongoDb(container, log);
 
-  const userService = container.get<IUserService>(TYPES.IUserService);
-  const model = container.get<IAuthentication>(TYPES.IAuthentication);
-  const payuService = container.get<IPayuService>(TYPES.IPayuService);
-  const donationService = container.get<IDonationService>(TYPES.IDonationService);
+    const userService = container.get<IUserService>(TYPES.IUserService);
+    const model = container.get<IAuthentication>(TYPES.IAuthentication);
+    const payuService = container.get<IPayuService>(TYPES.IPayuService);
+    const donationService = container.get<IDonationService>(TYPES.IDonationService);
 
-  await createAdminUser(userService);
+    const initializationPromises = Object.values(TYPES)
+      .flatMap(type => container.getAll(type))
+      .filter((instance: any) => instance.initiate)
+      .map((instance: any) => instance.initiate());
 
-  const context = createGraphQLContext(container, model);
+    await Promise.all(initializationPromises);
 
-  const server = new ApolloServer({
-    context,
-    typeDefs,
-    resolvers,
-    introspection: true,
-    formatError: (error: any) => {
-      delete error.extensions.exception;
-      if (error instanceof ValidationError) {
-        return new InvalidInput(error.invalidFields);
+    await createAdminUser(userService);
+
+    const context = createGraphQLContext(container, model);
+
+    const server = new ApolloServer({
+      context,
+      typeDefs,
+      resolvers,
+      introspection: true,
+      formatError: (error: any) => {
+        delete error.extensions.exception;
+        console.error(error);
+        return error;
       }
-      console.error(error);
-      return error;
-    }
-  });
+    });
 
-  const app: Express = express();
+    const app: Express = express();
 
-  const oauth = new OAuthServer({
-    model
-  });
+    const oauth = new OAuthServer({
+      model
+    });
 
-  /**
-   * Express middlewares
-   */
-  app.use(cors());
+    /**
+     * Express middlewares
+     */
+    app.use(cors());
 
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  server.applyMiddleware({ app });
-  app.use(errorHandler);
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    server.applyMiddleware({ app });
+    app.use(errorHandler);
 
-  /**
-   * Authentication
-   */
-  app.post("/oauth2/token", async (req, res) => {
-    const response = await oauth.token(new Request(req), new Response(res));
-    res.send(response);
-  });
+    /**
+     * Authentication
+     */
+    app.post("/oauth2/token", async (req, res) => {
+      const response = await oauth.token(new Request(req), new Response(res));
+      res.send(response);
+    });
 
-  /**
-   * Payu Endpoints
-   */
-  app.post("/notification", async (req, res) => {
-    const { returnHash, donationId } = await payuService.verifyNotification(req.body);
-    await donationService.confirmPayment(donationId);
-    res.send(returnHash);
-  });
+    /**
+     * Payu Endpoints
+     */
+    app.post("/notification", async (req, res) => {
+      const { returnHash, donationId } = await payuService.verifyNotification(req.body);
+      await donationService.confirmPayment(donationId);
+      res.send(returnHash);
+    });
 
-  /**
-   * Serve images
-   */
+    /**
+     * Serve images
+     */
 
-  app.use("/static", express.static(path.resolve(__dirname, "static")));
+    app.use("/static", express.static(path.resolve(__dirname, "static")));
 
-  /**
-   * Rest of the routes are managed by frontend
-   */
-  app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../frontend-dist", "index.html"));
-  });
+    /**
+     * Rest of the routes are managed by frontend
+     */
+    app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "../frontend-dist", "index.html"));
+    });
 
-  /**
-   * Start application
-   */
-  return app.listen(port, host, () => {
-    log(
-      `\n  ${chalk.gray("App is running at")} ${chalk.cyan("http://%s:%d")} ${chalk.gray("in")} ${chalk.blue(
-        "%s"
-      )} ${chalk.green("mode")}`,
-      host,
-      port,
-      environment
-    );
-    log(`  ${chalk.gray("Graphql is running at")} ${chalk.cyan("http://%s:%d%s")}`, host, port, server.graphqlPath);
-    log(`  ${chalk.gray("Press")} ${chalk.red("CTRL-C")} ${chalk.gray("to stop.\n")}`);
+    /**
+     * Start application
+     */
+    return app.listen(port, host, () => {
+      log(
+        `\n  ${chalk.gray("App is running at")} ${chalk.cyan("http://%s:%d")} ${chalk.gray("in")} ${chalk.blue(
+          "%s"
+        )} ${chalk.green("mode")}`,
+        host,
+        port,
+        environment
+      );
+      log(`  ${chalk.gray("Graphql is running at")} ${chalk.cyan("http://%s:%d%s")}`, host, port, server.graphqlPath);
+      log(`  ${chalk.gray("Press")} ${chalk.red("CTRL-C")} ${chalk.gray("to stop.\n")}`);
+      if (callback) {
+        callback(null, app);
+      }
+    });
+  } catch (error) {
+    log(`  ${chalk.red("Application failed to initialize")}`);
+    console.error(error.stack);
     if (callback) {
-      callback(null, app);
+      callback(error);
     }
-  });
+  }
 };
