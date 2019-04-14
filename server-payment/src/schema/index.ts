@@ -1,7 +1,7 @@
 import { gql, IResolvers } from "apollo-server-express";
 import { merge } from "lodash";
 import { IDonationCreator } from "../models/Donation";
-import { AuthorizationError, AuthorizationRequired } from "../models/Errors";
+import { AuthorizationError, AuthenticationRequired } from "../models/Errors";
 import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
@@ -114,7 +114,7 @@ const SchemaDefinition = gql`
 const rootResolvers: IResolvers<any, IContext> = {
   Query: {
     users: (parent, { id }, { userService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return userService.getAll(
         {},
         { page: 1, perPage: Number.MAX_SAFE_INTEGER },
@@ -141,42 +141,42 @@ const rootResolvers: IResolvers<any, IContext> = {
       return packageService.getAll({ onlyActive, ids, isCustom }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return { count: await packageService.count(filter) };
     },
 
     Donation: (parent, { id }, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return donationService.getById(id);
     },
     allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       return donationService.getAll(filter, pagination, sorting);
     },
     _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return { count: await donationService.count(filter) };
     },
 
     Subscription: (parent, { id }, { subscriptionService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return subscriptionService.getById(id);
     },
     allSubscriptions: (parent, { filter, sortField, sortOrder, page, perPage }, { subscriptionService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       return subscriptionService.getAll(filter, pagination, sorting);
     },
     _allSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return { count: await subscriptionService.count(filter) };
     },
 
     ChargableSubscription: (parent, { id, repeatConfig }, { subscriptionManagerService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return subscriptionManagerService.getChargableSubscriptionById(id, repeatConfig);
     },
     allChargableSubscriptions: (
@@ -184,7 +184,7 @@ const rootResolvers: IResolvers<any, IContext> = {
       { filter: { repeatConfig, ...restFilters }, sortField, sortOrder, page, perPage },
       { subscriptionManagerService, user }
     ) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       return subscriptionManagerService.getChargableSubscriptions(repeatConfig, restFilters, pagination, sorting);
@@ -194,42 +194,42 @@ const rootResolvers: IResolvers<any, IContext> = {
       { repeatConfig, ...restFilters },
       { subscriptionManagerService, user }
     ) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return { count: await subscriptionManagerService.countChargableSubscriptions(repeatConfig, restFilters) };
     }
   },
   Mutation: {
     createPackage: (parent, args, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return packageService.create({
         ...(args as IPackageCreator),
         isCustom: false
       });
     },
     updatePackage: (parent, args, { packageService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return packageService.edit(args as IPackageModifier);
     },
     createDonation: async (parent, { donationCreator, language }, { donationManagerService }) => {
       return donationManagerService.createDonation(donationCreator as IDonationCreator, language);
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return donationService.cleanPendingDonations();
     },
 
     updateSubscription: (parent, args, { subscriptionService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return subscriptionService.edit(args as ISubscriptionModifier);
     },
 
     chargeSubscription: (parent, { id }, { payuService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return payuService.chargeUsingToken(id);
     },
 
     cancelSubscription: (parent, { id }, { subscriptionService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return subscriptionService.cancelSubscription(id);
     }
   }

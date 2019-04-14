@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-core";
 import { IResolvers } from "graphql-tools";
-import { AuthorizationRequired } from "../models/Errors";
+import { AuthenticationRequired } from "../models/Errors";
 import { IPackage } from "../models/Package";
 import { IContext } from "./context";
 
@@ -31,7 +31,7 @@ export const typeDef = gql`
 export const resolvers: IResolvers<IPackage, IContext> = {
   Package: {
     donationCount: (parent, args, { donationService, user }) => {
-      if (!user) throw new AuthorizationRequired();
+      if (!user) throw new AuthenticationRequired();
       return donationService.countByPackageId(parent.id);
     }
   }

@@ -5,6 +5,7 @@ import buildGraphQLProvider from "ra-data-graphql-simple";
 import { DonationList } from "./donation";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 import authProvider from "./authProvider";
+import i18nProvider from "./i18nProvider";
 import { client } from "./dataProvider";
 
 class AdminPage extends Component {
@@ -12,7 +13,7 @@ class AdminPage extends Component {
 
   componentDidMount() {
     buildGraphQLProvider({ client }).then(provider =>
-      this.setState({ provider }),
+      this.setState({ provider })
     );
   }
 
@@ -22,7 +23,11 @@ class AdminPage extends Component {
     }
 
     return (
-      <Admin dataProvider={this.state.provider} authProvider={authProvider}>
+      <Admin
+        dataProvider={this.state.provider}
+        authProvider={authProvider}
+        i18nProvider={i18nProvider}
+      >
         <Resource name="Donation" list={DonationList} />
         <Resource
           name="Package"

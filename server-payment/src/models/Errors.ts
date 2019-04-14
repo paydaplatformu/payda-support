@@ -1,8 +1,9 @@
 import { AuthenticationError, UserInputError } from "apollo-server-core";
 
-export class AuthorizationRequired extends AuthenticationError {
+export class AuthenticationRequired extends AuthenticationError {
   constructor() {
     super("Authorization needed to access this function.");
+    this.statusCode = 403;
   }
 }
 
@@ -25,19 +26,19 @@ export class InvalidInput extends UserInputError {
     super("Invalid input.", {
       invalidFields
     });
+    this.statusCode = 400;
   }
 }
 
-export class AuthorizationError extends Error {
+export class AuthorizationError extends AuthenticationError {
   constructor(message: string = "Not authorized.") {
     super(message);
+    this.statusCode = 401;
   }
 }
 
-export class ValidationError extends Error {
-  public invalidFields: InvalidField[];
+export class ValidationError extends InvalidInput {
   constructor(invalidFields: InvalidField[]) {
-    super("Invalid data.");
-    this.invalidFields = invalidFields;
+    super(invalidFields);
   }
 }
