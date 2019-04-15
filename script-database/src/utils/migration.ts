@@ -24,7 +24,7 @@ export const convertPackage = (pkg: any) => ({
   reference: undefined,
   createdAt: pkg.created_at,
   updatedAt: pkg.updated_at,
-  repeatConfig: "NONE",
+  repeatInterval: "NONE",
   image: imageUrl(pkg.image),
   price: {
     currency: pkg.price.currency,
@@ -33,7 +33,11 @@ export const convertPackage = (pkg: any) => ({
   priority: pkg.priority,
   isActive: true,
   isCustom: false,
-  isCustomizable: false
+  customizationConfig: {
+    allowPriceAmountCustomization: false,
+    allowPriceCurrencyCustomization: false,
+    allowRepeatIntervalCustomization: false
+  }
 });
 
 interface IDonationEntity {
@@ -76,7 +80,7 @@ export const setPackage = (packages: Collection) => (donation: any) => {
           reference: undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
-          repeatConfig: "NONE",
+          repeatInterval: "NONE",
           image: undefined,
           price: {
             currency: donation.price.currency,
@@ -85,7 +89,11 @@ export const setPackage = (packages: Collection) => (donation: any) => {
           priority: 1,
           isActive: false,
           isCustom: false,
-          isCustomizable: false
+          customizationConfig: {
+            allowPriceAmountCustomization: false,
+            allowPriceCurrencyCustomization: false,
+            allowRepeatIntervalCustomization: false
+          }
         };
 
         const convertedPackage = donation.package._id && {

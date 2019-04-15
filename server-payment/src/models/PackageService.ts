@@ -12,5 +12,4 @@ export interface IPackageService {
   getByRepeatInterval(repeatInterval: RepeatInterval): Promise<IPackage[]>;
   create(packageCreator: IPackageCreator): Promise<IPackage>;
   edit(packageModifier: IPackageModifier): Promise<IPackage | null>;
-  isCustomPrice(originalPrice: IMonetaryAmount, price: IMonetaryAmount): boolean;
 }

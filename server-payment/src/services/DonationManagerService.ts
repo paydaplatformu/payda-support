@@ -30,22 +30,45 @@ export class DonationManagerService implements IDonationManagerService {
   private getPackageForDonationCreator = async (donationCreator: IDonationCreator) => {
     const pkg = await this.packageService.getById(donationCreator.packageId);
     if (!pkg) throw new Error("Package does not exist, cannot create donation.");
+    const priceAmount =
+      pkg.customizationConfig.allowPriceAmountCustomization && donationCreator.customPriceAmount
+        ? donationCreator.customPriceAmount
+        : pkg.price.amount;
 
-    if (pkg.isCustomizable && donationCreator.customPrice) {
-      if (this.packageService.isCustomPrice(pkg.price, donationCreator.customPrice)) {
-        return this.packageService.create({
-          isCustomizable: false,
-          defaultTag: pkg.defaultTag,
-          image: pkg.image,
-          price: donationCreator.customPrice,
-          priority: pkg.priority,
-          reference: pkg.reference,
-          repeatInterval: pkg.repeatInterval,
-          tags: pkg.tags,
-          isCustom: true
-        });
-      }
+    const priceCurrency =
+      pkg.customizationConfig.allowPriceCurrencyCustomization && donationCreator.customPriceCurrency
+        ? donationCreator.customPriceCurrency
+        : pkg.price.currency;
+
+    const repeatInterval =
+      pkg.customizationConfig.allowRepeatIntervalCustomization && donationCreator.customRepeatInterval
+        ? donationCreator.customRepeatInterval
+        : pkg.repeatInterval;
+
+    const isCustom =
+      priceAmount !== pkg.price.amount || priceCurrency !== pkg.price.currency || repeatInterval !== pkg.repeatInterval;
+
+    if (isCustom) {
+      return this.packageService.create({
+        customizationConfig: {
+          allowPriceAmountCustomization: false,
+          allowPriceCurrencyCustomization: false,
+          allowRepeatIntervalCustomization: false
+        },
+        defaultTag: pkg.defaultTag,
+        image: pkg.image,
+        price: {
+          amount: priceAmount,
+          currency: priceCurrency
+        },
+        priority: pkg.priority,
+        reference: pkg.reference,
+        repeatInterval,
+        tags: pkg.tags,
+        isCustom: true
+      });
     }
+
     return pkg;
   };
 

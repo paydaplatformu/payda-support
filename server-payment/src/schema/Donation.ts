@@ -1,7 +1,4 @@
 import { gql } from "apollo-server-core";
-import { IResolvers } from "graphql-tools";
-import { IDonation } from "../models/Donation";
-import { IContext } from "./context";
 
 export const typeDef = gql`
   input DonationFilter {
@@ -12,7 +9,9 @@ export const typeDef = gql`
     fullName: String!
     email: String!
     packageId: String!
-    customPrice: MonetaryAmountInput
+    customPriceAmount: Float
+    customPriceCurrency: Currency
+    customRepeatInterval: RepeatInterval
     notes: String
     quantity: Int!
     usingAmex: Boolean!

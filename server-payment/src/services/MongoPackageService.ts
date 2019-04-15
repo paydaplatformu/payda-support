@@ -58,7 +58,7 @@ export class MongoPackageService
       image: entity.image,
       isActive: entity.isActive,
       price: entity.price,
-      isCustomizable: entity.isCustomizable,
+      customizationConfig: entity.customizationConfig,
       isCustom: entity.isCustom,
       priority: entity.priority,
       reference: entity.reference,
@@ -74,9 +74,5 @@ export class MongoPackageService
 
   public getDefaultFilters = (): IPackageFilters => {
     return { onlyActive: true, ids: undefined, showCustom: false };
-  };
-
-  public isCustomPrice = (originalPrice: IMonetaryAmount, price: IMonetaryAmount) => {
-    return !(originalPrice.amount === price.amount && originalPrice.currency === price.currency);
   };
 }

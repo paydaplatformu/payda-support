@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { Currency } from "./Currency";
 import { IMonetaryAmount } from "./MonetaryAmount";
+import { PackageCustomizationConfig } from "./PackageCustomizationConfig";
 import { IPackageTag } from "./PackageTag";
 import { RepeatInterval } from "./RepeatInterval";
 
@@ -10,7 +11,7 @@ export interface IPackageCreator {
   repeatInterval: RepeatInterval;
   image?: string;
   price: IMonetaryAmount;
-  isCustomizable: boolean;
+  customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
   tags: IPackageTag[];
@@ -44,7 +45,7 @@ export interface IPackage {
   repeatInterval: RepeatInterval;
   image?: string;
   price: IMonetaryAmount;
-  isCustomizable: boolean;
+  customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
   tags: IPackageTag[];
@@ -60,7 +61,7 @@ export interface IPackageEntity {
   repeatInterval: RepeatInterval;
   image?: string;
   price: IMonetaryAmount;
-  isCustomizable: boolean;
+  customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
   tags: IPackageTag[];

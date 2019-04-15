@@ -21,11 +21,20 @@ const query = gql`
         currency
         amount
       }
-      isCustomizable
+      customizationConfig {
+        allowPriceAmountCustomization
+        allowPriceCurrencyCustomization
+        allowRepeatIntervalCustomization
+      }
       repeatInterval
     }
-    __type(name: "Currency") {
-      name
+    availableCurrencies: __type(name: "Currency") {
+      enumValues {
+        name
+      }
+    }
+
+    availableRepeatIntervals: __type(name: "RepeatInterval") {
       enumValues {
         name
       }
@@ -37,7 +46,7 @@ export const PackageContext = React.createContext();
 
 export const PackageContextProvider = ({ children }) => {
   const initialState = {
-    selectedPackage: {}
+    selectedPackage: null
   };
 
   const reducer = (state = initialState, action) => {
@@ -68,7 +77,11 @@ export const PackageContextProvider = ({ children }) => {
               loading,
               packages: data.allPackages,
               availableCurrencies:
-                data.__type && data.__type.enumValues.map(c => c.name),
+                data.availableCurrencies &&
+                data.availableCurrencies.enumValues.map(c => c.name),
+              availableRepeatIntervals:
+                data.availableRepeatIntervals &&
+                data.availableRepeatIntervals.enumValues.map(c => c.name),
               selectedPackage: state && state.selectedPackage,
               selectPackage
             }}

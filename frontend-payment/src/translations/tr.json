@@ -20,8 +20,12 @@
   "notes": "Bağışınıza eklemek istediğiniz not",
   "custom_amount_placeholder": "Bağış miktarı",
   "custom_currency_placeholder": "Para birimi",
+  "custom_repeat_interval_placeholder": "Tekrar",
   "thank_you_page_title": "Teşekkürler!",
   "thank_you_page_description": "Desteğiniz ve bağışınız için teşekkür ederiz.",
   "recurring_monthly": "(Ayda bir defa)",
-  "recurring_yearly": "(Yılda bir defa)"
+  "recurring_yearly": "(Yılda bir defa)",
+  "monthly": "Aylık",
+  "yearly": "Yıllık",
+  "non_recurrent": "Tekrarsız"
 }
