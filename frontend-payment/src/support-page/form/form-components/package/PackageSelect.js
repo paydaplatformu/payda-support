@@ -17,6 +17,12 @@ const PackageSelect = props => {
   const { translate, langCode } = useContext(TranslationContext);
   const { loading, packages, selectPackage } = useContext(PackageContext);
 
+  const onPackageSelect = value => {
+    const pkg = packages.find(p => p.id === value);
+    selectPackage(pkg);
+    props.onPackageSelect && props.onPackageSelect(pkg);
+  };
+
   return (
     <div style={{ width: "100%", marginRight: 10 }}>
       <Form.Item style={{ marginBottom: 0 }}>
@@ -33,9 +39,7 @@ const PackageSelect = props => {
             size="large"
             loading={loading}
             disabled={loading}
-            onSelect={value =>
-              selectPackage(packages.find(p => p.id === value))
-            }
+            onSelect={onPackageSelect}
           >
             {!loading &&
               packages.map(pack => (

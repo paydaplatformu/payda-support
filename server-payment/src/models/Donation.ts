@@ -1,11 +1,14 @@
 import { ObjectId } from "mongodb";
-import { IMonetaryAmount } from "./MonetaryAmount";
+import { Currency } from "./Currency";
+import { RepeatInterval } from "./RepeatInterval";
 
 export interface IDonationCreator {
   fullName: string;
   email: string;
   packageId: string;
-  customPrice?: IMonetaryAmount;
+  customPriceAmount?: number;
+  customPriceCurrency?: Currency;
+  customRepeatInterval?: RepeatInterval;
   quantity: number;
   usingAmex: boolean;
   notes?: string;

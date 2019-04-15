@@ -65,8 +65,7 @@ const PackageList = props => (
         label="Last Updated"
         source="updatedAt"
       />
-      <BooleanField label="Customizable" source="isCustomizable" />
-      <BooleanField label="Custom" source="isCustomizable" />
+      <BooleanField label="Custom" source="isCustom" />
       <BooleanField label="Active" source="isActive" />
     </Datagrid>
   </List>

@@ -25,7 +25,7 @@ export const typeDef = gql`
     donationCount: Int!
     image: String
     price: MonetaryAmount!
-    isCustomizable: Boolean!
+    customizationConfig: PackageCustomizationConfig!
     isCustom: Boolean!
     priority: Int
     tags: [PackageTag!]!

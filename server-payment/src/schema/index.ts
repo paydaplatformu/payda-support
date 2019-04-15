@@ -15,6 +15,7 @@ import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as ListMetadata } from "./ListMetadata";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
+import { typeDef as PackageCustomizationConfig } from "./PackageCustomizationConfig";
 import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as PaymentProcess } from "./PaymentProcess";
 import { typeDef as RepeatInterval } from "./RepeatInterval";
@@ -77,6 +78,7 @@ const Query = gql`
   type Mutation {
     createPackage(
       defaultTag: PackageTagInput!
+      customizationConfig: PackageCustomizationConfigInput!
       reference: String
       repeatInterval: RepeatInterval!
       image: String
@@ -254,6 +256,7 @@ export const typeDefs = [
   SubscriptionStatus,
   FormField,
   PackageTag,
+  PackageCustomizationConfig,
   SubscriptionChargeResult,
   SchemaDefinition,
   Query,

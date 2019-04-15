@@ -9,9 +9,10 @@ import HomePage from "./home-page/HomePage";
 import SupportPage from "./support-page/SupportPage";
 import AdminPage from "./admin-page/AdminPage";
 import ThankYouPage from "./thank-you-page/ThankYouPage";
+import { baseURL } from "./constants";
 
 const client = new ApolloClient({
-  uri: "https://payda-support-v2.herokuapp.com/graphql",
+  uri: `${baseURL}/graphql`
 });
 
 const App = () => (

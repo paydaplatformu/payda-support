@@ -22,3 +22,9 @@ export const RECURRENCY_TRANSLATION_KEYS = {
   MONTHLY: "recurring_monthly",
   YEARLY: "recurring_yearly"
 };
+
+export const REPEAT_INTERVAL_TRANSLATION_KEYS = {
+  MONTHLY: "monthly",
+  YEARLY: "yearly",
+  NONE: "non_recurrent"
+};
