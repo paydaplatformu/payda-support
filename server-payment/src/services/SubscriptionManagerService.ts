@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { IPackageService } from "../models/PackageService";
 import { PaginationSettings } from "../models/PaginationSettings";
-import { RepeatConfig } from "../models/RepeatConfig";
+import { RepeatInterval } from "../models/RepeatInterval";
 import { SortingSettings } from "../models/SortingSettings";
 import { IRunningSubscription, ISubscriptionFilters } from "../models/Subscription";
 import { ISubscriptionManagerService } from "../models/SubscriptionManagerService";
@@ -17,15 +17,15 @@ export class SubscriptionManagerService implements ISubscriptionManagerService {
   private subscriptionService: ISubscriptionService = null as any;
 
   public getChargableSubscriptions = async (
-    repeatConfig: RepeatConfig,
+    repeatInterval: RepeatInterval,
     filters: ISubscriptionFilters,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<IRunningSubscription[]> => {
-    const allowedPackages = await this.packageService.getByRepeatConfig(repeatConfig);
+    const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
-    return this.subscriptionService.getByChargableSubscriptionsForRepeatConfigAndPackageIds(
-      repeatConfig,
+    return this.subscriptionService.getByChargableSubscriptionsForRepeatIntervalAndPackageIds(
+      repeatInterval,
       allowedPackageIds,
       filters,
       pagination,
@@ -34,13 +34,13 @@ export class SubscriptionManagerService implements ISubscriptionManagerService {
   };
 
   public countChargableSubscriptions = async (
-    repeatConfig: RepeatConfig,
+    repeatInterval: RepeatInterval,
     filters: ISubscriptionFilters
   ): Promise<number> => {
-    const allowedPackages = await this.packageService.getByRepeatConfig(repeatConfig);
+    const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
-    return this.subscriptionService.countChargableSubscriptionsForRepeatConfigAndPackageIds(
-      repeatConfig,
+    return this.subscriptionService.countChargableSubscriptionsForRepeatIntervalAndPackageIds(
+      repeatInterval,
       allowedPackageIds,
       filters
     );
@@ -48,10 +48,10 @@ export class SubscriptionManagerService implements ISubscriptionManagerService {
 
   public getChargableSubscriptionById = async (
     id: string,
-    repeatConfig: RepeatConfig
+    repeatInterval: RepeatInterval
   ): Promise<IRunningSubscription | null> => {
-    const allowedPackages = await this.packageService.getByRepeatConfig(repeatConfig);
+    const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
-    return this.subscriptionService.getByIdForRepeatConfigAndPackageIds(id, repeatConfig, allowedPackageIds);
+    return this.subscriptionService.getByIdForRepeatIntervalAndPackageIds(id, repeatInterval, allowedPackageIds);
   };
 }

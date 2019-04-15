@@ -1,7 +1,7 @@
 import { gql, IResolvers } from "apollo-server-express";
 import { merge } from "lodash";
 import { IDonationCreator } from "../models/Donation";
-import { AuthorizationError, AuthenticationRequired } from "../models/Errors";
+import { AuthenticationRequired, AuthorizationError } from "../models/Errors";
 import { IPackageCreator, IPackageModifier } from "../models/Package";
 import { ISubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
@@ -17,7 +17,7 @@ import { typeDef as MonetaryAmount } from "./MonetaryAmount";
 import { resolvers as packageResolvers, typeDef as Package } from "./Package";
 import { typeDef as PackageTag } from "./PackageTag";
 import { typeDef as PaymentProcess } from "./PaymentProcess";
-import { typeDef as RepeatConfig } from "./RepeatConfig";
+import { typeDef as RepeatInterval } from "./RepeatInterval";
 import { typeDef as Subscription } from "./Subscription";
 import { typeDef as SubscriptionChargeResult } from "./SubscriptionChargeResult";
 import { typeDef as SubscriptionStatus } from "./SubscriptionStatus";
@@ -78,7 +78,7 @@ const Query = gql`
     createPackage(
       defaultTag: PackageTagInput!
       reference: String
-      repeatConfig: RepeatConfig!
+      repeatInterval: RepeatInterval!
       image: String
       price: MonetaryAmountInput!
       priority: Int!
@@ -182,27 +182,27 @@ const rootResolvers: IResolvers<any, IContext> = {
       return { count: await subscriptionService.count(filter) };
     },
 
-    ChargableSubscription: (parent, { id, repeatConfig }, { subscriptionManagerService, user }) => {
+    ChargableSubscription: (parent, { id, repeatInterval }, { subscriptionManagerService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return subscriptionManagerService.getChargableSubscriptionById(id, repeatConfig);
+      return subscriptionManagerService.getChargableSubscriptionById(id, repeatInterval);
     },
     allChargableSubscriptions: (
       parent,
-      { filter: { repeatConfig, ...restFilters }, sortField, sortOrder, page, perPage },
+      { filter: { repeatInterval, ...restFilters }, sortField, sortOrder, page, perPage },
       { subscriptionManagerService, user }
     ) => {
       if (!user) throw new AuthenticationRequired();
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      return subscriptionManagerService.getChargableSubscriptions(repeatConfig, restFilters, pagination, sorting);
+      return subscriptionManagerService.getChargableSubscriptions(repeatInterval, restFilters, pagination, sorting);
     },
     _allChargableSubscriptionsMeta: async (
       parent,
-      { repeatConfig, ...restFilters },
+      { repeatInterval, ...restFilters },
       { subscriptionManagerService, user }
     ) => {
       if (!user) throw new AuthenticationRequired();
-      return { count: await subscriptionManagerService.countChargableSubscriptions(repeatConfig, restFilters) };
+      return { count: await subscriptionManagerService.countChargableSubscriptions(repeatInterval, restFilters) };
     }
   },
   Mutation: {
@@ -245,7 +245,7 @@ const rootResolvers: IResolvers<any, IContext> = {
 export const typeDefs = [
   DateType,
   JsonType,
-  RepeatConfig,
+  RepeatInterval,
   Currency,
   MonetaryAmount,
   PaymentProcess,

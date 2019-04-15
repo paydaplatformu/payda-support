@@ -16,7 +16,7 @@ import {
 import {
   currencyChoices,
   defaultDateFieldProps,
-  repeatConfigChoices
+  repeatIntervalChoices
 } from "../../utils";
 
 const PackageFilter = props => (
@@ -25,8 +25,8 @@ const PackageFilter = props => (
     <TextInput label="Search" source="search" alwaysOn />
     <SelectInput
       label="Repeat Interval"
-      source="repeatConfig"
-      choices={repeatConfigChoices}
+      source="repeatInterval"
+      choices={repeatIntervalChoices}
     />
     <NumberInput label="Amount" source="amount" />
     <SelectInput label="Currency" source="currency" choices={currencyChoices} />
@@ -50,8 +50,8 @@ const PackageList = props => (
       <NumberField label="Donations" source="donationCount" />
       <SelectField
         label="Repeat Interval"
-        source="repeatConfig"
-        choices={repeatConfigChoices}
+        source="repeatInterval"
+        choices={repeatIntervalChoices}
       />
       <TextField label="Price" source="price.amount" />
       <TextField label="Currency" source="price.currency" />

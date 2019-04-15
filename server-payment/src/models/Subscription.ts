@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { DeactivationReason } from "./DeactivationReason";
 import { LanguageCode } from "./LanguageCode";
 import { PaymentProcess } from "./PaymentProcess";
-import { RepeatConfig } from "./RepeatConfig";
+import { RepeatInterval } from "./RepeatInterval";
 import { SubscriptionStatus } from "./SubscriptionStatus";
 
 export interface ISubscriptionCreator {
@@ -22,7 +22,7 @@ export interface ISubscriptionModifier {
 export interface ISubscriptionFilters {
   ids?: string[];
   status?: SubscriptionStatus;
-  repeatConfig?: RepeatConfig;
+  repeatInterval?: RepeatInterval;
 }
 
 export interface ISubscriptionBase {

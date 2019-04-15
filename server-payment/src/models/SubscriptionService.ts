@@ -1,11 +1,10 @@
 import { PaginationSettings } from "./PaginationSettings";
-import { RepeatConfig } from "./RepeatConfig";
+import { RepeatInterval } from "./RepeatInterval";
 import { SortingSettings } from "./SortingSettings";
 import {
   IRunningSubscription,
   ISubscription,
   ISubscriptionCreator,
-  ISubscriptionEntity,
   ISubscriptionFilters,
   ISubscriptionModifier
 } from "./Subscription";
@@ -16,20 +15,20 @@ export interface ISubscriptionService {
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<ISubscription[]>;
-  getByChargableSubscriptionsForRepeatConfigAndPackageIds(
-    repeatConfig: RepeatConfig,
+  getByChargableSubscriptionsForRepeatIntervalAndPackageIds(
+    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: ISubscriptionFilters,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<IRunningSubscription[]>;
-  getByIdForRepeatConfigAndPackageIds(
+  getByIdForRepeatIntervalAndPackageIds(
     id: string,
-    repeatConfig: RepeatConfig,
+    repeatInterval: RepeatInterval,
     packageIds: string[]
   ): Promise<IRunningSubscription | null>;
-  countChargableSubscriptionsForRepeatConfigAndPackageIds(
-    repeatConfig: RepeatConfig,
+  countChargableSubscriptionsForRepeatIntervalAndPackageIds(
+    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: ISubscriptionFilters
   ): Promise<number>;

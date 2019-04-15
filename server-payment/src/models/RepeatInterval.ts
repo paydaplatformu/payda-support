@@ -1,4 +1,4 @@
-export enum RepeatConfig {
+export enum RepeatInterval {
   NONE = "NONE",
   MONTHLY = "MONTHLY",
   YEARLY = "YEARLY"

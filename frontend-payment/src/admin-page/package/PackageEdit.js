@@ -11,7 +11,7 @@ import {
 } from "react-admin";
 
 import { LANG_CODES } from "../../constants";
-import { repeatConfigChoices, currencyChoices } from "../../utils";
+import { repeatIntervalChoices, currencyChoices } from "../../utils";
 
 const PackageEdit = props => (
   <Edit {...props}>
@@ -32,8 +32,8 @@ const PackageEdit = props => (
       <TextInput source="reference" />
       <SelectInput
         label="Repeat"
-        source="repeatConfig"
-        choices={repeatConfigChoices}
+        source="repeatInterval"
+        choices={repeatIntervalChoices}
       />
       <TextInput source="image" />
       <NumberInput source="price.amount" />

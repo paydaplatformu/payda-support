@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 import { IMonetaryAmount } from "../models/MonetaryAmount";
 import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
-import { RepeatConfig } from "../models/RepeatConfig";
+import { RepeatInterval } from "../models/RepeatInterval";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
 
@@ -34,7 +34,7 @@ export class MongoPackageService
     onlyActive,
     ids,
     showCustom,
-    repeatConfig,
+    repeatInterval,
     amount,
     currency,
     search
@@ -43,7 +43,7 @@ export class MongoPackageService
       onlyActive === true ? { isActive: true } : undefined,
       showCustom !== true ? { isCustom: false } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
-      repeatConfig !== undefined ? { repeatConfig } : undefined,
+      repeatInterval !== undefined ? { repeatInterval } : undefined,
       amount !== undefined ? { "price.amount": amount } : undefined,
       currency !== undefined ? { "price.currency": currency } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined
@@ -62,14 +62,14 @@ export class MongoPackageService
       isCustom: entity.isCustom,
       priority: entity.priority,
       reference: entity.reference,
-      repeatConfig: entity.repeatConfig,
+      repeatInterval: entity.repeatInterval,
       tags: entity.tags,
       updatedAt: entity.updatedAt
     };
   };
 
-  public getByRepeatConfig = (repeatConfig: RepeatConfig): Promise<IPackage[]> => {
-    return this.getAll({ repeatConfig });
+  public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<IPackage[]> => {
+    return this.getAll({ repeatInterval });
   };
 
   public getDefaultFilters = (): IPackageFilters => {

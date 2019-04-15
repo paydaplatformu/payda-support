@@ -31,10 +31,10 @@ export const getPackagePriceText = pack => {
   return `${packagePrice.amount}${packagePrice.currency}`;
 };
 
-export const isPackageRecurrent = repeatConfig => repeatConfig !== "NONE";
+export const isPackageRecurrent = repeatInterval => repeatInterval !== "NONE";
 
-export const getPackageRecurrencyTranslationKey = repeatConfig =>
-  RECURRENCY_TRANSLATION_KEYS[repeatConfig];
+export const getPackageRecurrencyTranslationKey = repeatInterval =>
+  RECURRENCY_TRANSLATION_KEYS[repeatInterval];
 
 export const defaultDateFieldProps = {
   options: {
@@ -48,7 +48,7 @@ export const defaultDateFieldProps = {
   }
 };
 
-export const repeatConfigChoices = [
+export const repeatIntervalChoices = [
   { id: REPEAT_CONFIG.NONE, name: "None" },
   { id: REPEAT_CONFIG.MONTHLY, name: "Monthly" },
   { id: REPEAT_CONFIG.YEARLY, name: "Yearly" }

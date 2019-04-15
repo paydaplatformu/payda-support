@@ -22,7 +22,7 @@ const query = gql`
         amount
       }
       isCustomizable
-      repeatConfig
+      repeatInterval
     }
     __type(name: "Currency") {
       name
@@ -37,7 +37,7 @@ export const PackageContext = React.createContext();
 
 export const PackageContextProvider = ({ children }) => {
   const initialState = {
-    selectedPackage: {},
+    selectedPackage: {}
   };
 
   const reducer = (state = initialState, action) => {
@@ -70,7 +70,7 @@ export const PackageContextProvider = ({ children }) => {
               availableCurrencies:
                 data.__type && data.__type.enumValues.map(c => c.name),
               selectedPackage: state && state.selectedPackage,
-              selectPackage,
+              selectPackage
             }}
           >
             {children}
