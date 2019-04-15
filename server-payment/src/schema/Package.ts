@@ -9,7 +9,7 @@ export const typeDef = gql`
     ids: [String!]
     onlyActive: Boolean
     showCustom: Boolean
-    repeatConfig: RepeatConfig
+    repeatInterval: RepeatInterval
     amount: Float
     currency: Currency
     search: String
@@ -21,7 +21,7 @@ export const typeDef = gql`
     reference: String
     createdAt: Date!
     updatedAt: Date!
-    repeatConfig: RepeatConfig!
+    repeatInterval: RepeatInterval!
     donationCount: Int!
     image: String
     price: MonetaryAmount!

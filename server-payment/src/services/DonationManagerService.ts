@@ -8,7 +8,7 @@ import { LanguageCode } from "../models/LanguageCode";
 import { IPackage } from "../models/Package";
 import { IPackageService } from "../models/PackageService";
 import { IPayuService } from "../models/PayuService";
-import { RepeatConfig } from "../models/RepeatConfig";
+import { RepeatInterval } from "../models/RepeatInterval";
 import { ISubscription } from "../models/Subscription";
 import { ISubscriptionService } from "../models/SubscriptionService";
 import { TYPES } from "../types";
@@ -40,7 +40,7 @@ export class DonationManagerService implements IDonationManagerService {
           price: donationCreator.customPrice,
           priority: pkg.priority,
           reference: pkg.reference,
-          repeatConfig: pkg.repeatConfig,
+          repeatInterval: pkg.repeatInterval,
           tags: pkg.tags,
           isCustom: true
         });
@@ -54,7 +54,7 @@ export class DonationManagerService implements IDonationManagerService {
     pkg: IPackage,
     language: LanguageCode
   ): Promise<ISubscription | undefined> => {
-    if (pkg.repeatConfig !== RepeatConfig.NONE) {
+    if (pkg.repeatInterval !== RepeatInterval.NONE) {
       return this.subscriptionService.create({
         donationId: donation.id,
         packageId: pkg.id,

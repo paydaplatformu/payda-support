@@ -13,7 +13,7 @@ import { IPackageService } from "../models/PackageService";
 import { PaymentProcess } from "../models/PaymentProcess";
 import { PayuCredentials } from "../models/PayuCredentials";
 import { IPayuService } from "../models/PayuService";
-import { RepeatConfig } from "../models/RepeatConfig";
+import { RepeatInterval } from "../models/RepeatInterval";
 import { ISubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
@@ -72,7 +72,7 @@ export class PayuService implements IPayuService {
   ) => {
     const { firstName, lastName } = splitName(donation.fullName);
     const tokenSettings: object =
-      pkg.repeatConfig !== RepeatConfig.NONE
+      pkg.repeatInterval !== RepeatInterval.NONE
         ? {
             LU_ENABLE_TOKEN: "1"
           }
@@ -125,12 +125,12 @@ export class PayuService implements IPayuService {
   };
 
   private getInstallmentOptions = (pkg: IPackage) =>
-    pkg.repeatConfig !== RepeatConfig.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
+    pkg.repeatInterval !== RepeatInterval.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
 
-  private getPayMethod = (pkg: IPackage) => (pkg.repeatConfig !== RepeatConfig.NONE ? "CCVISAMC" : "");
+  private getPayMethod = (pkg: IPackage) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
 
   private getReference = (pkg: IPackage, donation: IDonation) =>
-    pkg.repeatConfig !== RepeatConfig.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
+    pkg.repeatInterval !== RepeatInterval.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
 
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
 

@@ -8,7 +8,7 @@ import {
   getPackageName,
   getPackagePriceText,
   isPackageRecurrent,
-  getPackageRecurrencyTranslationKey,
+  getPackageRecurrencyTranslationKey
 } from "../../../../utils";
 
 import PackageDetails from "./PackageDetails";
@@ -24,9 +24,9 @@ const PackageSelect = props => {
           rules: [
             {
               required: true,
-              message: translate("packageid_validation_error"),
-            },
-          ],
+              message: translate("packageid_validation_error")
+            }
+          ]
         })(
           <Select
             placeholder={translate("select_package")}
@@ -41,14 +41,14 @@ const PackageSelect = props => {
               packages.map(pack => (
                 <Select.Option key={pack.id} value={pack.id}>
                   {getPackageName(pack, langCode)} - {getPackagePriceText(pack)}{" "}
-                  {isPackageRecurrent(pack.repeatConfig)
+                  {isPackageRecurrent(pack.repeatInterval)
                     ? translate(
-                        getPackageRecurrencyTranslationKey(pack.repeatConfig),
+                        getPackageRecurrencyTranslationKey(pack.repeatInterval)
                       )
                     : null}
                 </Select.Option>
               ))}
-          </Select>,
+          </Select>
         )}
       </Form.Item>
       <div style={{ marginTop: 5, marginBottom: 15 }}>

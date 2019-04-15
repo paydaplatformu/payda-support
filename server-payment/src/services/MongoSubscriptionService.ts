@@ -1,13 +1,12 @@
 import { startOfMonth, startOfYear, subMonths, subYears } from "date-fns";
 import { injectable } from "inversify";
-import { Cursor, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { DeactivationReason } from "../models/DeactivationReason";
 import { PaginationSettings } from "../models/PaginationSettings";
-import { RepeatConfig } from "../models/RepeatConfig";
+import { RepeatInterval } from "../models/RepeatInterval";
 import { SortingSettings } from "../models/SortingSettings";
 import {
   IRunningSubscription,
-  IRunningSubscriptionEntity,
   ISubscription,
   ISubscriptionCreator,
   ISubscriptionEntity,
@@ -29,13 +28,16 @@ export class MongoSubscriptionService
     ISubscriptionModifier
   >
   implements ISubscriptionService {
-  private generateByRepeatConfigAndPackageIdsFilters = (repeatConfig: RepeatConfig, packageIds: string[]): object[] => {
+  private generateByRepeatIntervalAndPackageIdsFilters = (
+    repeatInterval: RepeatInterval,
+    packageIds: string[]
+  ): object[] => {
     const now = new Date();
     const packageIdsConverted = packageIds.map(id => new ObjectId(id));
-    switch (repeatConfig) {
-      case RepeatConfig.YEARLY:
+    switch (repeatInterval) {
+      case RepeatInterval.YEARLY:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subYears, startOfYear);
-      case RepeatConfig.MONTHLY:
+      case RepeatInterval.MONTHLY:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMonths, startOfMonth);
       default:
         throw new Error("Unknown repeat config.");
@@ -122,24 +124,24 @@ export class MongoSubscriptionService
     return null;
   };
 
-  public getByChargableSubscriptionsForRepeatConfigAndPackageIds = async (
-    repeatConfig: RepeatConfig,
+  public getByChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
+    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: ISubscriptionFilters,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<IRunningSubscription[]> => {
-    const extraFilters = this.generateByRepeatConfigAndPackageIdsFilters(repeatConfig, packageIds);
+    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     const subscriptions = await this.getAll(filters, pagination, sorting, extraFilters);
     return subscriptions.filter<IRunningSubscription>(this.isRunningSubscription);
   };
 
-  public getByIdForRepeatConfigAndPackageIds = async (
+  public getByIdForRepeatIntervalAndPackageIds = async (
     id: string,
-    repeatConfig: RepeatConfig,
+    repeatInterval: RepeatInterval,
     packageIds: string[]
   ): Promise<IRunningSubscription | null> => {
-    const extraFilters = this.generateByRepeatConfigAndPackageIdsFilters(repeatConfig, packageIds);
+    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     const subscriptions = await this.getAll({ ids: [id] }, undefined, undefined, extraFilters);
     if (subscriptions.length === 0) return null;
     else if (subscriptions.length > 1) throw new Error("Conflicting ids for subscriptions");
@@ -148,12 +150,12 @@ export class MongoSubscriptionService
     return head;
   };
 
-  public countChargableSubscriptionsForRepeatConfigAndPackageIds = async (
-    repeatConfig: RepeatConfig,
+  public countChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
+    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: ISubscriptionFilters
   ): Promise<number> => {
-    const extraFilters = this.generateByRepeatConfigAndPackageIdsFilters(repeatConfig, packageIds);
+    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     return this.count(filters, extraFilters);
   };
 

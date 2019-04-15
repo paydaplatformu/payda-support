@@ -11,7 +11,7 @@ import {
 
 import { LANG_CODES } from "../../constants";
 import { CURRENCY } from "../../constants";
-import { repeatConfigChoices } from "../../utils";
+import { repeatIntervalChoices } from "../../utils";
 
 const PackageCreate = props => (
   <Create {...props}>
@@ -31,8 +31,8 @@ const PackageCreate = props => (
       <TextInput source="reference" />
       <SelectInput
         label="Repeat"
-        source="repeatConfig"
-        choices={repeatConfigChoices}
+        source="repeatInterval"
+        choices={repeatIntervalChoices}
       />
       <TextInput source="image" />
       <NumberInput source="price.amount" />
