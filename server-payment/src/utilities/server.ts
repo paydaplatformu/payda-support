@@ -4,8 +4,8 @@ import chalk from "chalk";
 import { Container } from "inversify";
 import { Db } from "mongodb";
 import { config } from "../config";
-import { IAuthentication } from "../models/Authentication";
-import { IUserService } from "../models/UserService";
+import { Authentication } from "../models/Authentication";
+import { UserService } from "../models/UserService";
 import { IContextProvider } from "../schema/context";
 import { MongoDbConnectionProvider } from "../services/MongoDbConnectionProvider";
 import { TYPES } from "../types";
@@ -25,7 +25,7 @@ export const bindMongoDb = async (container: Container, log: any) => {
   }
 };
 
-export const createAdminUser = async (userService: IUserService) => {
+export const createAdminUser = async (userService: UserService) => {
   const userCount = await userService.getUserCount();
   if (userCount === 0) {
     await userService.create({
@@ -35,7 +35,7 @@ export const createAdminUser = async (userService: IUserService) => {
   }
 };
 
-export const createGraphQLContext: (container: Container, model: IAuthentication) => ContextFunction = (
+export const createGraphQLContext: (container: Container, model: Authentication) => ContextFunction = (
   container,
   model
 ) => async ({ req }) => {

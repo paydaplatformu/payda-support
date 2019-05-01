@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-core";
 import { IResolvers } from "graphql-tools";
-import { ISubscription } from "../models/Subscription";
+import { SubscriptionModel } from "../models/Subscription";
 import { IContext } from "./context";
 
 export const typeDef = gql`
@@ -22,6 +22,6 @@ export const typeDef = gql`
   }
 `;
 
-export const resolvers: IResolvers<ISubscription, IContext> = {
+export const resolvers: IResolvers<SubscriptionModel, IContext> = {
   Subscription: {}
 };

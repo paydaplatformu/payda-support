@@ -1,16 +1,16 @@
 import { PaginationSettings } from "./PaginationSettings";
 import { RepeatInterval } from "./RepeatInterval";
 import { SortingSettings } from "./SortingSettings";
-import { IRunningSubscription, ISubscriptionFilters } from "./Subscription";
+import { RunningSubscriptionModel, SubscriptionFilters } from "./Subscription";
 
-export interface ISubscriptionManagerService {
+export interface SubscriptionManagerService {
   getChargableSubscriptions(
     repeatInterval: RepeatInterval,
-    filters: ISubscriptionFilters,
+    filters: SubscriptionFilters,
     pagination: PaginationSettings,
     sorting: SortingSettings
-  ): Promise<IRunningSubscription[]>;
+  ): Promise<RunningSubscriptionModel[]>;
 
-  countChargableSubscriptions(repeatInterval: RepeatInterval, filters: ISubscriptionFilters): Promise<number>;
-  getChargableSubscriptionById(id: string, repeatInterval: RepeatInterval): Promise<IRunningSubscription | null>;
+  countChargableSubscriptions(repeatInterval: RepeatInterval, filters: SubscriptionFilters): Promise<number>;
+  getChargableSubscriptionById(id: string, repeatInterval: RepeatInterval): Promise<RunningSubscriptionModel | null>;
 }

@@ -1,32 +1,32 @@
 import { ObjectId } from "mongodb";
 import { Currency } from "./Currency";
-import { IMonetaryAmount } from "./MonetaryAmount";
+import { MonetaryAmount } from "./MonetaryAmount";
 import { PackageCustomizationConfig } from "./PackageCustomizationConfig";
-import { IPackageTag } from "./PackageTag";
+import { PackageTag } from "./PackageTag";
 import { RepeatInterval } from "./RepeatInterval";
 
-export interface IPackageCreator {
-  defaultTag: IPackageTag;
+export interface PackageCreator {
+  defaultTag: PackageTag;
   reference?: string;
   repeatInterval: RepeatInterval;
   image?: string;
-  price: IMonetaryAmount;
+  price: MonetaryAmount;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
-  tags: IPackageTag[];
+  tags: PackageTag[];
 }
 
-export interface IPackageModifier {
+export interface PackageModifier {
   id: string;
-  defaultTag: IPackageTag;
+  defaultTag: PackageTag;
   reference?: string;
   image?: string;
   priority: number;
-  tags: IPackageTag[];
+  tags: PackageTag[];
 }
 
-export interface IPackageFilters {
+export interface PackageFilters {
   ids?: string[];
   onlyActive?: boolean;
   showCustom?: boolean;
@@ -36,34 +36,34 @@ export interface IPackageFilters {
   search?: string;
 }
 
-export interface IPackage {
+export interface PackageModel {
   id: string;
-  defaultTag: IPackageTag;
+  defaultTag: PackageTag;
   reference?: string;
   createdAt: Date;
   updatedAt: Date;
   repeatInterval: RepeatInterval;
   image?: string;
-  price: IMonetaryAmount;
+  price: MonetaryAmount;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
-  tags: IPackageTag[];
+  tags: PackageTag[];
   isActive: boolean;
 }
 
-export interface IPackageEntity {
+export interface PackageEntity {
   _id: ObjectId;
-  defaultTag: IPackageTag;
+  defaultTag: PackageTag;
   reference?: string;
   createdAt: Date;
   updatedAt: Date;
   repeatInterval: RepeatInterval;
   image?: string;
-  price: IMonetaryAmount;
+  price: MonetaryAmount;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
-  tags: IPackageTag[];
+  tags: PackageTag[];
   isActive: boolean;
 }

@@ -5,13 +5,13 @@ import { PaymentProcess } from "./PaymentProcess";
 import { RepeatInterval } from "./RepeatInterval";
 import { SubscriptionStatus } from "./SubscriptionStatus";
 
-export interface ISubscriptionCreator {
+export interface SubscriptionCreator {
   packageId: string;
   donationId: string;
   language: LanguageCode;
 }
 
-export interface ISubscriptionModifier {
+export interface SubscriptionModifier {
   id: string;
   status?: SubscriptionStatus;
   paymentToken?: string | null;
@@ -19,13 +19,13 @@ export interface ISubscriptionModifier {
   deactivationReason?: DeactivationReason | null;
 }
 
-export interface ISubscriptionFilters {
+export interface SubscriptionFilters {
   ids?: string[];
   status?: SubscriptionStatus;
   repeatInterval?: RepeatInterval;
 }
 
-export interface ISubscriptionBase {
+export interface SubscriptionBaseModel {
   id: string;
   status: SubscriptionStatus;
   packageId: string;
@@ -37,24 +37,24 @@ export interface ISubscriptionBase {
   updatedAt: Date;
 }
 
-export interface ICreatedSubscription extends ISubscriptionBase {
+export interface CreatedSubscriptionModel extends SubscriptionBaseModel {
   status: SubscriptionStatus.CREATED;
   deactivationReason: null;
 }
 
-export interface IRunningSubscription extends ISubscriptionBase {
+export interface RunningSubscriptionModel extends SubscriptionBaseModel {
   status: SubscriptionStatus.RUNNING;
   deactivationReason: null;
 }
 
-export interface ICancelledSubscription extends ISubscriptionBase {
+export interface CancelledSubscriptionModel extends SubscriptionBaseModel {
   status: SubscriptionStatus.CANCELLED;
   deactivationReason: DeactivationReason;
 }
 
-export type ISubscription = ICreatedSubscription | IRunningSubscription | ICancelledSubscription;
+export type SubscriptionModel = CreatedSubscriptionModel | RunningSubscriptionModel | CancelledSubscriptionModel;
 
-export interface ISubscriptionEntityBase {
+export interface SubscriptionBaseEntity {
   _id: ObjectId;
   paymentToken: string | null;
   packageId: ObjectId;
@@ -66,25 +66,25 @@ export interface ISubscriptionEntityBase {
   updatedAt: Date;
 }
 
-export interface ICreatedSubscriptionEntity extends ISubscriptionEntityBase {
+export interface CreatedSubscriptionEntity extends SubscriptionBaseEntity {
   status: SubscriptionStatus.CREATED;
   deactivationReason: null;
   paymentToken: null;
 }
 
-export interface IRunningSubscriptionEntity extends ISubscriptionEntityBase {
+export interface RunningSubscriptionEntity extends SubscriptionBaseEntity {
   status: SubscriptionStatus.RUNNING;
   deactivationReason: null;
   paymentToken: string;
 }
 
-export interface ICancelledSubscriptionEntity extends ISubscriptionEntityBase {
+export interface CancelledSubscriptionEntity extends SubscriptionBaseEntity {
   status: SubscriptionStatus.CANCELLED;
   deactivationReason: DeactivationReason;
   paymentToken: null;
 }
 
-export type ISubscriptionEntity =
-  | ICreatedSubscriptionEntity
-  | IRunningSubscriptionEntity
-  | ICancelledSubscriptionEntity;
+export type SubscriptionEntity =
+  | CreatedSubscriptionEntity
+  | RunningSubscriptionEntity
+  | CancelledSubscriptionEntity;

@@ -1,7 +1,7 @@
 import { drop, sortBy } from "lodash";
 import { Token } from "oauth2-server";
 import { config } from "../config";
-import { IAuthentication } from "../models/Authentication";
+import { Authentication } from "../models/Authentication";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
 
@@ -36,7 +36,7 @@ export const splitName = (fullName: string) => {
   };
 };
 
-export const createTokenGetter = (authenticationModel: IAuthentication) => async (
+export const createTokenGetter = (authenticationModel: Authentication) => async (
   header: string | undefined
 ): Promise<Token | null> => {
   if (header) {

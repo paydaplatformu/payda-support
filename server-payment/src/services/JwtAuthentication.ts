@@ -1,29 +1,29 @@
 import { inject, injectable } from "inversify";
 import { AuthorizationCode, Client, Falsey, RefreshToken, Token, User } from "oauth2-server";
 import { config } from "../config";
-import { IAuthentication } from "../models/Authentication";
-import { IUser } from "../models/User";
-import { IUserService } from "../models/UserService";
+import { Authentication } from "../models/Authentication";
+import { UserModel } from "../models/User";
+import { UserService } from "../models/UserService";
 import { TYPES } from "../types";
 import { sign, verify } from "../utilities/jwt";
 
 interface ITokenBody {
-  user: IUser;
+  user: UserModel;
   client: Client;
   scope: string | string[];
 }
 
 @injectable()
-export class JwtAuthentication implements IAuthentication {
+export class JwtAuthentication implements Authentication {
   private clients = (config.get("clients") as any) as Client[];
 
-  @inject(TYPES.IUserService) private userService: IUserService = null as any;
+  @inject(TYPES.UserService) private userService: UserService = null as any;
 
   /**
    * Invoked to generate a new refresh token.
    *
    */
-  public async generateRefreshToken(client: Client, user: IUser, scope: string | string[]): Promise<string> {
+  public async generateRefreshToken(client: Client, user: UserModel, scope: string | string[]): Promise<string> {
     const body: ITokenBody = {
       client,
       scope,
@@ -78,7 +78,7 @@ export class JwtAuthentication implements IAuthentication {
    * Invoked to generate a new access token.
    *
    */
-  public async generateAccessToken(client: Client, user: IUser, scope: string | string[]): Promise<string> {
+  public async generateAccessToken(client: Client, user: UserModel, scope: string | string[]): Promise<string> {
     const body: ITokenBody = {
       client,
       scope,

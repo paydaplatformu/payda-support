@@ -1,16 +1,16 @@
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
-import { IMonetaryAmount } from "../models/MonetaryAmount";
-import { IPackage, IPackageCreator, IPackageEntity, IPackageFilters, IPackageModifier } from "../models/Package";
-import { IPackageService } from "../models/PackageService";
+import { MonetaryAmount } from "../models/MonetaryAmount";
+import { PackageModel, PackageCreator, PackageEntity, PackageFilters, PackageModifier } from "../models/Package";
+import { PackageService } from "../models/PackageService";
 import { RepeatInterval } from "../models/RepeatInterval";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
 
 @injectable()
 export class MongoPackageService
-  extends BaseMongoService<IPackageEntity, IPackage, IPackageFilters, IPackageCreator, IPackageModifier>
-  implements IPackageService {
+  extends BaseMongoService<PackageEntity, PackageModel, PackageFilters, PackageCreator, PackageModifier>
+  implements PackageService {
   protected static collectionName = "packages";
 
   protected async initiate(): Promise<void> {
@@ -20,7 +20,7 @@ export class MongoPackageService
     }
   }
 
-  protected async createEntity(creator: IPackageCreator): Promise<IPackageEntity> {
+  protected async createEntity(creator: PackageCreator): Promise<PackageEntity> {
     const fromSuper = await super.createEntity(creator);
     return {
       ...fromSuper,
@@ -28,7 +28,7 @@ export class MongoPackageService
       tags: fromSuper.tags || []
     };
   }
-  protected creatorValidator: Validator<IPackageCreator> = {};
+  protected creatorValidator: Validator<PackageCreator> = {};
 
   protected getFilters = ({
     onlyActive,
@@ -38,7 +38,7 @@ export class MongoPackageService
     amount,
     currency,
     search
-  }: IPackageFilters): object[] => {
+  }: PackageFilters): object[] => {
     return [
       onlyActive === true ? { isActive: true } : undefined,
       showCustom !== true ? { isCustom: false } : undefined,
@@ -50,7 +50,7 @@ export class MongoPackageService
     ].filter(el => el !== undefined) as any;
   };
 
-  protected toModel = (entity: IPackageEntity): IPackage => {
+  protected toModel = (entity: PackageEntity): PackageModel => {
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,
@@ -68,11 +68,11 @@ export class MongoPackageService
     };
   };
 
-  public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<IPackage[]> => {
+  public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<PackageModel[]> => {
     return this.getAll({ repeatInterval });
   };
 
-  public getDefaultFilters = (): IPackageFilters => {
+  public getDefaultFilters = (): PackageFilters => {
     return { onlyActive: true, ids: undefined, showCustom: false };
   };
 }

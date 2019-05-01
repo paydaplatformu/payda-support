@@ -1,12 +1,12 @@
 export const TYPES = {
   IContextProvider: Symbol.for("IContextProvider"),
-  IUserService: Symbol.for("IUserService"),
-  IPayuService: Symbol.for("IPayuService"),
+  UserService: Symbol.for("UserService"),
+  PayuService: Symbol.for("PayuService"),
   IMongoDb: Symbol.for("IMongoDb"),
-  IAuthentication: Symbol.for("IAuthentication"),
-  IPackageService: Symbol.for("IPackageService"),
-  ISubscriptionService: Symbol.for("ISubscriptionService"),
+  Authentication: Symbol.for("Authentication"),
+  PackageService: Symbol.for("PackageService"),
+  SubscriptionService: Symbol.for("SubscriptionService"),
   IDonationService: Symbol.for("IDonationService"),
-  IDonationManagerService: Symbol.for("IDonationManagerService"),
-  ISubscriptionManagerService: Symbol.for("ISubscriptionManagerService")
+  DonationManagerService: Symbol.for("DonationManagerService"),
+  SubscriptionManagerService: Symbol.for("SubscriptionManagerService")
 };

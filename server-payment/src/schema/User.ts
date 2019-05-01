@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-core";
 import { IResolvers } from "graphql-tools";
-import { IUser } from "../models/User";
+import { UserModel } from "../models/User";
 import { IContext } from "./context";
 
 export const typeDef = gql`
@@ -12,6 +12,6 @@ export const typeDef = gql`
   }
 `;
 
-export const resolvers: IResolvers<IUser, IContext> = {
+export const resolvers: IResolvers<UserModel, IContext> = {
   User: {}
 };

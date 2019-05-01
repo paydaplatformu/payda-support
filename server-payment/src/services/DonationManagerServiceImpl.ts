@@ -1,33 +1,33 @@
 import { inject, injectable } from "inversify";
 import { config } from "../config";
-import { IDonation, IDonationCreator } from "../models/Donation";
+import { DonationModel, DonationCreator } from "../models/Donation";
 import { DonationCreationResult } from "../models/DonationCreationResult";
-import { IDonationManagerService } from "../models/DonationManagerService";
+import { DonationManagerService } from "../models/DonationManagerService";
 import { IDonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
-import { IPackage } from "../models/Package";
-import { IPackageService } from "../models/PackageService";
-import { IPayuService } from "../models/PayuService";
+import { PackageModel } from "../models/Package";
+import { PackageService } from "../models/PackageService";
+import { PayuService } from "../models/PayuService";
 import { RepeatInterval } from "../models/RepeatInterval";
-import { ISubscription } from "../models/Subscription";
-import { ISubscriptionService } from "../models/SubscriptionService";
+import { SubscriptionModel } from "../models/Subscription";
+import { SubscriptionService } from "../models/SubscriptionService";
 import { TYPES } from "../types";
 
 @injectable()
-export class DonationManagerService implements IDonationManagerService {
+export class DonationManagerServiceImpl implements DonationManagerService {
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
 
-  @inject(TYPES.IPackageService)
-  private packageService: IPackageService = null as any;
+  @inject(TYPES.PackageService)
+  private packageService: PackageService = null as any;
 
-  @inject(TYPES.IPayuService)
-  private payuService: IPayuService = null as any;
+  @inject(TYPES.PayuService)
+  private payuService: PayuService = null as any;
 
-  @inject(TYPES.ISubscriptionService)
-  private subscriptionService: ISubscriptionService = null as any;
+  @inject(TYPES.SubscriptionService)
+  private subscriptionService: SubscriptionService = null as any;
 
-  private getPackageForDonationCreator = async (donationCreator: IDonationCreator) => {
+  private getPackageForDonationCreator = async (donationCreator: DonationCreator) => {
     const pkg = await this.packageService.getById(donationCreator.packageId);
     if (!pkg) throw new Error("Package does not exist, cannot create donation.");
     const priceAmount =
@@ -73,10 +73,10 @@ export class DonationManagerService implements IDonationManagerService {
   };
 
   private getSubscription = async (
-    donation: IDonation,
-    pkg: IPackage,
+    donation: DonationModel,
+    pkg: PackageModel,
     language: LanguageCode
-  ): Promise<ISubscription | undefined> => {
+  ): Promise<SubscriptionModel | undefined> => {
     if (pkg.repeatInterval !== RepeatInterval.NONE) {
       return this.subscriptionService.create({
         donationId: donation.id,
@@ -88,11 +88,11 @@ export class DonationManagerService implements IDonationManagerService {
   };
 
   public createDonation = async (
-    donationCreator: IDonationCreator,
+    donationCreator: DonationCreator,
     language: LanguageCode
   ): Promise<DonationCreationResult> => {
     const pkg = await this.getPackageForDonationCreator(donationCreator);
-    const donation = await this.donationService.create(donationCreator as IDonationCreator);
+    const donation = await this.donationService.create(donationCreator as DonationCreator);
     const subscription = await this.getSubscription(donation, pkg, language);
     const formFields = await this.payuService.getFormContents(donation, pkg, language);
     return {

@@ -1,12 +1,12 @@
-import { IDonation } from "./Donation";
+import { DonationModel } from "./Donation";
 import { KeyValuePair } from "./KeyValuePair";
-import { IPackage } from "./Package";
-import { ISubscription } from "./Subscription";
+import { PackageModel } from "./Package";
+import { SubscriptionModel } from "./Subscription";
 
 export interface DonationCreationResult {
-  donation: IDonation;
-  package: IPackage;
-  subscription?: ISubscription;
+  donation: DonationModel;
+  package: PackageModel;
+  subscription?: SubscriptionModel;
   formUrl: string;
   formFields: Array<KeyValuePair<string, string>>;
 }

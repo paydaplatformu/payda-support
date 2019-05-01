@@ -6,14 +6,14 @@ import { PaginationSettings } from "../models/PaginationSettings";
 import { RepeatInterval } from "../models/RepeatInterval";
 import { SortingSettings } from "../models/SortingSettings";
 import {
-  IRunningSubscription,
-  ISubscription,
-  ISubscriptionCreator,
-  ISubscriptionEntity,
-  ISubscriptionFilters,
-  ISubscriptionModifier
+  RunningSubscriptionModel,
+  SubscriptionModel,
+  SubscriptionCreator,
+  SubscriptionEntity,
+  SubscriptionFilters,
+  SubscriptionModifier
 } from "../models/Subscription";
-import { ISubscriptionService } from "../models/SubscriptionService";
+import { SubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
@@ -21,13 +21,13 @@ import { BaseMongoService } from "./BaseMongoService";
 @injectable()
 export class MongoSubscriptionService
   extends BaseMongoService<
-    ISubscriptionEntity,
-    ISubscription,
-    ISubscriptionFilters,
-    ISubscriptionCreator,
-    ISubscriptionModifier
+    SubscriptionEntity,
+    SubscriptionModel,
+    SubscriptionFilters,
+    SubscriptionCreator,
+    SubscriptionModifier
   >
-  implements ISubscriptionService {
+  implements SubscriptionService {
   private generateByRepeatIntervalAndPackageIdsFilters = (
     repeatInterval: RepeatInterval,
     packageIds: string[]
@@ -76,15 +76,15 @@ export class MongoSubscriptionService
     ];
   };
 
-  private getEntityByDonationId = (donationId: string): Promise<ISubscriptionEntity | null> => {
+  private getEntityByDonationId = (donationId: string): Promise<SubscriptionEntity | null> => {
     return this.collection.findOne({ donationId: new ObjectId(donationId) });
   };
 
   protected static collectionName = "subscriptions";
 
-  protected creatorValidator: Validator<ISubscriptionCreator> = {};
+  protected creatorValidator: Validator<SubscriptionCreator> = {};
 
-  protected toModel = (entity: ISubscriptionEntity): ISubscription => {
+  protected toModel = (entity: SubscriptionEntity): SubscriptionModel => {
     return {
       id: entity._id.toString(),
       packageId: entity.packageId.toString(),
@@ -98,7 +98,7 @@ export class MongoSubscriptionService
     };
   };
 
-  protected async createEntity(creator: ISubscriptionCreator): Promise<ISubscriptionEntity> {
+  protected async createEntity(creator: SubscriptionCreator): Promise<SubscriptionEntity> {
     const fromSuper = await super.createEntity(creator);
     return {
       ...fromSuper,
@@ -116,7 +116,7 @@ export class MongoSubscriptionService
     return this.edit({ id, status: SubscriptionStatus.CANCELLED, deactivationReason: DeactivationReason.USER_REQUEST });
   };
 
-  public getByDonationId = async (donationId: string): Promise<ISubscription | null> => {
+  public getByDonationId = async (donationId: string): Promise<SubscriptionModel | null> => {
     const result = await this.getEntityByDonationId(donationId);
     if (result) {
       return this.toModel(result);
@@ -127,20 +127,20 @@ export class MongoSubscriptionService
   public getByChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: ISubscriptionFilters,
+    filters: SubscriptionFilters,
     pagination: PaginationSettings,
     sorting: SortingSettings
-  ): Promise<IRunningSubscription[]> => {
+  ): Promise<RunningSubscriptionModel[]> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     const subscriptions = await this.getAll(filters, pagination, sorting, extraFilters);
-    return subscriptions.filter<IRunningSubscription>(this.isRunningSubscription);
+    return subscriptions.filter<RunningSubscriptionModel>(this.isRunningSubscription);
   };
 
   public getByIdForRepeatIntervalAndPackageIds = async (
     id: string,
     repeatInterval: RepeatInterval,
     packageIds: string[]
-  ): Promise<IRunningSubscription | null> => {
+  ): Promise<RunningSubscriptionModel | null> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     const subscriptions = await this.getAll({ ids: [id] }, undefined, undefined, extraFilters);
     if (subscriptions.length === 0) return null;
@@ -153,7 +153,7 @@ export class MongoSubscriptionService
   public countChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: ISubscriptionFilters
+    filters: SubscriptionFilters
   ): Promise<number> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     return this.count(filters, extraFilters);
@@ -165,13 +165,13 @@ export class MongoSubscriptionService
     return entity.paymentToken;
   }
 
-  protected getFilters = ({ ids, status }: ISubscriptionFilters): object[] => {
+  protected getFilters = ({ ids, status }: SubscriptionFilters): object[] => {
     return [
       status !== undefined ? { status } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined) as any;
   };
 
-  public isRunningSubscription = (subscription: ISubscription): subscription is IRunningSubscription =>
+  public isRunningSubscription = (subscription: SubscriptionModel): subscription is RunningSubscriptionModel =>
     subscription.status === SubscriptionStatus.RUNNING;
 }

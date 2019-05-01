@@ -1,6 +1,6 @@
 import { LanguageCode } from "./LanguageCode";
 
-export interface IPackageTag {
+export interface PackageTag {
   code: LanguageCode;
   name: string;
   description?: string;

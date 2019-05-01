@@ -1,7 +1,7 @@
-import { IUserEntity } from "../entities/UserEntity";
-import { IUser } from "../models/User";
+import { UserEntity } from "../entities/UserEntity";
+import { UserModel } from "../models/User";
 
-export const userEntityToModel = (user: IUserEntity): IUser => ({
+export const userEntityToModel = (user: UserEntity): UserModel => ({
   createdAt: user.createdAt,
   email: user.email,
   id: user.id,

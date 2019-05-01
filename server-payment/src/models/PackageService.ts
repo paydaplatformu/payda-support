@@ -1,15 +1,14 @@
-import { IMonetaryAmount } from "./MonetaryAmount";
-import { IPackage, IPackageCreator, IPackageFilters, IPackageModifier } from "./Package";
+import { PackageModel, PackageCreator, PackageFilters, PackageModifier } from "./Package";
 import { PaginationSettings } from "./PaginationSettings";
 import { RepeatInterval } from "./RepeatInterval";
 import { SortingSettings } from "./SortingSettings";
 
-export interface IPackageService {
-  getDefaultFilters(): IPackageFilters;
-  getAll(filters: IPackageFilters, pagination: PaginationSettings, sorting: SortingSettings): Promise<IPackage[]>;
-  count(filters: IPackageFilters): Promise<number>;
-  getById(id: string): Promise<IPackage | null>;
-  getByRepeatInterval(repeatInterval: RepeatInterval): Promise<IPackage[]>;
-  create(packageCreator: IPackageCreator): Promise<IPackage>;
-  edit(packageModifier: IPackageModifier): Promise<IPackage | null>;
+export interface PackageService {
+  getDefaultFilters(): PackageFilters;
+  getAll(filters: PackageFilters, pagination: PaginationSettings, sorting: SortingSettings): Promise<PackageModel[]>;
+  count(filters: PackageFilters): Promise<number>;
+  getById(id: string): Promise<PackageModel | null>;
+  getByRepeatInterval(repeatInterval: RepeatInterval): Promise<PackageModel[]>;
+  create(packageCreator: PackageCreator): Promise<PackageModel>;
+  edit(packageModifier: PackageModifier): Promise<PackageModel | null>;
 }
