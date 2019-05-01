@@ -5,30 +5,30 @@ import { inject, injectable } from "inversify";
 import * as qs from "querystring";
 import { config } from "../config";
 import { DeactivationReason } from "../models/DeactivationReason";
-import { IDonation } from "../models/Donation";
+import { DonationModel } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
-import { IPackage } from "../models/Package";
-import { IPackageService } from "../models/PackageService";
+import { PackageModel } from "../models/Package";
+import { PackageService } from "../models/PackageService";
 import { PaymentProcess } from "../models/PaymentProcess";
 import { PayuCredentials } from "../models/PayuCredentials";
-import { IPayuService } from "../models/PayuService";
+import { PayuService } from "../models/PayuService";
 import { RepeatInterval } from "../models/RepeatInterval";
-import { ISubscriptionService } from "../models/SubscriptionService";
+import { SubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
 import { getUTF8Length, splitName } from "../utilities/helpers";
 
 @injectable()
-export class PayuService implements IPayuService {
+export class PayuServiceImpl implements PayuService {
   @inject(TYPES.IDonationService)
   private donationService: IDonationService = null as any;
 
-  @inject(TYPES.IPackageService)
-  private packageService: IPackageService = null as any;
+  @inject(TYPES.PackageService)
+  private packageService: PackageService = null as any;
 
-  @inject(TYPES.ISubscriptionService)
-  private subscriptionService: ISubscriptionService = null as any;
+  @inject(TYPES.SubscriptionService)
+  private subscriptionService: SubscriptionService = null as any;
 
   private amexCredentials: PayuCredentials = {
     merchant: config.get("payu.amexCredentials.merchant"),
@@ -36,7 +36,7 @@ export class PayuService implements IPayuService {
   };
   private backRef: string = config.get("payu.backRef");
 
-  private createHashInput = (donation: IDonation, pkg: IPackage, language: LanguageCode, merchant: string): object => {
+  private createHashInput = (donation: DonationModel, pkg: PackageModel, language: LanguageCode, merchant: string): object => {
     const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
     const ref = this.getReference(pkg, donation);
 
@@ -65,8 +65,8 @@ export class PayuService implements IPayuService {
 
   private finalizeFormFields = (
     input: object,
-    donation: IDonation,
-    pkg: IPackage,
+    donation: DonationModel,
+    pkg: PackageModel,
     language: LanguageCode,
     hash: string
   ) => {
@@ -124,12 +124,12 @@ export class PayuService implements IPayuService {
     return this.defaultCredentials;
   };
 
-  private getInstallmentOptions = (pkg: IPackage) =>
+  private getInstallmentOptions = (pkg: PackageModel) =>
     pkg.repeatInterval !== RepeatInterval.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
 
-  private getPayMethod = (pkg: IPackage) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
+  private getPayMethod = (pkg: PackageModel) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
 
-  private getReference = (pkg: IPackage, donation: IDonation) =>
+  private getReference = (pkg: PackageModel, donation: DonationModel) =>
     pkg.repeatInterval !== RepeatInterval.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
 
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
@@ -217,7 +217,7 @@ export class PayuService implements IPayuService {
     };
   };
 
-  public getFormContents = async (donation: IDonation, pkg: IPackage, language: LanguageCode) => {
+  public getFormContents = async (donation: DonationModel, pkg: PackageModel, language: LanguageCode) => {
     const credentials = this.getCredentials(donation.usingAmex);
     const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
     const hash = await this.generateHash(hashInput, credentials.secret);

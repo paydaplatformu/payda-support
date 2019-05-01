@@ -1,10 +1,10 @@
 import { PaginationSettings } from "./PaginationSettings";
 import { SortingSettings } from "./SortingSettings";
-import { IUser, IUserCreator } from "./User";
+import { UserModel, UserCreator } from "./User";
 
-export interface IUserService {
+export interface UserService {
   getUserCount(): Promise<number>;
-  getAll(filters: {}, pagination: PaginationSettings, sorting: SortingSettings): Promise<IUser[]>;
-  create(userCreator: IUserCreator): Promise<IUser>;
-  getByEmailAndPassword(email: string, password: string): Promise<IUser | null>;
+  getAll(filters: {}, pagination: PaginationSettings, sorting: SortingSettings): Promise<UserModel[]>;
+  create(userCreator: UserCreator): Promise<UserModel>;
+  getByEmailAndPassword(email: string, password: string): Promise<UserModel | null>;
 }

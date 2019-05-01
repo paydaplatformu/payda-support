@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { Currency } from "./Currency";
 import { RepeatInterval } from "./RepeatInterval";
 
-export interface IDonationCreator {
+export interface DonationCreator {
   fullName: string;
   email: string;
   packageId: string;
@@ -14,16 +14,16 @@ export interface IDonationCreator {
   notes?: string;
 }
 
-export interface IDonationModifier {
+export interface DonationModifier {
   id: string;
   paymentConfirmed: boolean;
 }
 
-export interface IDonationFilters {
+export interface DonationFilters {
   paymentConfirmed?: boolean;
 }
 
-export interface IDonation {
+export interface DonationModel {
   id: string;
   fullName: string;
   email: string;
@@ -35,7 +35,7 @@ export interface IDonation {
   usingAmex: boolean;
 }
 
-export interface IDonationEntity {
+export interface DonationEntity {
   _id: ObjectId;
   fullName: string;
   email: string;

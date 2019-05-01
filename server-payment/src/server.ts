@@ -10,11 +10,11 @@ import path from "path";
 import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
-import { IAuthentication } from "./models/Authentication";
+import { Authentication } from "./models/Authentication";
 import { IDonationService } from "./models/DonationService";
 import { InvalidInput, ValidationError } from "./models/Errors";
-import { IPayuService } from "./models/PayuService";
-import { IUserService } from "./models/UserService";
+import { PayuService } from "./models/PayuService";
+import { UserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
 import { TYPES } from "./types";
 import { bindMongoDb, createAdminUser, createGraphQLContext } from "./utilities/server";
@@ -42,9 +42,9 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
   try {
     await bindMongoDb(container, log);
 
-    const userService = container.get<IUserService>(TYPES.IUserService);
-    const model = container.get<IAuthentication>(TYPES.IAuthentication);
-    const payuService = container.get<IPayuService>(TYPES.IPayuService);
+    const userService = container.get<UserService>(TYPES.UserService);
+    const model = container.get<Authentication>(TYPES.Authentication);
+    const payuService = container.get<PayuService>(TYPES.PayuService);
     const donationService = container.get<IDonationService>(TYPES.IDonationService);
 
     const initializationPromises = Object.values(TYPES)

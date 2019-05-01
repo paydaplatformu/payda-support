@@ -1,52 +1,52 @@
 import { ContainerModule } from "inversify";
 import "reflect-metadata";
-import { IAuthentication } from "./models/Authentication";
-import { IDonationManagerService } from "./models/DonationManagerService";
+import { Authentication } from "./models/Authentication";
+import { DonationManagerService } from "./models/DonationManagerService";
 import { IDonationService } from "./models/DonationService";
-import { IPackageService } from "./models/PackageService";
-import { IPayuService } from "./models/PayuService";
-import { ISubscriptionManagerService } from "./models/SubscriptionManagerService";
-import { ISubscriptionService } from "./models/SubscriptionService";
-import { IUserService } from "./models/UserService";
+import { PackageService } from "./models/PackageService";
+import { PayuService } from "./models/PayuService";
+import { SubscriptionManagerService } from "./models/SubscriptionManagerService";
+import { SubscriptionService } from "./models/SubscriptionService";
+import { UserService } from "./models/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
-import { DonationManagerService } from "./services/DonationManagerService";
+import { DonationManagerServiceImpl } from "./services/DonationManagerServiceImpl";
 import { JwtAuthentication } from "./services/JwtAuthentication";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
 import { MongoDonationService } from "./services/MongoDonationService";
 import { MongoPackageService } from "./services/MongoPackageService";
 import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
 import { MongoUserService } from "./services/MongoUserService";
-import { PayuService } from "./services/PayuService";
-import { SubscriptionManagerService } from "./services/SubscriptionManagerService";
+import { PayuServiceImpl } from "./services/PayuServiceImpl";
+import { SubscriptionManagerServiceImpl } from "./services/SubscriptionManagerServiceImpl";
 import { TYPES } from "./types";
 
 const production = new ContainerModule(bind => {
   bind<MongoDbConnectionProvider>(MongoDbConnectionProvider)
     .toSelf()
     .inSingletonScope();
-  bind<IAuthentication>(TYPES.IAuthentication)
+  bind<Authentication>(TYPES.Authentication)
     .to(JwtAuthentication)
     .inSingletonScope();
-  bind<IUserService>(TYPES.IUserService)
+  bind<UserService>(TYPES.UserService)
     .to(MongoUserService)
     .inSingletonScope();
-  bind<IPackageService>(TYPES.IPackageService)
+  bind<PackageService>(TYPES.PackageService)
     .to(MongoPackageService)
     .inSingletonScope();
-  bind<ISubscriptionService>(TYPES.ISubscriptionService)
+  bind<SubscriptionService>(TYPES.SubscriptionService)
     .to(MongoSubscriptionService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MongoDonationService)
     .inSingletonScope();
-  bind<IPayuService>(TYPES.IPayuService)
-    .to(PayuService)
+  bind<PayuService>(TYPES.PayuService)
+    .to(PayuServiceImpl)
     .inSingletonScope();
-  bind<ISubscriptionManagerService>(TYPES.ISubscriptionManagerService)
-    .to(SubscriptionManagerService)
+  bind<SubscriptionManagerService>(TYPES.SubscriptionManagerService)
+    .to(SubscriptionManagerServiceImpl)
     .inSingletonScope();
-  bind<IDonationManagerService>(TYPES.IDonationManagerService)
-    .to(DonationManagerService)
+  bind<DonationManagerService>(TYPES.DonationManagerService)
+    .to(DonationManagerServiceImpl)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)
@@ -54,29 +54,29 @@ const production = new ContainerModule(bind => {
 });
 
 const test = new ContainerModule(bind => {
-  bind<IAuthentication>(TYPES.IAuthentication)
+  bind<Authentication>(TYPES.Authentication)
     .to(JwtAuthentication)
     .inSingletonScope();
-  bind<IUserService>(TYPES.IUserService)
+  bind<UserService>(TYPES.UserService)
     .to(MongoUserService)
     .inSingletonScope();
-  bind<IPackageService>(TYPES.IPackageService)
+  bind<PackageService>(TYPES.PackageService)
     .to(MongoPackageService)
     .inSingletonScope();
-  bind<ISubscriptionService>(TYPES.ISubscriptionService)
+  bind<SubscriptionService>(TYPES.SubscriptionService)
     .to(MongoSubscriptionService)
     .inSingletonScope();
   bind<IDonationService>(TYPES.IDonationService)
     .to(MongoDonationService)
     .inSingletonScope();
-  bind<IPayuService>(TYPES.IPayuService)
-    .to(PayuService)
+  bind<PayuService>(TYPES.PayuService)
+    .to(PayuServiceImpl)
     .inSingletonScope();
-  bind<IDonationManagerService>(TYPES.IDonationManagerService)
-    .to(DonationManagerService)
+  bind<DonationManagerService>(TYPES.DonationManagerService)
+    .to(DonationManagerServiceImpl)
     .inSingletonScope();
-  bind<ISubscriptionManagerService>(TYPES.ISubscriptionManagerService)
-    .to(SubscriptionManagerService)
+  bind<SubscriptionManagerService>(TYPES.SubscriptionManagerService)
+    .to(SubscriptionManagerServiceImpl)
     .inSingletonScope();
   bind<IContextProvider>(TYPES.IContextProvider)
     .to(ContextProvider)

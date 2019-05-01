@@ -6,7 +6,7 @@ import {
   RefreshTokenModel
 } from "oauth2-server";
 
-export interface IAuthentication
+export interface Authentication
   extends AuthorizationCodeModel,
     ClientCredentialsModel,
     RefreshTokenModel,

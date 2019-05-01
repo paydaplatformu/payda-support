@@ -2,7 +2,7 @@ import { subHours } from "date-fns";
 import { injectable } from "inversify";
 import { Cursor, ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
-import { IDonation, IDonationCreator, IDonationEntity, IDonationFilters, IDonationModifier } from "../models/Donation";
+import { DonationModel, DonationCreator, DonationEntity, DonationFilters, DonationModifier } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { FieldErrorCode } from "../models/Errors";
 import { Validator } from "../models/Validator";
@@ -10,11 +10,11 @@ import { BaseMongoService } from "./BaseMongoService";
 
 @injectable()
 export class MongoDonationService
-  extends BaseMongoService<IDonationEntity, IDonation, IDonationFilters, IDonationCreator, IDonationModifier>
+  extends BaseMongoService<DonationEntity, DonationModel, DonationFilters, DonationCreator, DonationModifier>
   implements IDonationService {
   protected static collectionName = "donations";
 
-  protected async createEntity(creator: IDonationCreator): Promise<IDonationEntity> {
+  protected async createEntity(creator: DonationCreator): Promise<DonationEntity> {
     const fromSuper = await super.createEntity(creator);
     return {
       ...fromSuper,
@@ -25,7 +25,7 @@ export class MongoDonationService
     };
   }
 
-  protected creatorValidator: Validator<IDonationCreator> = {
+  protected creatorValidator: Validator<DonationCreator> = {
     email: async value => {
       if (!isEmail(value)) return [FieldErrorCode.INVALID_EMAIL];
       return null;
@@ -45,12 +45,12 @@ export class MongoDonationService
     }
   };
 
-  protected getFilters = ({ paymentConfirmed }: IDonationFilters = {}): object[] => {
+  protected getFilters = ({ paymentConfirmed }: DonationFilters = {}): object[] => {
     if (paymentConfirmed !== undefined) return [{ paymentConfirmed }];
     return [];
   };
 
-  protected toModel = (entity: IDonationEntity): IDonation => {
+  protected toModel = (entity: DonationEntity): DonationModel => {
     return {
       id: entity._id.toString(),
       date: entity.date,
@@ -72,7 +72,7 @@ export class MongoDonationService
     return result.deletedCount || 0;
   };
 
-  public confirmPayment = async (donationId: string): Promise<IDonation | null> => {
+  public confirmPayment = async (donationId: string): Promise<DonationModel | null> => {
     return this.edit({ id: donationId, paymentConfirmed: true });
   };
 
@@ -80,7 +80,7 @@ export class MongoDonationService
     return this.collection.find({ packageId: new ObjectId(packageId) }).count();
   };
 
-  public getByPackageId = async (packageId: string): Promise<IDonation[]> => {
+  public getByPackageId = async (packageId: string): Promise<DonationModel[]> => {
     const results = await this.collection.find({ packageId: new ObjectId(packageId) }).toArray();
     return results.map(this.toModel);
   };

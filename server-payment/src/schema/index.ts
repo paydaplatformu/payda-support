@@ -1,9 +1,9 @@
 import { gql, IResolvers } from "apollo-server-express";
 import { merge } from "lodash";
-import { IDonationCreator } from "../models/Donation";
+import { DonationCreator } from "../models/Donation";
 import { AuthenticationRequired, AuthorizationError } from "../models/Errors";
-import { IPackageCreator, IPackageModifier } from "../models/Package";
-import { ISubscriptionModifier } from "../models/Subscription";
+import { PackageCreator, PackageModifier } from "../models/Package";
+import { SubscriptionModifier } from "../models/Subscription";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
@@ -211,16 +211,16 @@ const rootResolvers: IResolvers<any, IContext> = {
     createPackage: (parent, args, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();
       return packageService.create({
-        ...(args as IPackageCreator),
+        ...(args as PackageCreator),
         isCustom: false
       });
     },
     updatePackage: (parent, args, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return packageService.edit(args as IPackageModifier);
+      return packageService.edit(args as PackageModifier);
     },
     createDonation: async (parent, { donationCreator, language }, { donationManagerService }) => {
-      return donationManagerService.createDonation(donationCreator as IDonationCreator, language);
+      return donationManagerService.createDonation(donationCreator as DonationCreator, language);
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       if (!user) throw new AuthenticationRequired();
@@ -229,7 +229,7 @@ const rootResolvers: IResolvers<any, IContext> = {
 
     updateSubscription: (parent, args, { subscriptionService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return subscriptionService.edit(args as ISubscriptionModifier);
+      return subscriptionService.edit(args as SubscriptionModifier);
     },
 
     chargeSubscription: (parent, { id }, { payuService, user }) => {
