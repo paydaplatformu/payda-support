@@ -6,8 +6,9 @@ import { IContext } from "./context";
 export const typeDef = gql`
   input SubscriptionFilter {
     ids: [String!]
-    onlyActive: Boolean
+    status: SubscriptionStatus
     repeatInterval: RepeatInterval
+    hasPaymentToken: Boolean
   }
 
   type Subscription {

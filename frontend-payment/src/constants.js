@@ -2,10 +2,16 @@ export const paydaOrange = "rgba(245, 145, 48, 1)";
 export const baseURL =
   localStorage.getItem("baseURL") || "https://payda-support-v2.herokuapp.com";
 
-export const REPEAT_CONFIG = {
+export const REPEAT_INTERVAL = {
   NONE: "NONE",
   MONTHLY: "MONTHLY",
   YEARLY: "YEARLY"
+};
+
+export const SUBSCRIPTION_STATUS = {
+  CREATED: "CREATED",
+  RUNNING: "RUNNING",
+  CANCELLED: "CANCELLED"
 };
 
 export const CURRENCY = {

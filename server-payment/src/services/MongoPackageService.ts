@@ -32,7 +32,7 @@ export class MongoPackageService
   protected getFilters = ({
     onlyActive,
     ids,
-    showCustom,
+    onlyOriginal,
     repeatInterval,
     amount,
     currency,
@@ -40,7 +40,7 @@ export class MongoPackageService
   }: PackageFilters): object[] => {
     return [
       onlyActive === true ? { isActive: true } : undefined,
-      showCustom !== true ? { isCustom: false } : undefined,
+      onlyOriginal === true ? { isCustom: false } : undefined,
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       repeatInterval !== undefined ? { repeatInterval } : undefined,
       amount !== undefined ? { "price.amount": amount } : undefined,
@@ -72,6 +72,6 @@ export class MongoPackageService
   };
 
   public getDefaultFilters = (): PackageFilters => {
-    return { onlyActive: true, ids: undefined, showCustom: false };
+    return { onlyActive: true, ids: undefined, onlyOriginal: true };
   };
 }

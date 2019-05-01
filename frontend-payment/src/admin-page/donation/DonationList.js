@@ -8,7 +8,7 @@ import {
   SelectInput,
   TextInput
 } from "react-admin";
-import { commonFields } from "./common";
+import { commonDonationFields } from "./common";
 
 const DonationFilter = props => (
   <Filter {...props}>
@@ -34,7 +34,7 @@ const DonationList = props => (
     filters={<DonationFilter />}
     filterDefaultValues={{ paymentConfirmed: true }}
   >
-    <Datagrid rowClick="show">{commonFields}</Datagrid>
+    <Datagrid rowClick="show">{commonDonationFields}</Datagrid>
   </List>
 );
 
