@@ -21,6 +21,9 @@ export interface DonationModifier {
 
 export interface DonationFilters {
   paymentConfirmed?: boolean;
+  search?: string;
+  ids?: string[];
+  packageId?: string;
 }
 
 export interface DonationModel {

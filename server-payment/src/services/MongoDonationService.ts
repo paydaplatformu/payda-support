@@ -1,8 +1,8 @@
 import { subHours } from "date-fns";
 import { injectable } from "inversify";
-import { Cursor, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
-import { DonationModel, DonationCreator, DonationEntity, DonationFilters, DonationModifier } from "../models/Donation";
+import { DonationCreator, DonationEntity, DonationFilters, DonationModel, DonationModifier } from "../models/Donation";
 import { IDonationService } from "../models/DonationService";
 import { FieldErrorCode } from "../models/Errors";
 import { Validator } from "../models/Validator";
@@ -13,6 +13,13 @@ export class MongoDonationService
   extends BaseMongoService<DonationEntity, DonationModel, DonationFilters, DonationCreator, DonationModifier>
   implements IDonationService {
   protected static collectionName = "donations";
+
+  protected async initiate(): Promise<void> {
+    const hasSearchIndex = await this.collection.indexExists("donation_search");
+    if (!hasSearchIndex) {
+      await this.collection.createIndex({ fullName: "text", email: "text" }, { name: "donation_search" });
+    }
+  }
 
   protected async createEntity(creator: DonationCreator): Promise<DonationEntity> {
     const fromSuper = await super.createEntity(creator);
@@ -45,9 +52,13 @@ export class MongoDonationService
     }
   };
 
-  protected getFilters = ({ paymentConfirmed }: DonationFilters = {}): object[] => {
-    if (paymentConfirmed !== undefined) return [{ paymentConfirmed }];
-    return [];
+  protected getFilters = ({ paymentConfirmed, ids, search, packageId }: DonationFilters): object[] => {
+    return [
+      paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
+      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      search !== undefined ? { $text: { $search: search } } : undefined,
+      packageId !== undefined ? { packageId: new ObjectId(packageId) } : undefined
+    ].filter(el => el !== undefined) as any;
   };
 
   protected toModel = (entity: DonationEntity): DonationModel => {
