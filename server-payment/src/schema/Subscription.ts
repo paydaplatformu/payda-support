@@ -16,6 +16,7 @@ export const typeDef = gql`
     donationId: String!
     processHistory: [PaymentProcess!]!
     deactivationReason: DeactivationReason
+    hasPaymentToken: Boolean!
     status: SubscriptionStatus!
     createdAt: Date!
     updatedAt: Date!
