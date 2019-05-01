@@ -29,7 +29,7 @@ export interface PackageModifier {
 export interface PackageFilters {
   ids?: string[];
   onlyActive?: boolean;
-  showCustom?: boolean;
+  onlyOriginal?: boolean;
   repeatInterval?: RepeatInterval;
   amount?: number;
   currency?: Currency;

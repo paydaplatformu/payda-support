@@ -40,7 +40,7 @@ export class MongoSubscriptionService
       case RepeatInterval.MONTHLY:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMonths, startOfMonth);
       default:
-        throw new Error("Unknown repeat config.");
+        throw new Error("Unknown repeat interval.");
     }
   };
 
@@ -88,7 +88,7 @@ export class MongoSubscriptionService
     return {
       id: entity._id.toString(),
       packageId: entity.packageId.toString(),
-      donationId: entity.packageId.toString(),
+      donationId: entity.donationId.toString(),
       processHistory: entity.processHistory,
       deactivationReason: entity.deactivationReason as any,
       status: entity.status as any,
@@ -166,9 +166,10 @@ export class MongoSubscriptionService
     return entity.paymentToken;
   }
 
-  protected getFilters = ({ ids, status }: SubscriptionFilters): object[] => {
+  protected getFilters = ({ ids, status, hasPaymentToken }: SubscriptionFilters): object[] => {
     return [
       status !== undefined ? { status } : undefined,
+      hasPaymentToken !== true ? undefined : { paymentToken: { $exists: true, $ne: null } },
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined) as any;
   };

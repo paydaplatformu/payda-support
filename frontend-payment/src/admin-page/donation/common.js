@@ -13,7 +13,7 @@ import {
   getSourceProp
 } from "../../utils";
 
-export const commonFields = [
+export const commonDonationFields = [
   <TextField source="id" />,
   <TextField source="fullName" />,
   <EmailField source="email" />,

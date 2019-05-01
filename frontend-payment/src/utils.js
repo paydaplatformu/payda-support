@@ -1,7 +1,8 @@
 import {
   RECURRENCY_TRANSLATION_KEYS,
-  REPEAT_CONFIG,
-  CURRENCY
+  REPEAT_INTERVAL,
+  CURRENCY,
+  SUBSCRIPTION_STATUS
 } from "./constants";
 
 export const getPackageTag = (pack, langCode) =>
@@ -49,9 +50,19 @@ export const defaultDateFieldProps = {
 };
 
 export const repeatIntervalChoices = [
-  { id: REPEAT_CONFIG.NONE, name: "None" },
-  { id: REPEAT_CONFIG.MONTHLY, name: "Monthly" },
-  { id: REPEAT_CONFIG.YEARLY, name: "Yearly" }
+  { id: REPEAT_INTERVAL.NONE, name: "None" },
+  ...activeRepeatIntervalChoices
+];
+
+export const activeRepeatIntervalChoices = [
+  { id: REPEAT_INTERVAL.MONTHLY, name: "Monthly" },
+  { id: REPEAT_INTERVAL.YEARLY, name: "Yearly" }
+];
+
+export const subscriptionStatusChoices = [
+  { id: SUBSCRIPTION_STATUS.CREATED, name: "Created" },
+  { id: SUBSCRIPTION_STATUS.RUNNING, name: "Running" },
+  { id: SUBSCRIPTION_STATUS.CANCELLED, name: "Cancelled" }
 ];
 
 export const currencyChoices = [

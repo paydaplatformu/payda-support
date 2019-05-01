@@ -4,6 +4,11 @@ import { Admin, Resource } from "react-admin";
 import authProvider from "./authProvider";
 import { client } from "./dataProvider";
 import { DonationList, DonationShow } from "./donation";
+import { SubscriptionList, SubscriptionShow } from "./subscription";
+import {
+  ChargableSubscriptionList,
+  ChargableSubscriptionShow
+} from "./chargable-subscription";
 import i18nProvider from "./i18nProvider";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 
@@ -33,6 +38,16 @@ class AdminPage extends Component {
           list={PackageList}
           edit={PackageEdit}
           create={PackageCreate}
+        />
+        <Resource
+          name="Subscription"
+          list={SubscriptionList}
+          show={SubscriptionShow}
+        />
+        <Resource
+          name="ChargableSubscription"
+          list={ChargableSubscriptionList}
+          show={ChargableSubscriptionShow}
         />
       </Admin>
     );

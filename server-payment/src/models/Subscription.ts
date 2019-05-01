@@ -23,6 +23,7 @@ export interface SubscriptionFilters {
   ids?: string[];
   status?: SubscriptionStatus;
   repeatInterval?: RepeatInterval;
+  hasPaymentToken?: boolean;
 }
 
 export interface SubscriptionBaseModel {

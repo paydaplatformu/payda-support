@@ -4,6 +4,7 @@ import { DonationCreator } from "../models/Donation";
 import { AuthenticationRequired, AuthorizationError } from "../models/Errors";
 import { PackageCreator, PackageModifier } from "../models/Package";
 import { SubscriptionModifier } from "../models/Subscription";
+import { typeDef as ChargableSubscription } from "./ChargableSubscription";
 import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
 import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
@@ -58,14 +59,14 @@ const Query = gql`
       filter: SubscriptionFilter
     ): ListMetadata
 
-    ChargableSubscription(id: String!): Subscription
+    ChargableSubscription(id: String!): ChargableSubscription
     allChargableSubscriptions(
       page: Int
       perPage: Int
       sortField: String
       sortOrder: String
       filter: SubscriptionFilter
-    ): [Subscription!]!
+    ): [ChargableSubscription!]!
     _allChargableSubscriptionsMeta(
       page: Int
       perPage: Int
@@ -98,7 +99,7 @@ const Query = gql`
     createDonation(donationCreator: DonationCreator!, language: LanguageCode!): DonationCreationResult!
     cleanPendingDonations: Int!
 
-    updateSubscription(id: String!, isActive: Boolean!): Subscription
+    updateSubscription(id: String!, status: SubscriptionStatus!): Subscription
 
     chargeSubscription(id: String!): SubscriptionChargeResult!
 
@@ -127,27 +128,14 @@ const rootResolvers: IResolvers<any, IContext> = {
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
     allPackages: (
       parent,
-      {
-        filter: { onlyActive, ids, showCustom, amount, currency, search } = {
-          onlyActive: true,
-          ids: undefined,
-          amount: undefined,
-          currency: undefined,
-          showCustom: false,
-          search: undefined
-        },
-        sortField,
-        sortOrder,
-        page,
-        perPage
-      },
+      { filter: { onlyActive, ids, onlyOriginal, amount, currency, search }, sortField, sortOrder, page, perPage },
       { packageService, user }
     ) => {
       if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
-      return packageService.getAll({ onlyActive, ids, showCustom, amount, currency, search }, pagination, sorting);
+      return packageService.getAll({ onlyActive, ids, onlyOriginal, amount, currency, search }, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();
@@ -200,7 +188,7 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
     _allChargableSubscriptionsMeta: async (
       parent,
-      { repeatInterval, ...restFilters },
+      { filter: { repeatInterval, ...restFilters } },
       { subscriptionManagerService, user }
     ) => {
       if (!user) throw new AuthenticationRequired();
@@ -264,7 +252,8 @@ export const typeDefs = [
   Donation,
   Subscription,
   User,
-  ListMetadata
+  ListMetadata,
+  ChargableSubscription
 ];
 
 export const resolvers = merge(dateResolvers, jsonResolvers, rootResolvers, packageResolvers, userResolvers);

@@ -8,7 +8,7 @@ export const typeDef = gql`
   input PackageFilter {
     ids: [String!]
     onlyActive: Boolean
-    showCustom: Boolean
+    onlyOriginal: Boolean
     repeatInterval: RepeatInterval
     amount: Float
     currency: Currency
