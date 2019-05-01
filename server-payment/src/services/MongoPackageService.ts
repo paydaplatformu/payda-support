@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
-import { MonetaryAmount } from "../models/MonetaryAmount";
-import { PackageModel, PackageCreator, PackageEntity, PackageFilters, PackageModifier } from "../models/Package";
+import { PackageCreator, PackageEntity, PackageFilters, PackageModel, PackageModifier } from "../models/Package";
 import { PackageService } from "../models/PackageService";
 import { RepeatInterval } from "../models/RepeatInterval";
 import { Validator } from "../models/Validator";

@@ -3,9 +3,9 @@ import { RepeatInterval } from "./RepeatInterval";
 import { SortingSettings } from "./SortingSettings";
 import {
   RunningSubscriptionModel,
-  SubscriptionModel,
   SubscriptionCreator,
   SubscriptionFilters,
+  SubscriptionModel,
   SubscriptionModifier
 } from "./Subscription";
 
