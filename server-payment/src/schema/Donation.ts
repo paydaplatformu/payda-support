@@ -3,6 +3,9 @@ import { gql } from "apollo-server-core";
 export const typeDef = gql`
   input DonationFilter {
     paymentConfirmed: Boolean
+    search: String
+    ids: [String!]
+    packageId: String
   }
 
   input DonationCreator {

@@ -1,12 +1,11 @@
+import buildGraphQLProvider from "ra-data-graphql-simple";
 import React, { Component } from "react";
 import { Admin, Resource } from "react-admin";
-import buildGraphQLProvider from "ra-data-graphql-simple";
-
-import { DonationList } from "./donation";
-import { PackageCreate, PackageEdit, PackageList } from "./package";
 import authProvider from "./authProvider";
-import i18nProvider from "./i18nProvider";
 import { client } from "./dataProvider";
+import { DonationList } from "./donation";
+import i18nProvider from "./i18nProvider";
+import { PackageCreate, PackageEdit, PackageList } from "./package";
 
 class AdminPage extends Component {
   state = { provider: null };

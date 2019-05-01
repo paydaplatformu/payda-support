@@ -13,9 +13,9 @@ export class MongoPackageService
   protected static collectionName = "packages";
 
   protected async initiate(): Promise<void> {
-    const hasSearchIndex = await this.collection.indexExists("search");
+    const hasSearchIndex = await this.collection.indexExists("package_search");
     if (!hasSearchIndex) {
-      await this.collection.createIndex({ "defaultTag.name": "text", reference: "text" }, { name: "search" });
+      await this.collection.createIndex({ "defaultTag.name": "text", reference: "text" }, { name: "package_search" });
     }
   }
 
