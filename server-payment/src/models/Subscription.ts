@@ -35,6 +35,7 @@ export interface SubscriptionBaseModel {
   deactivationReason: DeactivationReason | null;
   createdAt: Date;
   updatedAt: Date;
+  hasPaymentToken: boolean;
 }
 
 export interface CreatedSubscriptionModel extends SubscriptionBaseModel {
@@ -84,7 +85,4 @@ export interface CancelledSubscriptionEntity extends SubscriptionBaseEntity {
   paymentToken: null;
 }
 
-export type SubscriptionEntity =
-  | CreatedSubscriptionEntity
-  | RunningSubscriptionEntity
-  | CancelledSubscriptionEntity;
+export type SubscriptionEntity = CreatedSubscriptionEntity | RunningSubscriptionEntity | CancelledSubscriptionEntity;

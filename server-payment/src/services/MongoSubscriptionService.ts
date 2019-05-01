@@ -94,7 +94,8 @@ export class MongoSubscriptionService
       status: entity.status as any,
       language: entity.language,
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt
+      updatedAt: entity.updatedAt,
+      hasPaymentToken: entity.paymentToken !== null
     };
   };
 
