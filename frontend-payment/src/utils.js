@@ -58,3 +58,9 @@ export const currencyChoices = [
   { id: CURRENCY.TRY, name: "TRY" },
   { id: CURRENCY.USD, name: "USD" }
 ];
+
+export const getSourceProp = element => {
+  if (element.props.children)
+    return `${element.props.source}.${element.props.children.props.source}`;
+  return element.props.source;
+};

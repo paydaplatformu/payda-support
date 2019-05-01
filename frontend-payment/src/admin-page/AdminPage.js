@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Admin, Resource } from "react-admin";
 import authProvider from "./authProvider";
 import { client } from "./dataProvider";
-import { DonationList } from "./donation";
+import { DonationList, DonationShow } from "./donation";
 import i18nProvider from "./i18nProvider";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 
@@ -27,7 +27,7 @@ class AdminPage extends Component {
         authProvider={authProvider}
         i18nProvider={i18nProvider}
       >
-        <Resource name="Donation" list={DonationList} />
+        <Resource name="Donation" list={DonationList} show={DonationShow} />
         <Resource
           name="Package"
           list={PackageList}
