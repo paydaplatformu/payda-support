@@ -5,8 +5,7 @@ import {
   Filter,
   List,
   ReferenceInput,
-  SelectInput,
-  TextInput
+  SelectInput
 } from "react-admin";
 import { SUBSCRIPTION_STATUS } from "../../constants";
 import { subscriptionStatusChoices } from "../../utils";
