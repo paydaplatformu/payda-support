@@ -1,4 +1,4 @@
-import { PackageModel, PackageCreator, PackageFilters, PackageModifier } from "./Package";
+import { PackageCreator, PackageFilters, PackageModel, PackageModifier } from "./Package";
 import { PaginationSettings } from "./PaginationSettings";
 import { RepeatInterval } from "./RepeatInterval";
 import { SortingSettings } from "./SortingSettings";

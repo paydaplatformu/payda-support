@@ -7,10 +7,10 @@ import { RepeatInterval } from "../models/RepeatInterval";
 import { SortingSettings } from "../models/SortingSettings";
 import {
   RunningSubscriptionModel,
-  SubscriptionModel,
   SubscriptionCreator,
   SubscriptionEntity,
   SubscriptionFilters,
+  SubscriptionModel,
   SubscriptionModifier
 } from "../models/Subscription";
 import { SubscriptionService } from "../models/SubscriptionService";
@@ -70,7 +70,7 @@ export class MongoSubscriptionService
         processHistory: {
           $exists: true,
           $ne: [],
-          $elemMatch: { date: { $lt: lessThan, $gte: greaterThanOrEqual } }
+          $elemMatch: { date: { $lt: lessThan, $gte: greaterThanOrEqual }, isSuccess: true }
         }
       }
     ];
