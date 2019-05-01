@@ -49,14 +49,14 @@ export const defaultDateFieldProps = {
   }
 };
 
-export const repeatIntervalChoices = [
-  { id: REPEAT_INTERVAL.NONE, name: "None" },
-  ...activeRepeatIntervalChoices
-];
-
 export const activeRepeatIntervalChoices = [
   { id: REPEAT_INTERVAL.MONTHLY, name: "Monthly" },
   { id: REPEAT_INTERVAL.YEARLY, name: "Yearly" }
+];
+
+export const repeatIntervalChoices = [
+  { id: REPEAT_INTERVAL.NONE, name: "None" },
+  ...activeRepeatIntervalChoices
 ];
 
 export const subscriptionStatusChoices = [
