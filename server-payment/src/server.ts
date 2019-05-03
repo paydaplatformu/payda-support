@@ -62,10 +62,12 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
       context,
       typeDefs,
       resolvers,
+      playground: true,
       introspection: true,
       formatError: (error: any) => {
-        delete error.extensions.exception;
         console.error(error);
+        console.error(error.extensions.exception);
+        delete error.extensions.exception;
         return error;
       }
     });
