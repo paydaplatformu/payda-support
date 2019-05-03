@@ -126,16 +126,13 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
 
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
-    allPackages: (
-      parent,
-      { filter: { onlyActive, ids, onlyOriginal, amount, currency, search }, sortField, sortOrder, page, perPage },
-      { packageService, user }
-    ) => {
-      if (!user && onlyActive === false) throw new AuthorizationError("Only admins can view non-active packages.");
+    allPackages: (parent, { filter, sortField, sortOrder, page, perPage }, { packageService, user }) => {
+      if (!user && filter && filter.onlyActive === false)
+        throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
       if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
-      return packageService.getAll({ onlyActive, ids, onlyOriginal, amount, currency, search }, pagination, sorting);
+      return packageService.getAll(filter, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();
