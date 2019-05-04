@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
 import { DonationCreator, DonationEntity, DonationFilters, DonationModel, DonationModifier } from "../models/Donation";
-import { IDonationService } from "../models/DonationService";
+import { DonationService } from "../models/DonationService";
 import { FieldErrorCode } from "../models/Errors";
 import { Validator } from "../models/Validator";
 import { BaseMongoService } from "./BaseMongoService";
@@ -11,7 +11,7 @@ import { BaseMongoService } from "./BaseMongoService";
 @injectable()
 export class MongoDonationService
   extends BaseMongoService<DonationEntity, DonationModel, DonationFilters, DonationCreator, DonationModifier>
-  implements IDonationService {
+  implements DonationService {
   protected static collectionName = "donations";
 
   protected async initiate(): Promise<void> {
@@ -28,6 +28,7 @@ export class MongoDonationService
       ...creator,
       paymentConfirmed: false,
       packageId: new ObjectId(creator.packageId),
+      parentDonationId: creator.parentDonationId !== undefined ? new ObjectId(creator.parentDonationId) : undefined,
       date: new Date()
     };
   }
@@ -52,11 +53,12 @@ export class MongoDonationService
     }
   };
 
-  protected getFilters = ({ paymentConfirmed, ids, search, packageId }: DonationFilters): object[] => {
+  protected getFilters = ({ paymentConfirmed, ids, search, packageId, onlyDirect }: DonationFilters): object[] => {
     return [
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
+      onlyDirect === false ? undefined : { parentDonationId: { $exists: false } },
       packageId !== undefined ? { packageId: new ObjectId(packageId) } : undefined
     ].filter(el => el !== undefined) as any;
   };
@@ -71,7 +73,8 @@ export class MongoDonationService
       notes: entity.notes,
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
-      usingAmex: entity.usingAmex
+      usingAmex: entity.usingAmex,
+      parentDonationId: entity.parentDonationId !== undefined ? entity.parentDonationId.toString() : undefined
     };
   };
 

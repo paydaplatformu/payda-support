@@ -6,7 +6,7 @@ import * as qs from "querystring";
 import { config } from "../config";
 import { DeactivationReason } from "../models/DeactivationReason";
 import { DonationModel } from "../models/Donation";
-import { IDonationService } from "../models/DonationService";
+import { DonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
 import { PackageModel } from "../models/Package";
 import { PackageService } from "../models/PackageService";
@@ -21,8 +21,8 @@ import { getUTF8Length, splitName } from "../utilities/helpers";
 
 @injectable()
 export class PayuServiceImpl implements PayuService {
-  @inject(TYPES.IDonationService)
-  private donationService: IDonationService = null as any;
+  @inject(TYPES.DonationService)
+  private donationService: DonationService = null as any;
 
   @inject(TYPES.PackageService)
   private packageService: PackageService = null as any;
@@ -36,7 +36,12 @@ export class PayuServiceImpl implements PayuService {
   };
   private backRef: string = config.get("payu.backRef");
 
-  private createHashInput = (donation: DonationModel, pkg: PackageModel, language: LanguageCode, merchant: string): object => {
+  private createHashInput = (
+    donation: DonationModel,
+    pkg: PackageModel,
+    language: LanguageCode,
+    merchant: string
+  ): object => {
     const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
     const ref = this.getReference(pkg, donation);
 
@@ -210,6 +215,21 @@ export class PayuServiceImpl implements PayuService {
       deactivationReason: status ? null : DeactivationReason.ERROR,
       status: status ? SubscriptionStatus.RUNNING : SubscriptionStatus.CANCELLED
     });
+
+    const childDonation = await this.donationService.create({
+      email: donation.email,
+      fullName: donation.fullName,
+      parentDonationId: donation.id,
+      customPriceAmount: undefined,
+      customPriceCurrency: undefined,
+      customRepeatInterval: undefined,
+      notes: undefined,
+      packageId: donation.packageId,
+      quantity: donation.quantity,
+      usingAmex: donation.usingAmex
+    });
+
+    await this.donationService.confirmPayment(childDonation.id);
 
     return {
       status,

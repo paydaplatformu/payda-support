@@ -14,7 +14,10 @@ export const typeDef = gql`
   type Subscription {
     id: String!
     packageId: String!
+
+    "Original donation made by the user"
     donationId: String!
+
     processHistory: [PaymentProcess!]!
     deactivationReason: DeactivationReason
     hasPaymentToken: Boolean!

@@ -50,6 +50,7 @@ interface IDonationEntity {
   date: Date;
   quantity: number;
   usingAmex: boolean;
+  parentDonationId?: ObjectId;
 }
 
 export const convertDonation = (input: any): IDonationEntity => ({
@@ -61,7 +62,8 @@ export const convertDonation = (input: any): IDonationEntity => ({
   packageId: input.packageId,
   paymentConfirmed: input.status,
   quantity: input.quantity || 1,
-  usingAmex: false
+  usingAmex: false,
+  parentDonationId: undefined
 });
 
 export const setPackage = (packages: Collection) => (donation: any) => {
