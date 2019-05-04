@@ -156,7 +156,7 @@ if (["development", "test"].includes(config.get("environment"))) {
   config.set("db.url", "");
   config.set("jwt.secret", "secret");
   config.set("defaultUser.password", "123456");
-  config.set("payu.backRef", "http://localhost:8080");
+  config.set("payu.backRef", "http://localhost:8080/thank-you");
   config.set("payu.defaultCredentials.merchant", "payu_default");
   config.set("payu.defaultCredentials.secret", "123456");
   config.set("payu.amexCredentials.merchant", "payu_amex");

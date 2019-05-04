@@ -2,7 +2,7 @@ import { ContainerModule } from "inversify";
 import "reflect-metadata";
 import { Authentication } from "./models/Authentication";
 import { DonationManagerService } from "./models/DonationManagerService";
-import { IDonationService } from "./models/DonationService";
+import { DonationService } from "./models/DonationService";
 import { PackageService } from "./models/PackageService";
 import { PayuService } from "./models/PayuService";
 import { SubscriptionManagerService } from "./models/SubscriptionManagerService";
@@ -36,7 +36,7 @@ const production = new ContainerModule(bind => {
   bind<SubscriptionService>(TYPES.SubscriptionService)
     .to(MongoSubscriptionService)
     .inSingletonScope();
-  bind<IDonationService>(TYPES.IDonationService)
+  bind<DonationService>(TYPES.DonationService)
     .to(MongoDonationService)
     .inSingletonScope();
   bind<PayuService>(TYPES.PayuService)
@@ -66,7 +66,7 @@ const test = new ContainerModule(bind => {
   bind<SubscriptionService>(TYPES.SubscriptionService)
     .to(MongoSubscriptionService)
     .inSingletonScope();
-  bind<IDonationService>(TYPES.IDonationService)
+  bind<DonationService>(TYPES.DonationService)
     .to(MongoDonationService)
     .inSingletonScope();
   bind<PayuService>(TYPES.PayuService)

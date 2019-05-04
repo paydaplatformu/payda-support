@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Client } from "oauth2-server";
 import "reflect-metadata";
 import { DonationManagerService } from "../models/DonationManagerService";
-import { IDonationService } from "../models/DonationService";
+import { DonationService } from "../models/DonationService";
 import { PackageService } from "../models/PackageService";
 import { PayuService } from "../models/PayuService";
 import { SubscriptionService } from "../models/SubscriptionService";
@@ -15,7 +15,7 @@ export const Type = Symbol.for("IContextProvider");
 
 export interface IContextProvider {
   packageService: PackageService;
-  donationService: IDonationService;
+  donationService: DonationService;
   subscriptionService: SubscriptionService;
   userService: UserService;
   payuService: PayuService;
@@ -25,7 +25,7 @@ export interface IContextProvider {
 
 export interface IContext {
   packageService: PackageService;
-  donationService: IDonationService;
+  donationService: DonationService;
   subscriptionService: SubscriptionService;
   userService: UserService;
   payuService: PayuService;
@@ -41,8 +41,8 @@ export class ContextProvider implements IContextProvider {
   @inject(TYPES.PackageService)
   public packageService: PackageService = null as any;
 
-  @inject(TYPES.IDonationService)
-  public donationService: IDonationService = null as any;
+  @inject(TYPES.DonationService)
+  public donationService: DonationService = null as any;
 
   @inject(TYPES.SubscriptionService)
   public subscriptionService: SubscriptionService = null as any;

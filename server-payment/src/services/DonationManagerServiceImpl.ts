@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
 import { config } from "../config";
-import { DonationModel, DonationCreator } from "../models/Donation";
+import { DonationCreator, DonationModel } from "../models/Donation";
 import { DonationCreationResult } from "../models/DonationCreationResult";
 import { DonationManagerService } from "../models/DonationManagerService";
-import { IDonationService } from "../models/DonationService";
+import { DonationService } from "../models/DonationService";
 import { LanguageCode } from "../models/LanguageCode";
 import { PackageModel } from "../models/Package";
 import { PackageService } from "../models/PackageService";
@@ -15,8 +15,8 @@ import { TYPES } from "../types";
 
 @injectable()
 export class DonationManagerServiceImpl implements DonationManagerService {
-  @inject(TYPES.IDonationService)
-  private donationService: IDonationService = null as any;
+  @inject(TYPES.DonationService)
+  private donationService: DonationService = null as any;
 
   @inject(TYPES.PackageService)
   private packageService: PackageService = null as any;

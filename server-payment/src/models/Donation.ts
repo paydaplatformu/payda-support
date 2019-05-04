@@ -12,6 +12,7 @@ export interface DonationCreator {
   quantity: number;
   usingAmex: boolean;
   notes?: string;
+  parentDonationId?: string;
 }
 
 export interface DonationModifier {
@@ -24,6 +25,7 @@ export interface DonationFilters {
   search?: string;
   ids?: string[];
   packageId?: string;
+  onlyDirect?: boolean;
 }
 
 export interface DonationModel {
@@ -36,6 +38,7 @@ export interface DonationModel {
   date: Date;
   quantity: number;
   usingAmex: boolean;
+  parentDonationId?: string;
 }
 
 export interface DonationEntity {
@@ -48,4 +51,5 @@ export interface DonationEntity {
   date: Date;
   quantity: number;
   usingAmex: boolean;
+  parentDonationId?: ObjectId;
 }

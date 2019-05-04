@@ -11,7 +11,7 @@ import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { Authentication } from "./models/Authentication";
-import { IDonationService } from "./models/DonationService";
+import { DonationService } from "./models/DonationService";
 import { InvalidInput, ValidationError } from "./models/Errors";
 import { PayuService } from "./models/PayuService";
 import { UserService } from "./models/UserService";
@@ -45,7 +45,7 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     const userService = container.get<UserService>(TYPES.UserService);
     const model = container.get<Authentication>(TYPES.Authentication);
     const payuService = container.get<PayuService>(TYPES.PayuService);
-    const donationService = container.get<IDonationService>(TYPES.IDonationService);
+    const donationService = container.get<DonationService>(TYPES.DonationService);
 
     const initializationPromises = Object.values(TYPES)
       .flatMap(type => container.getAll(type))

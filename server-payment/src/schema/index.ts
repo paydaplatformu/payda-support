@@ -205,7 +205,11 @@ const rootResolvers: IResolvers<any, IContext> = {
       return packageService.edit(args as PackageModifier);
     },
     createDonation: async (parent, { donationCreator, language }, { donationManagerService }) => {
-      return donationManagerService.createDonation(donationCreator as DonationCreator, language);
+      const saneDonationCreator: DonationCreator = {
+        ...(donationCreator as DonationCreator),
+        parentDonationId: undefined
+      };
+      return donationManagerService.createDonation(saneDonationCreator, language);
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       if (!user) throw new AuthenticationRequired();

@@ -25,6 +25,7 @@ const ChargableSubscriptionFilter = props => (
       reference="Package"
       alwaysOn
       perPage={100000}
+      filter={{ onlyOriginal: true }}
     >
       <SelectInput optionText="defaultTag.name" />
     </ReferenceInput>

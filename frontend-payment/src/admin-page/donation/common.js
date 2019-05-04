@@ -22,7 +22,7 @@ export const commonDonationFields = [
   </ReferenceField>,
   <ReferenceField
     sortable={false}
-    label="Amonut"
+    label="Amount"
     reference="Package"
     source="packageId"
     linkType={false}
@@ -55,6 +55,16 @@ export const commonDonationFields = [
     linkType={false}
   >
     <BooleanField source="isCustom" />
+  </ReferenceField>,
+  <ReferenceField
+    sortable={false}
+    label="Parent"
+    reference="Donation"
+    source="parentDonationId"
+    linkType="show"
+    allowEmpty
+  >
+    <TextField source="id" />
   </ReferenceField>,
   <BooleanField source="paymentConfirmed" />,
   <DateField {...defaultDateFieldProps} label="Date" source="date" />

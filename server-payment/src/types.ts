@@ -6,7 +6,7 @@ export const TYPES = {
   Authentication: Symbol.for("Authentication"),
   PackageService: Symbol.for("PackageService"),
   SubscriptionService: Symbol.for("SubscriptionService"),
-  IDonationService: Symbol.for("IDonationService"),
+  DonationService: Symbol.for("DonationService"),
   DonationManagerService: Symbol.for("DonationManagerService"),
   SubscriptionManagerService: Symbol.for("SubscriptionManagerService")
 };
