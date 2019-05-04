@@ -3,55 +3,90 @@ import {
   Edit,
   SimpleForm,
   SimpleFormIterator,
-  ArrayInput,
-  DisabledInput,
-  NumberInput,
   SelectInput,
-  TextInput
+  TextInput,
+  LongTextInput,
+  BooleanInput,
 } from "react-admin";
 
-import { LANG_CODES } from "../../constants";
-import { repeatIntervalChoices, currencyChoices } from "../../utils";
+import {
+  repeatIntervalChoices,
+  currencyChoices,
+  languageChoices,
+} from "../../utils";
+
+import {
+  StyledTextInput,
+  StyledLongTextInput,
+  StyledSelectInput,
+  StyledNumberInput,
+  StyledArrayInput,
+  StyledDisabledInput,
+  StyledDivider,
+} from "./PackageFormComponents";
 
 const PackageEdit = props => (
   <Edit {...props}>
     <SimpleForm>
-      <DisabledInput source="id" />
-      <div style={{ border: "1px solid black" }}>
-        <div>DEFAULT TAG EKLEME YERI</div>
-        <SelectInput
-          source="defaultTag.code"
-          choices={[
-            { id: LANG_CODES.TR, name: "Turkish" },
-            { id: LANG_CODES.EN, name: "English" }
-          ]}
-        />
-        <TextInput source="defaultTag.name" />
-        <TextInput source="defaultTag.description" />
-      </div>
-      <TextInput source="reference" />
-      <SelectInput
-        label="Repeat"
-        source="repeatInterval"
-        choices={repeatIntervalChoices}
+      <h2>Package Information</h2>
+      <StyledDivider />
+      <StyledSelectInput
+        source="defaultTag.code"
+        label="Default Package Language"
+        choices={languageChoices}
       />
-      <TextInput source="image" />
-      <NumberInput source="price.amount" />
-      <SelectInput source="price.currency" choices={currencyChoices} />
-      <NumberInput source="priority" />
-      <ArrayInput source="tags">
-        <SimpleFormIterator>
+      <StyledTextInput source="defaultTag.name" label="Default Package Name" />
+      <StyledLongTextInput
+        source="defaultTag.description"
+        label="Default Package Description"
+      />
+      <h4 style={{ marginTop: 30, width: "50%" }}>
+        * You can add package information in other languages by clicking the
+        button below
+      </h4>
+      <StyledArrayInput source="tags" label="">
+        <SimpleFormIterator style={{ marginTop: 30 }}>
           <SelectInput
             source="code"
-            choices={[
-              { id: LANG_CODES.TR, name: "Turkish" },
-              { id: LANG_CODES.EN, name: "English" }
-            ]}
+            label="Language"
+            choices={languageChoices}
           />
-          <TextInput source="name" />
-          <TextInput source="description" />
+          <TextInput source="name" label="Name" />
+          <LongTextInput source="description" label="Description" />
         </SimpleFormIterator>
-      </ArrayInput>
+      </StyledArrayInput>
+      <h2 style={{ marginTop: 30 }}>Price Information</h2>
+      <StyledDivider />
+      <StyledDisabledInput
+        source="price.currency"
+        label="Currency"
+        choices={currencyChoices}
+      />
+      <StyledDisabledInput source="price.amount" label="Price" />
+      <StyledDisabledInput
+        source="repeatInterval"
+        label="Repetitive Payment Interval"
+        choices={repeatIntervalChoices}
+      />
+      <BooleanInput
+        source="customizationConfig.allowPriceAmountCustomization"
+        label="Customizable Price"
+      />
+      <BooleanInput
+        source="customizationConfig.allowPriceCurrencyCustomization"
+        label="Customizable Currency"
+      />
+      <BooleanInput
+        source="customizationConfig.allowRepeatIntervalCustomization"
+        label="Customizable Interval"
+      />
+      <h2 style={{ marginTop: 30 }}>Package Image</h2>
+      <StyledDivider />
+      <StyledTextInput source="image" label="Image URL" />
+      <h2 style={{ marginTop: 30 }}>Other Information</h2>
+      <StyledDivider />
+      <StyledTextInput source="reference" />
+      <StyledNumberInput source="priority" />
     </SimpleForm>
   </Edit>
 );
