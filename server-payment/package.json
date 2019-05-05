@@ -51,6 +51,7 @@
     "mongodb": "^3.2.3",
     "oauth2-server": "^3.0.1",
     "reflect-metadata": "^0.1.13",
+    "source-map-support": "^0.5.12",
     "validator": "^10.11.0"
   },
   "scripts": {

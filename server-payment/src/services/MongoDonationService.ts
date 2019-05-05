@@ -58,7 +58,7 @@ export class MongoDonationService
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
       ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
-      onlyDirect === false ? undefined : { parentDonationId: { $exists: false } },
+      onlyDirect === true ? { parentDonationId: { $exists: false } } : undefined,
       packageId !== undefined ? { packageId: new ObjectId(packageId) } : undefined
     ].filter(el => el !== undefined) as any;
   };
@@ -74,7 +74,7 @@ export class MongoDonationService
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
       usingAmex: entity.usingAmex,
-      parentDonationId: entity.parentDonationId !== undefined ? entity.parentDonationId.toString() : undefined
+      parentDonationId: entity.parentDonationId ? entity.parentDonationId.toString() : undefined
     };
   };
 

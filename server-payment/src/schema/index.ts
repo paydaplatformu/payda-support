@@ -103,7 +103,7 @@ const Query = gql`
 
     chargeSubscription(id: String!): SubscriptionChargeResult!
 
-    cancelSubscription(is: String!): Subscription
+    cancelSubscription(id: String!): Subscription
   }
 `;
 
