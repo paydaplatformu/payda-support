@@ -9,9 +9,8 @@ import {
 } from "react-admin";
 import { SUBSCRIPTION_STATUS } from "../../constants";
 import { subscriptionStatusChoices } from "../../utils";
-import { commonSubscriptionFields } from "./common";
-import { Button } from "@material-ui/core";
 import CancelSubscriptionButton from "../containers/CancelSubscriptionButton";
+import { commonSubscriptionFields } from "./common";
 
 const SubscriptionFilter = props => (
   <Filter {...props}>

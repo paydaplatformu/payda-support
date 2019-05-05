@@ -4,11 +4,12 @@ import {
   Filter,
   List,
   ReferenceInput,
-  SelectInput,
-  TextField
+  SelectInput
 } from "react-admin";
 import { REPEAT_INTERVAL } from "../../constants";
 import { activeRepeatIntervalChoices } from "../../utils";
+import ChargeSubscriptionButton from "../containers/ChargeSubscriptionButton";
+import { commonChargableSubscriptionFields } from "./common";
 
 const ChargableSubscriptionFilter = props => (
   <Filter {...props}>
@@ -42,7 +43,8 @@ export const ChargableSubscriptionList = props => (
     filters={<ChargableSubscriptionFilter />}
   >
     <Datagrid rowClick="show">
-      <TextField label="Id" source="id" />
+      {commonChargableSubscriptionFields}
+      <ChargeSubscriptionButton color="secondary" variant="contained" />
     </Datagrid>
   </List>
 );

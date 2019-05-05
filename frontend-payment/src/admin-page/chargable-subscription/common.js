@@ -13,7 +13,7 @@ import {
   getSourceProp
 } from "../../utils";
 
-export const commonSubscriptionFields = [
+export const commonChargableSubscriptionFields = [
   <TextField label="Id" source="id" />,
   <ReferenceField
     label="Name"

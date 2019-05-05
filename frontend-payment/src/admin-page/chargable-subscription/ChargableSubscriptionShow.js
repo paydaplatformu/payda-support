@@ -1,9 +1,9 @@
 import React from "react";
 import { Show, SimpleShowLayout } from "react-admin";
-import { commonSubscriptionFields } from "./common";
+import { commonChargableSubscriptionFields } from "./common";
 
 export const ChargableSubscriptionShow = props => (
   <Show {...props}>
-    <SimpleShowLayout>{commonSubscriptionFields}</SimpleShowLayout>
+    <SimpleShowLayout>{commonChargableSubscriptionFields}</SimpleShowLayout>
   </Show>
 );
