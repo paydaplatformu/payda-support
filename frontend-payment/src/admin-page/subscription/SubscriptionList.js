@@ -10,6 +10,8 @@ import {
 import { SUBSCRIPTION_STATUS } from "../../constants";
 import { subscriptionStatusChoices } from "../../utils";
 import { commonSubscriptionFields } from "./common";
+import { Button } from "@material-ui/core";
+import CancelSubscriptionButton from "../containers/CancelSubscriptionButton";
 
 const SubscriptionFilter = props => (
   <Filter {...props}>
@@ -35,14 +37,20 @@ const SubscriptionFilter = props => (
   </Filter>
 );
 
-export const SubscriptionList = props => (
-  <List
-    {...props}
-    perPage={25}
-    sort={{ field: "createdAt", order: "DESC" }}
-    filters={<SubscriptionFilter />}
-    filterDefaultValues={{ status: SUBSCRIPTION_STATUS.RUNNING }}
-  >
-    <Datagrid rowClick="show">{commonSubscriptionFields}</Datagrid>
-  </List>
-);
+export const SubscriptionList = props => {
+  console.log(props);
+  return (
+    <List
+      {...props}
+      perPage={25}
+      sort={{ field: "createdAt", order: "DESC" }}
+      filters={<SubscriptionFilter />}
+      filterDefaultValues={{ status: SUBSCRIPTION_STATUS.RUNNING }}
+    >
+      <Datagrid rowClick="show">
+        {commonSubscriptionFields}
+        <CancelSubscriptionButton color="secondary" variant="contained" />
+      </Datagrid>
+    </List>
+  );
+};
