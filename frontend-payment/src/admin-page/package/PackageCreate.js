@@ -6,13 +6,13 @@ import {
   SelectInput,
   TextInput,
   LongTextInput,
-  BooleanInput,
+  BooleanInput
 } from "react-admin";
 
 import {
   languageChoices,
   repeatIntervalChoices,
-  currencyChoices,
+  currencyChoices
 } from "../../utils";
 
 import {
@@ -21,7 +21,7 @@ import {
   StyledSelectInput,
   StyledNumberInput,
   StyledArrayInput,
-  StyledDivider,
+  StyledDivider
 } from "./PackageFormComponents";
 
 const PackageCreate = props => (
@@ -70,14 +70,17 @@ const PackageCreate = props => (
       <BooleanInput
         source="customizationConfig.allowPriceAmountCustomization"
         label="Customizable Price"
+        defaultValue={false}
       />
       <BooleanInput
         source="customizationConfig.allowPriceCurrencyCustomization"
         label="Customizable Currency"
+        defaultValue={false}
       />
       <BooleanInput
         source="customizationConfig.allowRepeatIntervalCustomization"
         label="Customizable Interval"
+        defaultValue={false}
       />
       <h2 style={{ marginTop: 30 }}>Package Image</h2>
       <StyledDivider />
