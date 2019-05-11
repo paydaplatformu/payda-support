@@ -12,7 +12,6 @@ import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { Authentication } from "./models/Authentication";
 import { DonationService } from "./models/DonationService";
-import { InvalidInput, ValidationError } from "./models/Errors";
 import { PayuService } from "./models/PayuService";
 import { UserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";

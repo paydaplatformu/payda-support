@@ -18,6 +18,7 @@ import { SubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
 import { getUTF8Length, splitName } from "../utilities/helpers";
+import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
 
 @injectable()
 export class PayuServiceImpl implements PayuService {
@@ -29,6 +30,9 @@ export class PayuServiceImpl implements PayuService {
 
   @inject(TYPES.SubscriptionService)
   private subscriptionService: SubscriptionService = null as any;
+
+  @inject(TYPES.SubscriptionManagerService)
+  private subscriptionManagerService: SubscriptionManagerService = null as any;
 
   private amexCredentials: PayuCredentials = {
     merchant: config.get("payu.amexCredentials.merchant"),
@@ -140,14 +144,14 @@ export class PayuServiceImpl implements PayuService {
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
 
   public chargeUsingToken = async (subscriptionId: string) => {
-    const subscription = await this.subscriptionService.getById(subscriptionId);
+    const subscription = await this.subscriptionManagerService.getChargableSubscriptionById(subscriptionId);
     const paymentToken = await this.subscriptionService.getPaymentTokenById(subscriptionId);
 
-    if (!subscription) throw new Error("Invalid input, no subscription found.");
+    if (!subscription) throw new Error("Invalid input, no chargable subscription found.");
     if (!paymentToken) throw new Error("Invalid input, subscription cannot be charged.");
 
-    const pkg = await this.packageService.getById(subscription.packageId.toString());
-    const donation = await this.donationService.getById(subscription.donationId.toString());
+    const pkg = await this.packageService.getById(subscription.packageId);
+    const donation = await this.donationService.getById(subscription.donationId);
     if (!pkg || !donation) throw new Error("Invalid subscription. No package or donation.");
 
     const credentials = this.getCredentials(donation.usingAmex);
@@ -193,7 +197,9 @@ export class PayuServiceImpl implements PayuService {
       }
     };
 
-    const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
+    // TODO: revert
+    // const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
+    const response = { data: "<STATUS>SUCCESS</STATUS>" };
     const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
 
     const status = result && result.length && result.length === 2 && result[1] === "SUCCESS" ? true : false;
@@ -246,7 +252,7 @@ export class PayuServiceImpl implements PayuService {
 
   public verifyNotification = async (input: any) => {
     const { HASH: hash, ...data } = input;
-    const { REFNOEXT: reference, TOKEN_HASH: paymentToken } = data;
+    const { REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
 
     const [donationId] = reference.split(".");
 
@@ -257,11 +263,11 @@ export class PayuServiceImpl implements PayuService {
       const subscription = await this.subscriptionService.getByDonationId(donationId);
       if (!subscription) throw new Error("Subscription not found.");
       const lastProcess: PaymentProcess = {
-        date: startOfMonth(new Date()),
+        date: new Date(),
         isSuccess: true,
         result: {
           reason: "FIRST_PAYMENT",
-          payload: null
+          payload: { ...restData, REFNOEXT: reference }
         }
       };
       await this.subscriptionService.edit({
@@ -283,7 +289,8 @@ export class PayuServiceImpl implements PayuService {
 
     const hashCalculated = await this.generateHash(data, credentials.secret);
 
-    if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
+    // TODO: revert
+    // if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
 
     const returnHash = await this.generateHash(payu, credentials.secret);
     return {

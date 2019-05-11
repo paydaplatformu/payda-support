@@ -15,6 +15,7 @@ import {
 
 export const commonSubscriptionFields = [
   <TextField label="Id" source="id" />,
+  <TextField label="Language" source="language" />,
   <ReferenceField
     label="Name"
     reference="Donation"

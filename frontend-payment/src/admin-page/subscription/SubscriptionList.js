@@ -37,7 +37,6 @@ const SubscriptionFilter = props => (
 );
 
 export const SubscriptionList = props => {
-  console.log(props);
   return (
     <List
       {...props}

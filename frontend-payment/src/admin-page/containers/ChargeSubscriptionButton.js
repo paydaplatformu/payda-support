@@ -24,14 +24,20 @@ const ChargeSubscriptionButton = ({
   <Mutation
     mutation={CHARGE_SUBSCRIPTION}
     onCompleted={data => {
-      if (data.status) {
+      if (data.chargeSubscription.status) {
         showNotification("Subscription charged");
+        refreshView();
       } else {
         showNotification(
           "Error. Failed to charge. Click on subscription for more details"
         );
       }
     }}
+    onError={() =>
+      showNotification(
+        "Error. Failed to charge. Click on subscription for more details"
+      )
+    }
   >
     {chargeSubscription => (
       <Button

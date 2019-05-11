@@ -169,9 +169,9 @@ const rootResolvers: IResolvers<any, IContext> = {
       return { count: await subscriptionService.count(filter) };
     },
 
-    ChargableSubscription: (parent, { id, repeatInterval }, { subscriptionManagerService, user }) => {
+    ChargableSubscription: (parent, { id }, { subscriptionManagerService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return subscriptionManagerService.getChargableSubscriptionById(id, repeatInterval);
+      return subscriptionManagerService.getChargableSubscriptionById(id);
     },
     allChargableSubscriptions: (
       parent,

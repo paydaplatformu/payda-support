@@ -7,7 +7,8 @@ const dummyMessages = {
   "Subscription cancelled": "Subscription cancelled",
   "Subscription charged": "Subscription charged",
   "Error. Failed to charge. Click on subscription for more details":
-    "Error. Failed to charge. Click on subscription for more details"
+    "Error. Failed to charge. Click on subscription for more details",
+  "Error. Failed to cancel.": "Error. Failed to cancel."
 };
 
 const i18nProvider = () => dummyMessages;

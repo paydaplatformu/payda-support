@@ -46,12 +46,24 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     );
   };
 
-  public getChargableSubscriptionById = async (
-    id: string,
-    repeatInterval: RepeatInterval
-  ): Promise<RunningSubscriptionModel | null> => {
+  public getChargableSubscriptionById = async (id: string): Promise<RunningSubscriptionModel | null> => {
+    const subscription = await this.subscriptionService.getById(id);
+    if (!subscription) return null;
+
+    const pkg = await this.packageService.getById(subscription.packageId);
+    if (!pkg) throw new Error("Inconsistent state, subscription does not have a package");
+
+    const repeatInterval = pkg.repeatInterval;
+
     const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
+
     return this.subscriptionService.getByIdForRepeatIntervalAndPackageIds(id, repeatInterval, allowedPackageIds);
+  };
+
+  public isChargable = async (id: string) => {
+    const subscription = await this.getChargableSubscriptionById(id);
+    if (subscription) return true;
+    return false;
   };
 }

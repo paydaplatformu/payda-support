@@ -12,5 +12,7 @@ export interface SubscriptionManagerService {
   ): Promise<RunningSubscriptionModel[]>;
 
   countChargableSubscriptions(repeatInterval: RepeatInterval, filters: SubscriptionFilters): Promise<number>;
-  getChargableSubscriptionById(id: string, repeatInterval: RepeatInterval): Promise<RunningSubscriptionModel | null>;
+  getChargableSubscriptionById(id: string): Promise<RunningSubscriptionModel | null>;
+
+  isChargable(id: string): Promise<boolean>;
 }
