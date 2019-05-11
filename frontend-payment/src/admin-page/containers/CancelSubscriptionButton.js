@@ -22,8 +22,13 @@ const CancelSubscriptionButton = ({
 }) => (
   <Mutation
     mutation={CANCEL_SUBSCRIPTION}
-    onCompleted={() => {
-      showNotification("Subscription cancelled");
+    onCompleted={data => {
+      if (data.cancelSubscription.status) {
+        showNotification("Subscription cancelled");
+        refreshView();
+      } else {
+        showNotification("Error. Failed to cancel.");
+      }
     }}
   >
     {cancelSubscription => (
@@ -33,7 +38,6 @@ const CancelSubscriptionButton = ({
           e.preventDefault();
           e.stopPropagation();
           cancelSubscription({ variables: { id: record.id } });
-          refreshView();
         }}
       >
         Cancel

@@ -25,6 +25,8 @@
   "thank_you_page_description": "We'd like to say thank you for support and donation.",
   "recurring_monthly": "(Once per month)",
   "recurring_yearly": "(Once per year)",
+  "recurring_a": "(Test interval a)",
+  "recurring_b": "(Test interval b)",
   "monthly": "Monthly",
   "yearly": "Yearly",
   "non_recurrent": "None"

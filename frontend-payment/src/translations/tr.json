@@ -25,6 +25,8 @@
   "thank_you_page_description": "Desteğiniz ve bağışınız için teşekkür ederiz.",
   "recurring_monthly": "(Ayda bir defa)",
   "recurring_yearly": "(Yılda bir defa)",
+  "recurring_a": "(Test aralığı a)",
+  "recurring_b": "(Test aralığı b)",
   "monthly": "Aylık",
   "yearly": "Yıllık",
   "non_recurrent": "Tekrarsız"

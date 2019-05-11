@@ -2,7 +2,7 @@ import {
   RECURRENCY_TRANSLATION_KEYS,
   REPEAT_INTERVAL,
   CURRENCY,
-  SUBSCRIPTION_STATUS,
+  SUBSCRIPTION_STATUS
 } from "./constants";
 
 export const getPackageTag = (pack, langCode) =>
@@ -45,34 +45,36 @@ export const defaultDateFieldProps = {
     hour: "numeric",
     minute: "numeric",
     hour12: false,
-    timeZone: "Europe/Istanbul",
-  },
+    timeZone: "Europe/Istanbul"
+  }
 };
 
 export const languageChoices = [
   { id: "TR", name: "Turkish" },
-  { id: "EN", name: "English" },
+  { id: "EN", name: "English" }
 ];
 
 export const activeRepeatIntervalChoices = [
   { id: REPEAT_INTERVAL.MONTHLY, name: "Monthly" },
   { id: REPEAT_INTERVAL.YEARLY, name: "Yearly" },
+  { id: REPEAT_INTERVAL.TEST_A, name: "TEST_A" },
+  { id: REPEAT_INTERVAL.TEST_B, name: "TEST_B" }
 ];
 
 export const repeatIntervalChoices = [
   { id: REPEAT_INTERVAL.NONE, name: "None" },
-  ...activeRepeatIntervalChoices,
+  ...activeRepeatIntervalChoices
 ];
 
 export const subscriptionStatusChoices = [
   { id: SUBSCRIPTION_STATUS.CREATED, name: "Created" },
   { id: SUBSCRIPTION_STATUS.RUNNING, name: "Running" },
-  { id: SUBSCRIPTION_STATUS.CANCELLED, name: "Cancelled" },
+  { id: SUBSCRIPTION_STATUS.CANCELLED, name: "Cancelled" }
 ];
 
 export const currencyChoices = [
   { id: CURRENCY.TRY, name: "TRY" },
-  { id: CURRENCY.USD, name: "USD" },
+  { id: CURRENCY.USD, name: "USD" }
 ];
 
 export const getSourceProp = element => {

@@ -1,4 +1,13 @@
-import { startOfMonth, startOfYear, subMonths, subYears } from "date-fns";
+import {
+  startOfHour,
+  startOfMinute,
+  startOfMonth,
+  startOfYear,
+  subHours,
+  subMinutes,
+  subMonths,
+  subYears
+} from "date-fns";
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
 import { DeactivationReason } from "../models/DeactivationReason";
@@ -39,6 +48,10 @@ export class MongoSubscriptionService
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subYears, startOfYear);
       case RepeatInterval.MONTHLY:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMonths, startOfMonth);
+      case RepeatInterval.TEST_A:
+        return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subHours, startOfHour);
+      case RepeatInterval.TEST_B:
+        return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMinutes, startOfMinute);
       default:
         throw new Error("Unknown repeat interval.");
     }
@@ -71,6 +84,15 @@ export class MongoSubscriptionService
           $exists: true,
           $ne: [],
           $elemMatch: { date: { $lt: lessThan, $gte: greaterThanOrEqual }, isSuccess: true }
+        }
+      },
+      {
+        processHistory: {
+          $not: {
+            $exists: true,
+            $ne: [],
+            $elemMatch: { date: { $gt: lessThan } }
+          }
         }
       }
     ];
@@ -160,11 +182,11 @@ export class MongoSubscriptionService
     return this.count(filters, extraFilters);
   };
 
-  public async getPaymentTokenById(id: string): Promise<string | null> {
-    const entity = await super.getEntityById(id);
+  public getPaymentTokenById = async (id: string): Promise<string | null> => {
+    const entity = await this.getEntityById(id);
     if (!entity) return null;
     return entity.paymentToken;
-  }
+  };
 
   protected getFilters = ({ ids, status, hasPaymentToken }: SubscriptionFilters): object[] => {
     return [

@@ -105,7 +105,8 @@ export abstract class BaseMongoService<
     if (!current) return null;
     const next: Entity = {
       ...current,
-      ...modifier
+      ...modifier,
+      updatedAt: new Date()
     };
     await this.collection.updateOne({ _id: current._id }, { $set: next });
     return this.toModel(next);
