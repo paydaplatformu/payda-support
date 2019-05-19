@@ -46,7 +46,6 @@ const ChargeSubscriptionButton = ({
           e.preventDefault();
           e.stopPropagation();
           chargeSubscription({ variables: { id: record.id } });
-          refreshView();
         }}
       >
         Charge

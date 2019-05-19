@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createHmac } from "crypto";
-import { format, startOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { inject, injectable } from "inversify";
 import * as qs from "querystring";
 import { config } from "../config";
@@ -14,11 +14,11 @@ import { PaymentProcess } from "../models/PaymentProcess";
 import { PayuCredentials } from "../models/PayuCredentials";
 import { PayuService } from "../models/PayuService";
 import { RepeatInterval } from "../models/RepeatInterval";
+import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
 import { SubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
-import { getUTF8Length, splitName } from "../utilities/helpers";
-import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
+import { getUTF8Length, isProduction, splitName, isNonProduction } from "../utilities/helpers";
 
 @injectable()
 export class PayuServiceImpl implements PayuService {
@@ -197,9 +197,9 @@ export class PayuServiceImpl implements PayuService {
       }
     };
 
-    // TODO: revert
-    // const response = await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
-    const response = { data: "<STATUS>SUCCESS</STATUS>" };
+    const response = isNonProduction()
+      ? { data: "<STATUS>SUCCESS</STATUS>" }
+      : await axios.post(config.get("payu.aluUrl"), qs.stringify(body), requestConfig);
     const result = response.data.match(/<STATUS>(\S+)<\/STATUS>/);
 
     const status = result && result.length && result.length === 2 && result[1] === "SUCCESS" ? true : false;
@@ -259,6 +259,13 @@ export class PayuServiceImpl implements PayuService {
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
 
+    const credentials = this.getCredentials(donation.usingAmex);
+
+    if (isProduction()) {
+      const hashCalculated = await this.generateHash(data, credentials.secret);
+      if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
+    }
+
     if (paymentToken) {
       const subscription = await this.subscriptionService.getByDonationId(donationId);
       if (!subscription) throw new Error("Subscription not found.");
@@ -278,19 +285,12 @@ export class PayuServiceImpl implements PayuService {
       });
     }
 
-    const credentials = this.getCredentials(donation.usingAmex);
-
     const payu = {
       IPN_PID: data["IPN_PID[]"],
       IPN_PNAME: data["IPN_PNAME[]"],
       IPN_DATE: data.IPN_DATE,
       DATE: format(new Date(), "YYYYMMDDHHmmss")
     };
-
-    const hashCalculated = await this.generateHash(data, credentials.secret);
-
-    // TODO: revert
-    // if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
 
     const returnHash = await this.generateHash(payu, credentials.secret);
     return {
