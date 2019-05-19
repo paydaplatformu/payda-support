@@ -92,7 +92,10 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     language: LanguageCode
   ): Promise<DonationCreationResult> => {
     const pkg = await this.getPackageForDonationCreator(donationCreator);
-    const donation = await this.donationService.create(donationCreator as DonationCreator);
+    const donation = await this.donationService.create({
+      ...donationCreator,
+      packageId: pkg.id
+    });
     const subscription = await this.getSubscription(donation, pkg, language);
     const formFields = await this.payuService.getFormContents(donation, pkg, language);
     return {

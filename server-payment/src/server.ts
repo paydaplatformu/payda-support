@@ -1,12 +1,13 @@
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, registerServer } from "apollo-server-express";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
 import cors from "cors";
 import express, { Express } from "express";
 import "express-async-errors";
+import * as fs from "fs";
 import { Container } from "inversify";
 import OAuthServer, { Request, Response } from "oauth2-server";
-import path from "path";
+import * as path from "path";
 import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
@@ -17,6 +18,13 @@ import { UserService } from "./models/UserService";
 import { resolvers, typeDefs } from "./schema";
 import { TYPES } from "./types";
 import { bindMongoDb, createAdminUser, createGraphQLContext } from "./utilities/server";
+import { isNonProduction } from "./utilities/helpers";
+import axios from "axios";
+import { PackageService } from "./models/PackageService";
+import { RepeatInterval } from "./models/RepeatInterval";
+
+const STATIC_DIR = path.resolve(__dirname, "./static");
+const MOCK_HTML = fs.readFileSync(`${STATIC_DIR}/mock.html`).toString("utf-8");
 
 const log = console.log; // tslint:disable-line
 
@@ -45,6 +53,7 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     const model = container.get<Authentication>(TYPES.Authentication);
     const payuService = container.get<PayuService>(TYPES.PayuService);
     const donationService = container.get<DonationService>(TYPES.DonationService);
+    const packageService = container.get<PackageService>(TYPES.PackageService);
 
     const initializationPromises = Object.values(TYPES)
       .flatMap(type => container.getAll(type))
@@ -109,6 +118,44 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
      */
 
     app.use("/static", express.static(path.resolve(__dirname, "static")));
+
+    if (isNonProduction()) {
+      app.get("/mock", (req, res) => {
+        res.header("Content-Type", "text/html").send(MOCK_HTML.replace("{{DONATION_ID}}", "None"));
+      });
+
+      app.post("/mock", (req, res) => {
+        res
+          .header("Content-Type", "text/html")
+          .send(MOCK_HTML.replace("{{DONATION_ID}}", req.body.ORDER_REF.split(".")[0]));
+      });
+
+      app.post("/mock/:handler", async (req, res) => {
+        switch (req.params.handler) {
+          case "payment": {
+            const donationId = req.body.donationId;
+            const donation = await donationService.getById(donationId);
+            if (!donation) return res.send("Donation not found.");
+
+            const pkg = await packageService.getById(donation.packageId);
+            if (!pkg) return res.send("Package not found.");
+
+            const isRepeating = pkg.repeatInterval !== RepeatInterval.NONE;
+
+            const dummyInput = {
+              HASH: "somehash",
+              REFNOEXT: donationId,
+              TOKEN_HASH: isRepeating ? "mock_token" : undefined,
+              mockPayment: true
+            };
+            await axios.post(`http://${host}:${port}/notification`, dummyInput);
+            return res.redirect(config.get("payu.backRef"));
+          }
+          default:
+            return res.send("Error");
+        }
+      });
+    }
 
     /**
      * Rest of the routes are managed by frontend

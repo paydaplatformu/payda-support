@@ -1,4 +1,5 @@
 import convict from "convict";
+import { isNonProduction } from "../utilities/helpers";
 
 convict.addFormat({
   name: "clients-array",
@@ -173,6 +174,11 @@ if (["development", "test"].includes(config.get("environment"))) {
       }
     ])
   );
+}
+
+if (isNonProduction()) {
+  config.set("payu.backRef", `http://${config.get("host")}:${config.get("port")}/thank-you`);
+  config.set("payu.luUrl", `http://${config.get("host")}:${config.get("port")}/mock`);
 }
 
 // Perform validation

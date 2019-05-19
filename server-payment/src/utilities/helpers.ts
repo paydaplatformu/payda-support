@@ -26,6 +26,10 @@ export const isNonProduction = () => {
   return ["development", "test", "staging"].includes(config.get("environment"));
 };
 
+export const isProduction = () => {
+  return config.get("environment") === "production";
+};
+
 export const splitName = (fullName: string) => {
   const splitted = fullName.split(" ");
   const firstName = splitted.slice(0, -1).join(" ");
