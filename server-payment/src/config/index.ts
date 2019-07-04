@@ -176,8 +176,11 @@ if (["development", "test"].includes(config.get("environment"))) {
   );
 }
 
-if (isNonProduction()) {
+if (isNonProduction() && !config.has("payu.backRef")) {
   config.set("payu.backRef", `http://${config.get("host")}:${config.get("port")}/thank-you`);
+}
+
+if (isNonProduction() && !config.has("payu.luUrl")) {
   config.set("payu.luUrl", `http://${config.get("host")}:${config.get("port")}/mock`);
 }
 
