@@ -14,6 +14,7 @@ const Title = () => {
       <h4 style={{ ...headingStyle }}>
         {translate("thank_you_page_description")}
       </h4>
+      <h4 style={{ ...headingStyle }}>{translate("thank_you_page_contact")}</h4>
     </div>
   );
 };
