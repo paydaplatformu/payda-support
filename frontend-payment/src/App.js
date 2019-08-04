@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import AdminPage from "./admin-page/AdminPage";
 import { client } from "./admin-page/dataProvider";
 import { baseURL } from "./constants";
-import HomePage from "./home-page/HomePage";
 import SupportPage from "./support-page/SupportPage";
 import ThankYouPage from "./thank-you-page/ThankYouPage";
 import { TranslationContextProvider } from "./translations";
@@ -18,8 +17,7 @@ const App = () => (
   <Router>
     <TranslationContextProvider>
       <ApolloProvider client={userClient}>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/support" component={SupportPage} />
+        <Route exact path="/" component={SupportPage} />
         <Route path="/thank-you" component={ThankYouPage} />
       </ApolloProvider>
       <ApolloProvider client={client}>
