@@ -81,7 +81,10 @@ export const PackageContextProvider = ({ children }) => {
                 data.availableCurrencies.enumValues.map(c => c.name),
               availableRepeatIntervals:
                 data.availableRepeatIntervals &&
-                data.availableRepeatIntervals.enumValues.map(c => c.name),
+                data.availableRepeatIntervals.enumValues
+                  .map(c => c.name)
+                  .filter(c => !!c)
+                  .filter(c => !c.toLowerCase().includes("test")),
               selectedPackage: state && state.selectedPackage,
               selectPackage
             }}
