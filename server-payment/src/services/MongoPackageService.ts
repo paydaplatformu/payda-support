@@ -68,7 +68,7 @@ export class MongoPackageService
   };
 
   public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<PackageModel[]> => {
-    return this.getAll({ repeatInterval });
+    return this.getAll({ repeatInterval }, null);
   };
 
   public getDefaultFilters = (): PackageFilters => {

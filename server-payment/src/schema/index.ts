@@ -131,7 +131,7 @@ const rootResolvers: IResolvers<any, IContext> = {
         throw new AuthorizationError("Only admins can view non-active packages.");
       const pagination = { page, perPage };
       const sorting = { sortField, sortOrder };
-      if (!user) return packageService.getAll(packageService.getDefaultFilters(), pagination, sorting);
+      if (!user) return packageService.getAll(packageService.getDefaultFilters(), null, sorting);
       return packageService.getAll(filter, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {

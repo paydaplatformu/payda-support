@@ -2,7 +2,7 @@ import { gql } from "apollo-server-core";
 import { isNonProduction } from "../utilities/helpers";
 
 const getRepeatInterval = () => {
-  if (isNonProduction) {
+  if (isNonProduction()) {
     return gql`
       enum RepeatInterval {
         NONE

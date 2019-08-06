@@ -5,7 +5,11 @@ import { SortingSettings } from "./SortingSettings";
 
 export interface PackageService {
   getDefaultFilters(): PackageFilters;
-  getAll(filters: PackageFilters, pagination: PaginationSettings, sorting: SortingSettings): Promise<PackageModel[]>;
+  getAll(
+    filters: PackageFilters,
+    pagination: PaginationSettings | null,
+    sorting: SortingSettings
+  ): Promise<PackageModel[]>;
   count(filters: PackageFilters): Promise<number>;
   getById(id: string): Promise<PackageModel | null>;
   getByRepeatInterval(repeatInterval: RepeatInterval): Promise<PackageModel[]>;

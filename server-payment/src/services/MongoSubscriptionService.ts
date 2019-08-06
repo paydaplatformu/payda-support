@@ -165,7 +165,7 @@ export class MongoSubscriptionService
     packageIds: string[]
   ): Promise<RunningSubscriptionModel | null> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
-    const subscriptions = await this.getAll({ ids: [id] }, undefined, undefined, extraFilters);
+    const subscriptions = await this.getAll({ ids: [id] }, null, undefined, extraFilters);
     if (subscriptions.length === 0) return null;
     else if (subscriptions.length > 1) throw new Error("Conflicting ids for subscriptions");
     const head = subscriptions[0];

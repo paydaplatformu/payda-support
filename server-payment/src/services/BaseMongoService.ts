@@ -53,7 +53,7 @@ export abstract class BaseMongoService<
 
   protected prepareQuery = (
     filters: Filters,
-    pagination?: PaginationSettings,
+    pagination: PaginationSettings | null,
     sorting?: SortingSettings,
     extraFilters?: object[]
   ): Cursor<Entity> => {
@@ -84,7 +84,7 @@ export abstract class BaseMongoService<
   protected abstract toModel: (entity: Entity) => Model;
 
   public count = (filters: Filters, extraFilters?: object[]): Promise<number> => {
-    const query = this.prepareQuery(filters, undefined, undefined, extraFilters);
+    const query = this.prepareQuery(filters, null, undefined, extraFilters);
     return this.countQuery(query);
   };
 
@@ -114,7 +114,7 @@ export abstract class BaseMongoService<
 
   public getAll = async (
     filters: Filters,
-    pagination?: PaginationSettings,
+    pagination: PaginationSettings | null,
     sorting?: SortingSettings,
     extraFilters?: object[]
   ): Promise<Model[]> => {
