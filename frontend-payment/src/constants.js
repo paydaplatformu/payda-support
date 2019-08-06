@@ -1,6 +1,6 @@
 export const paydaOrange = "rgba(245, 145, 48, 1)";
 export const baseURL =
-  localStorage.getItem("baseURL") || "https://payda-support-v2.herokuapp.com";
+  localStorage.getItem("baseURL") || "https://support.paydaplatformu.org";
 
 export const REPEAT_INTERVAL = {
   NONE: "NONE",
