@@ -116,6 +116,12 @@ const config = convict({
       default: "https://secure.payu.com.tr/order/alu/v3",
       env: "PAYU_ALU_URL"
     },
+    merchantTokenUrl: {
+      doc: "Payu merchant token url",
+      format: "url",
+      default: "https://secure.payu.com.tr/order/token/v2/merchantToken/",
+      env: "PAYU_MERCHANT_TOKEN_URL"
+    },
     backRef: {
       doc: "Payu backref",
       format: String,
@@ -136,6 +142,20 @@ const config = convict({
         env: "PAYU_DEFAULT_CREDENTIALS_SECRET"
       }
     },
+    recurringDefaultCredentials: {
+      merchant: {
+        doc: "Payu merchant name",
+        format: String,
+        default: null,
+        env: "PAYU_RECURRING_DEFAULT_CREDENTIALS_MERCHANT"
+      },
+      secret: {
+        doc: "Payu secret",
+        format: String,
+        default: null,
+        env: "PAYU_RECURRING_DEFAULT_CREDENTIALS_SECRET"
+      }
+    },
     amexCredentials: {
       merchant: {
         doc: "Payu merchant name",
@@ -148,6 +168,20 @@ const config = convict({
         format: String,
         default: null,
         env: "PAYU_AMEX_CREDENTIALS_SECRET"
+      }
+    },
+    recurringAmexCredentials: {
+      merchant: {
+        doc: "Payu merchant name",
+        format: String,
+        default: null,
+        env: "PAYU_RECURRING_AMEX_CREDENTIALS_MERCHANT"
+      },
+      secret: {
+        doc: "Payu secret",
+        format: String,
+        default: null,
+        env: "PAYU_RECURRING_AMEX_CREDENTIALS_SECRET"
       }
     }
   }

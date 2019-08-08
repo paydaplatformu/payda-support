@@ -18,7 +18,7 @@ import { SubscriptionManagerService } from "../models/SubscriptionManagerService
 import { SubscriptionService } from "../models/SubscriptionService";
 import { SubscriptionStatus } from "../models/SubscriptionStatus";
 import { TYPES } from "../types";
-import { getUTF8Length, isProduction, splitName, isNonProduction } from "../utilities/helpers";
+import { getUTF8Length, isNonProduction, isProduction, splitName } from "../utilities/helpers";
 
 @injectable()
 export class PayuServiceImpl implements PayuService {
@@ -38,6 +38,22 @@ export class PayuServiceImpl implements PayuService {
     merchant: config.get("payu.amexCredentials.merchant"),
     secret: config.get("payu.amexCredentials.secret")
   };
+
+  private recurringAmexCredentials: PayuCredentials = {
+    merchant: config.get("payu.recurringAmexCredentials.merchant"),
+    secret: config.get("payu.recurringAmexCredentials.secret")
+  };
+
+  private defaultCredentials: PayuCredentials = {
+    merchant: config.get("payu.defaultCredentials.merchant"),
+    secret: config.get("payu.defaultCredentials.secret")
+  };
+
+  private recurringDefaultCredentials: PayuCredentials = {
+    merchant: config.get("payu.recurringDefaultCredentials.merchant"),
+    secret: config.get("payu.recurringDefaultCredentials.secret")
+  };
+
   private backRef: string = config.get("payu.backRef");
 
   private createHashInput = (
@@ -65,11 +81,6 @@ export class PayuServiceImpl implements PayuService {
       "ORDER_PRICE_TYPE[0]": "GROSS",
       INSTALLMENT_OPTIONS: this.getInstallmentOptions(pkg)
     };
-  };
-
-  private defaultCredentials: PayuCredentials = {
-    merchant: config.get("payu.defaultCredentials.merchant"),
-    secret: config.get("payu.defaultCredentials.secret")
   };
 
   private finalizeFormFields = (
@@ -106,7 +117,12 @@ export class PayuServiceImpl implements PayuService {
     }));
   };
 
-  private generateHash = (input: object, secret: string, shouldSort: boolean = false) => {
+  private generateHashWithLength = (
+    input: object,
+    secret: string,
+    shouldSort: boolean = false,
+    hashAlgorithm: string = "md5"
+  ) => {
     return new Promise<string>(resolve => {
       const keys = Object.keys(input);
       const sortHandled = shouldSort ? keys.sort() : keys;
@@ -119,7 +135,7 @@ export class PayuServiceImpl implements PayuService {
         })
         .join("");
 
-      const hmac = createHmac("md5", secret);
+      const hmac = createHmac(hashAlgorithm, secret);
       hmac.setEncoding("hex");
       hmac.end(toBeHashed, "utf8", () => {
         const hash = hmac.read();
@@ -128,8 +144,42 @@ export class PayuServiceImpl implements PayuService {
     });
   };
 
-  private getCredentials = (isAmex: boolean) => {
-    if (isAmex) return this.amexCredentials;
+  private generateSimpleHash = (
+    input: object,
+    secret: string,
+    shouldSort: boolean = false,
+    hashAlgorithm: string = "sha256"
+  ) => {
+    return new Promise<string>(resolve => {
+      const keys = Object.keys(input);
+      const sortHandled = shouldSort ? keys.sort() : keys;
+      const toBeHashed = sortHandled
+        .map(key => (input as any)[key])
+        .map(value => {
+          if (!value) return "";
+          return value;
+        })
+        .join("");
+
+      const hmac = createHmac(hashAlgorithm, secret);
+      hmac.setEncoding("hex");
+      hmac.end(toBeHashed, "utf8", () => {
+        const hash = hmac.read();
+        return resolve(hash.toString());
+      });
+    });
+  };
+
+  private getCredentials = (isAmex: boolean, useRecurringAccount: boolean) => {
+    if (isAmex) {
+      if (useRecurringAccount) {
+        return this.recurringAmexCredentials;
+      }
+      return this.amexCredentials;
+    }
+    if (useRecurringAccount) {
+      return this.recurringDefaultCredentials;
+    }
     return this.defaultCredentials;
   };
 
@@ -138,10 +188,43 @@ export class PayuServiceImpl implements PayuService {
 
   private getPayMethod = (pkg: PackageModel) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
 
-  private getReference = (pkg: PackageModel, donation: DonationModel) =>
-    pkg.repeatInterval !== RepeatInterval.NONE ? `${donation.id}.${format(new Date(), "YYYY-MM")}` : donation.id;
+  private getReference = (pkg: PackageModel, donation: DonationModel) => {
+    if (pkg.repeatInterval === RepeatInterval.TEST_B) {
+      return `${donation.id}.${format(new Date(), "YYYY-MM-DD-HH:mm")}`;
+    } else if (pkg.repeatInterval === RepeatInterval.TEST_A) {
+      return `${donation.id}.${format(new Date(), "YYYY-MM-DD-HH")}`;
+    } else if (pkg.repeatInterval === RepeatInterval.NONE) {
+      return donation.id;
+    } else {
+      return `${donation.id}.${format(new Date(), "YYYY-MM")}`;
+    }
+  };
 
   private getResult = (value: any): string => getUTF8Length(value.toString()) + value.toString();
+
+  public async getPaymentToken(isAmex: boolean, payuReferenceNumber: string): Promise<string> {
+    const credentials = this.getCredentials(isAmex, true);
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    const input = {
+      merchant: credentials.merchant,
+      refNo: payuReferenceNumber,
+      timestamp
+    };
+    const hash = await this.generateSimpleHash(input, credentials.secret, false);
+    const body = {
+      ...input,
+      signature: hash
+    };
+    const requestConfig = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    };
+    const response = await axios.post(config.get("payu.merchantTokenUrl"), qs.stringify(body), requestConfig);
+    console.log(response.data);
+    return response.data.response.token;
+  }
 
   public chargeUsingToken = async (subscriptionId: string) => {
     const subscription = await this.subscriptionManagerService.getChargableSubscriptionById(subscriptionId);
@@ -154,7 +237,7 @@ export class PayuServiceImpl implements PayuService {
     const donation = await this.donationService.getById(subscription.donationId);
     if (!pkg || !donation) throw new Error("Invalid subscription. No package or donation.");
 
-    const credentials = this.getCredentials(donation.usingAmex);
+    const credentials = this.getCredentials(donation.usingAmex, true);
     const ref = this.getReference(pkg, donation);
     const tag = pkg.tags.find(t => t.code === subscription.language) || pkg.defaultTag;
     const { firstName, lastName } = splitName(donation.fullName);
@@ -186,7 +269,7 @@ export class PayuServiceImpl implements PayuService {
       PAY_METHOD: "CCVISAMC",
       PRICES_CURRENCY: pkg.price.currency
     };
-    const hash = await this.generateHash(hashInput, credentials.secret, true);
+    const hash = await this.generateHashWithLength(hashInput, credentials.secret, true);
     const body = {
       ...hashInput,
       ORDER_HASH: hash
@@ -244,45 +327,79 @@ export class PayuServiceImpl implements PayuService {
   };
 
   public getFormContents = async (donation: DonationModel, pkg: PackageModel, language: LanguageCode) => {
-    const credentials = this.getCredentials(donation.usingAmex);
+    const credentials = this.getCredentials(donation.usingAmex, false);
     const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
-    const hash = await this.generateHash(hashInput, credentials.secret);
+    const hash = await this.generateHashWithLength(hashInput, credentials.secret);
     return this.finalizeFormFields(hashInput, donation, pkg, language, hash);
   };
 
   public verifyNotification = async (input: any) => {
+    console.log(input);
     const { HASH: hash, ...data } = input;
-    const { REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
-
+    const { REFNO: payuReferenceNumber, REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
     const [donationId] = reference.split(".");
 
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
 
-    const credentials = this.getCredentials(donation.usingAmex);
+    const credentials = this.getCredentials(donation.usingAmex, false);
 
     if (isProduction()) {
-      const hashCalculated = await this.generateHash(data, credentials.secret);
+      const hashCalculated = await this.generateHashWithLength(data, credentials.secret);
       if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
     }
 
-    if (paymentToken) {
-      const subscription = await this.subscriptionService.getByDonationId(donationId);
-      if (!subscription) throw new Error("Subscription not found.");
+    const subscription = await this.subscriptionService.getByDonationId(donationId);
+
+    if (subscription) {
       const lastProcess: PaymentProcess = {
         date: new Date(),
         isSuccess: true,
         result: {
           reason: "FIRST_PAYMENT",
-          payload: { ...restData, REFNOEXT: reference }
+          payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber }
         }
       };
-      await this.subscriptionService.edit({
-        id: subscription.id,
-        processHistory: [lastProcess],
-        paymentToken,
-        status: SubscriptionStatus.RUNNING
-      });
+
+      if (paymentToken) {
+        await this.subscriptionService.edit({
+          id: subscription.id,
+          processHistory: [lastProcess],
+          paymentToken,
+          status: SubscriptionStatus.RUNNING
+        });
+      } else {
+        try {
+          const paymentTokenFromReference = await this.getPaymentToken(donation.usingAmex, payuReferenceNumber);
+          await this.subscriptionService.edit({
+            id: subscription.id,
+            processHistory: [lastProcess],
+            paymentToken: paymentTokenFromReference,
+            status: SubscriptionStatus.RUNNING,
+            deactivationReason: null
+          });
+        } catch (error) {
+          console.error(error);
+          console.error(error && error.response);
+          console.error(error && error.response && error.response.data);
+          console.error(error && error.response && error.response.data && error.response.data.error);
+          const errorProcess: PaymentProcess = {
+            date: new Date(),
+            isSuccess: false,
+            result: {
+              reason: "FIRST_PAYMENT",
+              payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber, error: error.message }
+            }
+          };
+          await this.subscriptionService.edit({
+            id: subscription.id,
+            processHistory: [errorProcess],
+            paymentToken: null,
+            status: SubscriptionStatus.CANCELLED,
+            deactivationReason: DeactivationReason.ERROR
+          });
+        }
+      }
     }
 
     const payu = {
@@ -292,7 +409,7 @@ export class PayuServiceImpl implements PayuService {
       DATE: format(new Date(), "YYYYMMDDHHmmss")
     };
 
-    const returnHash = await this.generateHash(payu, credentials.secret);
+    const returnHash = await this.generateHashWithLength(payu, credentials.secret);
     return {
       donationId: donation.id,
       returnHash: "<epayment>" + payu.DATE + "|" + returnHash + "</epayment>"
