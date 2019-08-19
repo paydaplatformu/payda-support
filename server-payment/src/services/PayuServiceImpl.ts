@@ -63,7 +63,7 @@ export class PayuServiceImpl implements PayuService {
     merchant: string
   ): object => {
     const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
-    const ref = this.getReference(pkg, donation);
+    const ref = this.getReference(false, pkg, donation);
 
     return {
       MERCHANT: merchant,
@@ -188,15 +188,16 @@ export class PayuServiceImpl implements PayuService {
 
   private getPayMethod = (pkg: PackageModel) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
 
-  private getReference = (pkg: PackageModel, donation: DonationModel) => {
+  private getReference = (automated: boolean, pkg: PackageModel, donation: DonationModel) => {
+    const automatedString = automated ? "AUTO" : "FIRST_TIME";
     if (pkg.repeatInterval === RepeatInterval.TEST_B) {
-      return `${donation.id}.${format(new Date(), "YYYY-MM-DD-HH:mm")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH-mm")}`;
     } else if (pkg.repeatInterval === RepeatInterval.TEST_A) {
-      return `${donation.id}.${format(new Date(), "YYYY-MM-DD-HH")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH")}`;
     } else if (pkg.repeatInterval === RepeatInterval.NONE) {
-      return donation.id;
+      return `${automatedString}.${donation.id}`;
     } else {
-      return `${donation.id}.${format(new Date(), "YYYY-MM")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM")}`;
     }
   };
 
@@ -238,7 +239,7 @@ export class PayuServiceImpl implements PayuService {
     if (!pkg || !donation) throw new Error("Invalid subscription. No package or donation.");
 
     const credentials = this.getCredentials(donation.usingAmex, true);
-    const ref = this.getReference(pkg, donation);
+    const ref = this.getReference(true, pkg, donation);
     const tag = pkg.tags.find(t => t.code === subscription.language) || pkg.defaultTag;
     const { firstName, lastName } = splitName(donation.fullName);
 
@@ -337,12 +338,26 @@ export class PayuServiceImpl implements PayuService {
     console.log(input);
     const { HASH: hash, ...data } = input;
     const { REFNO: payuReferenceNumber, REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
-    const [donationId] = reference.split(".");
+    const [mode, donationId] = reference.split(".");
 
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
-
     const credentials = this.getCredentials(donation.usingAmex, false);
+
+    if (mode === "AUTO") {
+      const payuAuto = {
+        IPN_PID: data["IPN_PID[]"],
+        IPN_PNAME: data["IPN_PNAME[]"],
+        IPN_DATE: data.IPN_DATE,
+        DATE: format(new Date(), "YYYYMMDDHHmmss")
+      };
+
+      const returnHashAuto = await this.generateHashWithLength(payuAuto, credentials.secret);
+      return {
+        donationId,
+        returnHash: "<epayment>" + payuAuto.DATE + "|" + returnHashAuto + "</epayment>"
+      };
+    }
 
     if (isProduction()) {
       const hashCalculated = await this.generateHashWithLength(data, credentials.secret);
