@@ -44,6 +44,7 @@ export const SubscriptionList = props => {
       sort={{ field: "createdAt", order: "DESC" }}
       filters={<SubscriptionFilter />}
       filterDefaultValues={{ status: SUBSCRIPTION_STATUS.RUNNING }}
+      bulkActionButtons={false}
     >
       <Datagrid rowClick="show">
         {commonSubscriptionFields}

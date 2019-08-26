@@ -15,6 +15,10 @@ services:
       - PAYU_DEFAULT_CREDENTIALS_SECRET=SECRET_KEY
       - PAYU_AMEX_CREDENTIALS_MERCHANT=OPU_TEST
       - PAYU_AMEX_CREDENTIALS_SECRET=SECRET_KEY
+      - PAYU_RECURRING_DEFAULT_CREDENTIALS_MERCHANT=OPU_TEST
+      - PAYU_RECURRING_DEFAULT_CREDENTIALS_SECRET=SECRET_KEY
+      - PAYU_RECURRING_AMEX_CREDENTIALS_MERCHANT=OPU_TEST
+      - PAYU_RECURRING_AMEX_CREDENTIALS_SECRET=SECRET_KEY
       - CLIENTS=[{"id":"iframe","secret":"123456","grants":["password","refresh_token"],"accessTokenLifetime":3600,"refreshTokenLifetime":213186400}]
     volumes:
       - ./server-payment:/usr/app/
@@ -27,7 +31,6 @@ services:
       - mongodb
   mongodb:
     image: mongo:3.4
-    container_name: "mongodb"
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null

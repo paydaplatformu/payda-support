@@ -22,6 +22,8 @@ export interface PackageModifier {
   defaultTag: PackageTag;
   reference?: string;
   image?: string;
+  isActive?: string;
+  customizationConfig?: PackageCustomizationConfig;
   priority: number;
   tags: PackageTag[];
 }

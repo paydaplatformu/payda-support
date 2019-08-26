@@ -89,6 +89,7 @@ const PackageCreate = props => (
       <StyledDivider />
       <StyledTextInput source="reference" />
       <StyledNumberInput source="priority" />
+      <BooleanInput source="isActive" label="Accept Donations" />
     </SimpleForm>
   </Create>
 );

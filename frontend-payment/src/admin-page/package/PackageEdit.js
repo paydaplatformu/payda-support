@@ -6,7 +6,9 @@ import {
   SelectInput,
   TextInput,
   LongTextInput,
-  BooleanInput
+  BooleanInput,
+  Toolbar,
+  SaveButton
 } from "react-admin";
 
 import {
@@ -25,9 +27,15 @@ import {
   StyledDivider
 } from "./PackageFormComponents";
 
+const PackageEditToolbar = props => (
+  <Toolbar {...props}>
+    <SaveButton />
+  </Toolbar>
+);
+
 const PackageEdit = props => (
-  <Edit {...props}>
-    <SimpleForm>
+  <Edit undoable={false} {...props}>
+    <SimpleForm toolbar={<PackageEditToolbar />}>
       <h2>Package Information</h2>
       <StyledDivider />
       <StyledSelectInput
@@ -90,6 +98,7 @@ const PackageEdit = props => (
       <StyledDivider />
       <StyledTextInput source="reference" />
       <StyledNumberInput source="priority" />
+      <BooleanInput source="isActive" label="Accept Donations" />
     </SimpleForm>
   </Edit>
 );

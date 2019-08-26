@@ -90,6 +90,8 @@ const Query = gql`
     updatePackage(
       id: String!
       defaultTag: PackageTagInput
+      isActive: Boolean
+      customizationConfig: PackageCustomizationConfigInput
       reference: String
       image: String
       priority: Int

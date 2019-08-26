@@ -36,6 +36,7 @@ const DonationList = props => (
     sort={{ field: "date", order: "DESC" }}
     filters={<DonationFilter />}
     filterDefaultValues={{ paymentConfirmed: true }}
+    bulkActionButtons={false}
   >
     <Datagrid rowClick="show">{commonDonationFields}</Datagrid>
   </List>

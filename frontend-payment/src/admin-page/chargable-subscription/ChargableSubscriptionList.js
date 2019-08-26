@@ -40,6 +40,7 @@ export const ChargableSubscriptionList = props => (
     perPage={25}
     style={{ marginBottom: "2rem" }}
     sort={{ field: "createdAt", order: "DESC" }}
+    bulkActionButtons={false}
     filters={<ChargableSubscriptionFilter />}
   >
     <Datagrid rowClick="show">

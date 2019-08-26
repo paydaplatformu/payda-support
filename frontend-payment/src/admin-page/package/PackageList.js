@@ -41,6 +41,7 @@ const PackageList = props => (
     sort={{ field: "priority", order: "DESC" }}
     filters={<PackageFilter />}
     filterDefaultValues={{ onlyActive: true, onlyOriginal: true }}
+    bulkActionButtons={false}
   >
     <Datagrid rowClick="edit">
       <TextField label="Id" source="id" />

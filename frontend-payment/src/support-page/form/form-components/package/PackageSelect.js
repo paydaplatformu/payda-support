@@ -13,6 +13,13 @@ import {
 
 import PackageDetails from "./PackageDetails";
 
+const getPackageDisplayText = (pack, langCode) => {
+  if (pack.price && pack.price.amount === 0) {
+    return getPackageName(pack, langCode);
+  }
+  return `${getPackageName(pack, langCode)} - ${getPackagePriceText(pack)}`;
+};
+
 const PackageSelect = props => {
   const { translate, langCode } = useContext(TranslationContext);
   const { loading, packages, selectPackage } = useContext(PackageContext);
@@ -44,7 +51,7 @@ const PackageSelect = props => {
             {!loading &&
               packages.map(pack => (
                 <Select.Option key={pack.id} value={pack.id}>
-                  {getPackageName(pack, langCode)} - {getPackagePriceText(pack)}{" "}
+                  {getPackageDisplayText(pack, langCode)}{" "}
                   {isPackageRecurrent(pack.repeatInterval)
                     ? translate(
                         getPackageRecurrencyTranslationKey(pack.repeatInterval)
