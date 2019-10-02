@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Form, Input, InputNumber, Checkbox } from "antd";
+import { Form, Input, InputNumber } from "antd";
 
 import { TranslationContext } from "../../translations";
 import { LANG_CODES } from "../../constants";
