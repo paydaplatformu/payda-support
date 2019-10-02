@@ -30,7 +30,8 @@ const DonationFormInner = props => {
 
       createDonation({
         variables: {
-          donationCreator: { ...fieldValues, agreementsAccepted: undefined },
+          // TODO: remove usingamex hack
+          donationCreator: { ...fieldValues, usingAmex: false, agreementsAccepted: undefined },
           language: langCode.toUpperCase()
         }
       });
@@ -108,12 +109,13 @@ const DonationFormInner = props => {
             />
           )}
         </Form.Item>
-        <Form.Item style={{ marginBottom: 0 }}>
+        {/* TODO: re enable */}
+        {/* <Form.Item style={{ marginBottom: 0 }}>
           {getFieldDecorator("usingAmex", {
             valuePropName: "checked",
             initialValue: false
           })(<Checkbox>{translate("pay_using_amex")}</Checkbox>)}
-        </Form.Item>
+        </Form.Item> */}
         <ModalsFormInput getFieldDecorator={getFieldDecorator} />
         <Form.Item>
           <SubmitButton htmlType="submit" size="large" block>
