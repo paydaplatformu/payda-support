@@ -1,6 +1,6 @@
 {
   "support_now": "Support Now!",
-  "pay_using_amex": "I want to pay by using American Express",
+  "pay_using_amex": "Check this box if you'd like to use American Express for payment. Otherwise leave empty.",
   "email_address": "Email Address",
   "supporter_name": "Supporter Name",
   "quantity": "Quantity",
