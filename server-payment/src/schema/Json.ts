@@ -5,6 +5,4 @@ export const typeDef = gql`
   scalar JSON
 `;
 
-export const resolvers = {
-  JSON: GraphQLJSON
-};
+export const resolver = GraphQLJSON;

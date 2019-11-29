@@ -1,43 +1,21 @@
 import { ObjectId } from "mongodb";
-import { Currency } from "./Currency";
-import { RepeatInterval } from "./RepeatInterval";
-
-export interface DonationCreator {
-  fullName: string;
-  email: string;
-  packageId: string;
-  customPriceAmount?: number;
-  customPriceCurrency?: Currency;
-  customRepeatInterval?: RepeatInterval;
-  quantity: number;
-  usingAmex: boolean;
-  notes?: string;
-  parentDonationId?: string;
-}
+import { Currency, RepeatInterval } from "../generated/graphql";
 
 export interface DonationModifier {
   id: string;
   paymentConfirmed: boolean;
 }
 
-export interface DonationFilters {
-  paymentConfirmed?: boolean;
-  search?: string;
-  ids?: string[];
-  packageId?: string;
-  onlyDirect?: boolean;
-}
-
-export interface DonationModel {
-  id: string;
+export interface DonationCreator {
   fullName: string;
   email: string;
   packageId: string;
-  notes?: string;
-  paymentConfirmed: boolean;
-  date: Date;
+  customPriceAmount: number | null;
+  customPriceCurrency: Currency | null;
+  customRepeatInterval: RepeatInterval | null;
   quantity: number;
   usingAmex: boolean;
+  notes: string | null;
   parentDonationId?: string;
 }
 
@@ -46,7 +24,7 @@ export interface DonationEntity {
   fullName: string;
   email: string;
   packageId: ObjectId;
-  notes?: string;
+  notes: string | null;
   paymentConfirmed: boolean;
   date: Date;
   quantity: number;

@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
-import { PackageService } from "../models/PackageService";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { RepeatInterval } from "../models/RepeatInterval";
-import { SortingSettings } from "../models/SortingSettings";
-import { RunningSubscriptionModel, SubscriptionFilters } from "../models/Subscription";
-import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
-import { SubscriptionService } from "../models/SubscriptionService";
-import { TYPES } from "../types";
+import { PackageService } from "../package/PackageService";
+import { PaginationSettings } from "../../models/PaginationSettings";
+import { SortingSettings } from "../../models/SortingSettings";
+import { RunningSubscription } from "../../models/Subscription";
+import { SubscriptionManagerService } from "./SubscriptionManagerService";
+import { SubscriptionService } from "../subscription/SubscriptionService";
+import { TYPES } from "../../types";
+import { RepeatInterval, SubscriptionFilter } from "../../generated/graphql";
 
 @injectable()
 export class SubscriptionManagerServiceImpl implements SubscriptionManagerService {
@@ -17,15 +17,14 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
   private subscriptionService: SubscriptionService = null as any;
 
   public getChargableSubscriptions = async (
-    repeatInterval: RepeatInterval,
-    filters: SubscriptionFilters,
+    filters: SubscriptionFilter,
     pagination: PaginationSettings,
     sorting: SortingSettings
-  ): Promise<RunningSubscriptionModel[]> => {
-    const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
+  ): Promise<RunningSubscription[]> => {
+    const allowedPackages = await this.packageService.getByRepeatInterval(filters.repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
     return this.subscriptionService.getByChargableSubscriptionsForRepeatIntervalAndPackageIds(
-      repeatInterval,
+      filters.repeatInterval,
       allowedPackageIds,
       filters,
       pagination,
@@ -33,20 +32,17 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     );
   };
 
-  public countChargableSubscriptions = async (
-    repeatInterval: RepeatInterval,
-    filters: SubscriptionFilters
-  ): Promise<number> => {
-    const allowedPackages = await this.packageService.getByRepeatInterval(repeatInterval);
+  public countChargableSubscriptions = async (filters: SubscriptionFilter): Promise<number> => {
+    const allowedPackages = await this.packageService.getByRepeatInterval(filters.repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
     return this.subscriptionService.countChargableSubscriptionsForRepeatIntervalAndPackageIds(
-      repeatInterval,
+      filters.repeatInterval,
       allowedPackageIds,
       filters
     );
   };
 
-  public getChargableSubscriptionById = async (id: string): Promise<RunningSubscriptionModel | null> => {
+  public getChargableSubscriptionById = async (id: string): Promise<RunningSubscription | null> => {
     const subscription = await this.subscriptionService.getById(id);
     if (!subscription) return null;
 

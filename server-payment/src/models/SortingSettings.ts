@@ -1,4 +1,4 @@
 export interface SortingSettings {
-  sortField: string;
-  sortOrder: string;
+  sortField?: string | null;
+  sortOrder?: string | null;
 }

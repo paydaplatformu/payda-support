@@ -1,17 +1,14 @@
-import { gql, IResolvers } from "apollo-server-express";
-import { merge } from "lodash";
 import { DonationCreator } from "../models/Donation";
 import { AuthenticationRequired, AuthorizationError } from "../models/Errors";
 import { PackageCreator, PackageModifier } from "../models/Package";
 import { SubscriptionModifier } from "../models/Subscription";
 import { typeDef as ChargableSubscription } from "./ChargableSubscription";
-import { IContext } from "./context";
 import { typeDef as Currency } from "./Currency";
-import { resolvers as dateResolvers, typeDef as DateType } from "./Date";
+import { resolver as dateResolver, typeDef as DateType } from "./Date";
 import { typeDef as DeactivationReason } from "./DeactivationReason";
 import { typeDef as Donation } from "./Donation";
-import { typeDef as FormField } from "./FormField";
-import { resolvers as jsonResolvers, typeDef as JsonType } from "./Json";
+import { typeDef as KeyValue } from "./KeyValue";
+import { resolver as jsonResolver, typeDef as JsonType } from "./Json";
 import { typeDef as LanguageCode } from "./LanguageCode";
 import { typeDef as ListMetadata } from "./ListMetadata";
 import { typeDef as MonetaryAmount } from "./MonetaryAmount";
@@ -23,117 +20,21 @@ import { typeDef as RepeatInterval } from "./RepeatInterval";
 import { typeDef as Subscription } from "./Subscription";
 import { typeDef as SubscriptionChargeResult } from "./SubscriptionChargeResult";
 import { typeDef as SubscriptionStatus } from "./SubscriptionStatus";
-import { resolvers as userResolvers, typeDef as User } from "./User";
+import { Query } from "./Query";
+import { Mutation } from "./Mutation";
+import { makeExecutableSchema } from "graphql-tools";
+import { SchemaDefinition } from "./SchemaDefinition";
+import { Resolvers } from "../generated/graphql";
 
-const Query = gql`
-  type Query {
-    users: [User!]!
-
-    Package(id: String!): Package
-    allPackages(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PackageFilter): [Package!]!
-    _allPackagesMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PackageFilter): ListMetadata
-
-    Donation(id: String!): Donation
-    allDonations(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: DonationFilter): [Donation!]!
-    _allDonationsMeta(
-      page: Int
-      perPage: Int
-      sortField: String
-      sortOrder: String
-      filter: DonationFilter
-    ): ListMetadata
-
-    Subscription(id: String!): Subscription
-    allSubscriptions(
-      page: Int
-      perPage: Int
-      sortField: String
-      sortOrder: String
-      filter: SubscriptionFilter
-    ): [Subscription!]!
-    _allSubscriptionsMeta(
-      page: Int
-      perPage: Int
-      sortField: String
-      sortOrder: String
-      filter: SubscriptionFilter
-    ): ListMetadata
-
-    ChargableSubscription(id: String!): ChargableSubscription
-    allChargableSubscriptions(
-      page: Int
-      perPage: Int
-      sortField: String
-      sortOrder: String
-      filter: SubscriptionFilter
-    ): [ChargableSubscription!]!
-    _allChargableSubscriptionsMeta(
-      page: Int
-      perPage: Int
-      sortField: String
-      sortOrder: String
-      filter: SubscriptionFilter
-    ): ListMetadata
-  }
-
-  type Mutation {
-    createPackage(
-      defaultTag: PackageTagInput!
-      customizationConfig: PackageCustomizationConfigInput!
-      reference: String
-      repeatInterval: RepeatInterval!
-      image: String
-      price: MonetaryAmountInput!
-      priority: Int!
-      tags: [PackageTagInput!]
-    ): Package!
-    updatePackage(
-      id: String!
-      defaultTag: PackageTagInput
-      isActive: Boolean
-      customizationConfig: PackageCustomizationConfigInput
-      reference: String
-      image: String
-      priority: Int
-      tags: [PackageTagInput!]
-    ): Package
-
-    createDonation(donationCreator: DonationCreator!, language: LanguageCode!): DonationCreationResult!
-    cleanPendingDonations: Int!
-
-    updateSubscription(id: String!, status: SubscriptionStatus!): Subscription
-
-    chargeSubscription(id: String!): SubscriptionChargeResult!
-
-    cancelSubscription(id: String!): Subscription
-  }
-`;
-
-const SchemaDefinition = gql`
-  schema {
-    query: Query
-    mutation: Mutation
-  }
-`;
-
-const rootResolvers: IResolvers<any, IContext> = {
+const resolvers: Resolvers = {
   Query: {
-    users: (parent, { id }, { userService, user }) => {
-      if (!user) throw new AuthenticationRequired();
-      return userService.getAll(
-        {},
-        { page: 1, perPage: Number.MAX_SAFE_INTEGER },
-        { sortOrder: "ASC", sortField: "id" }
-      );
-    },
-
     Package: (parent, { id }, { packageService }) => packageService.getById(id),
     allPackages: (parent, { filter, sortField, sortOrder, page, perPage }, { packageService, user }) => {
       if (!user && filter && filter.onlyActive === false)
         throw new AuthorizationError("Only admins can view non-active packages.");
-      const pagination = { page, perPage };
+      const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
-      if (!user) return packageService.getAll(packageService.getDefaultFilters(), null, sorting);
+      if (!user) return packageService.getAll(packageService.getDefaultFilters() || {}, null, sorting);
       return packageService.getAll(filter, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
@@ -147,7 +48,7 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
     allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      const pagination = { page, perPage };
+      const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
       return donationService.getAll(filter, pagination, sorting);
     },
@@ -162,7 +63,7 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
     allSubscriptions: (parent, { filter, sortField, sortOrder, page, perPage }, { subscriptionService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      const pagination = { page, perPage };
+      const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
       return subscriptionService.getAll(filter, pagination, sorting);
     },
@@ -177,21 +78,19 @@ const rootResolvers: IResolvers<any, IContext> = {
     },
     allChargableSubscriptions: (
       parent,
-      { filter: { repeatInterval, ...restFilters }, sortField, sortOrder, page, perPage },
+      { filter, sortField, sortOrder, page, perPage },
       { subscriptionManagerService, user }
     ) => {
       if (!user) throw new AuthenticationRequired();
-      const pagination = { page, perPage };
+      const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
-      return subscriptionManagerService.getChargableSubscriptions(repeatInterval, restFilters, pagination, sorting);
+      return subscriptionManagerService.getChargableSubscriptions(filter, pagination, sorting);
     },
-    _allChargableSubscriptionsMeta: async (
-      parent,
-      { filter: { repeatInterval, ...restFilters } },
-      { subscriptionManagerService, user }
-    ) => {
+    _allChargableSubscriptionsMeta: async (parent, { filter }, { subscriptionManagerService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return { count: await subscriptionManagerService.countChargableSubscriptions(repeatInterval, restFilters) };
+      return {
+        count: await subscriptionManagerService.countChargableSubscriptions(filter)
+      };
     }
   },
   Mutation: {
@@ -206,12 +105,12 @@ const rootResolvers: IResolvers<any, IContext> = {
       if (!user) throw new AuthenticationRequired();
       return packageService.edit(args as PackageModifier);
     },
-    createDonation: async (parent, { donationCreator, language }, { donationManagerService }) => {
-      const saneDonationCreator: DonationCreator = {
-        ...(donationCreator as DonationCreator),
+    createDonation: async (parent, { donationInput, language }, { donationManagerService }) => {
+      const donationCreator: DonationCreator = {
+        ...donationInput,
         parentDonationId: undefined
       };
-      return donationManagerService.createDonation(saneDonationCreator, language);
+      return donationManagerService.createDonation(donationCreator, language);
     },
     cleanPendingDonations: (parent, args, { donationService, user }) => {
       if (!user) throw new AuthenticationRequired();
@@ -232,10 +131,13 @@ const rootResolvers: IResolvers<any, IContext> = {
       if (!user) throw new AuthenticationRequired();
       return subscriptionService.cancelSubscription(id);
     }
-  }
+  },
+  Date: dateResolver,
+  Package: packageResolvers,
+  JSON: jsonResolver
 };
 
-export const typeDefs = [
+const typeDefs = [
   DateType,
   JsonType,
   RepeatInterval,
@@ -245,18 +147,18 @@ export const typeDefs = [
   LanguageCode,
   DeactivationReason,
   SubscriptionStatus,
-  FormField,
+  KeyValue,
   PackageTag,
   PackageCustomizationConfig,
   SubscriptionChargeResult,
   SchemaDefinition,
   Query,
+  Mutation,
   Package,
   Donation,
   Subscription,
-  User,
   ListMetadata,
   ChargableSubscription
 ];
 
-export const resolvers = merge(dateResolvers, jsonResolvers, rootResolvers, packageResolvers, userResolvers);
+export default makeExecutableSchema({ typeDefs, resolvers });

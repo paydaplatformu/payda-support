@@ -3,22 +3,24 @@ import { createHmac } from "crypto";
 import { format } from "date-fns";
 import { inject, injectable } from "inversify";
 import * as qs from "querystring";
-import { config } from "../config";
-import { DeactivationReason } from "../models/DeactivationReason";
-import { DonationModel } from "../models/Donation";
-import { DonationService } from "../models/DonationService";
-import { LanguageCode } from "../models/LanguageCode";
-import { PackageModel } from "../models/Package";
-import { PackageService } from "../models/PackageService";
-import { PaymentProcess } from "../models/PaymentProcess";
-import { PayuCredentials } from "../models/PayuCredentials";
-import { PayuService } from "../models/PayuService";
-import { RepeatInterval } from "../models/RepeatInterval";
-import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
-import { SubscriptionService } from "../models/SubscriptionService";
-import { SubscriptionStatus } from "../models/SubscriptionStatus";
-import { TYPES } from "../types";
-import { getUTF8Length, isNonProduction, isProduction, splitName } from "../utilities/helpers";
+import { config } from "../../config";
+import { DonationService } from "../donation/DonationService";
+import { PackageService } from "../package/PackageService";
+import { PayuCredentials } from "../../models/PayuCredentials";
+import { PayuService } from "./PayuService";
+import { SubscriptionManagerService } from "../subscription-manager/SubscriptionManagerService";
+import { SubscriptionService } from "../subscription/SubscriptionService";
+import { TYPES } from "../../types";
+import { getUTF8Length, isNonProduction, isProduction, splitName } from "../../utilities/helpers";
+import {
+  Donation,
+  RepeatInterval,
+  LanguageCode,
+  SubscriptionStatus,
+  DeactivationReason,
+  PaymentProcess,
+  Package
+} from "../../generated/graphql";
 
 @injectable()
 export class PayuServiceImpl implements PayuService {
@@ -56,12 +58,7 @@ export class PayuServiceImpl implements PayuService {
 
   private backRef: string = config.get("payu.backRef");
 
-  private createHashInput = (
-    donation: DonationModel,
-    pkg: PackageModel,
-    language: LanguageCode,
-    merchant: string
-  ): object => {
+  private createHashInput = (donation: Donation, pkg: Package, language: LanguageCode, merchant: string): object => {
     const tag = pkg.tags.find(t => t.code === language) || pkg.defaultTag;
     const ref = this.getReference(false, pkg, donation);
 
@@ -85,14 +82,14 @@ export class PayuServiceImpl implements PayuService {
 
   private finalizeFormFields = (
     input: object,
-    donation: DonationModel,
-    pkg: PackageModel,
+    donation: Donation,
+    pkg: Package,
     language: LanguageCode,
     hash: string
   ) => {
     const { firstName, lastName } = splitName(donation.fullName);
     const tokenSettings: object =
-      pkg.repeatInterval !== RepeatInterval.NONE
+      pkg.repeatInterval !== RepeatInterval.None
         ? {
             LU_ENABLE_TOKEN: "1"
           }
@@ -183,18 +180,18 @@ export class PayuServiceImpl implements PayuService {
     return this.defaultCredentials;
   };
 
-  private getInstallmentOptions = (pkg: PackageModel) =>
-    pkg.repeatInterval !== RepeatInterval.NONE ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
+  private getInstallmentOptions = (pkg: Package) =>
+    pkg.repeatInterval !== RepeatInterval.None ? "1" : "1,2,3,4,5,6,7,8,9,10,11,12";
 
-  private getPayMethod = (pkg: PackageModel) => (pkg.repeatInterval !== RepeatInterval.NONE ? "CCVISAMC" : "");
+  private getPayMethod = (pkg: Package) => (pkg.repeatInterval !== RepeatInterval.None ? "CCVISAMC" : "");
 
-  private getReference = (automated: boolean, pkg: PackageModel, donation: DonationModel) => {
+  private getReference = (automated: boolean, pkg: Package, donation: Donation) => {
     const automatedString = automated ? "AUTO" : "FIRST_TIME";
-    if (pkg.repeatInterval === RepeatInterval.TEST_B) {
+    if (pkg.repeatInterval === RepeatInterval.TestB) {
       return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH-mm")}`;
-    } else if (pkg.repeatInterval === RepeatInterval.TEST_A) {
+    } else if (pkg.repeatInterval === RepeatInterval.TestA) {
       return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH")}`;
-    } else if (pkg.repeatInterval === RepeatInterval.NONE) {
+    } else if (pkg.repeatInterval === RepeatInterval.None) {
       return `${automatedString}.${donation.id}`;
     } else {
       return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM")}`;
@@ -302,18 +299,18 @@ export class PayuServiceImpl implements PayuService {
       id: subscription.id,
       processHistory: [...currentProcessHistory, lastProcess],
       paymentToken,
-      deactivationReason: status ? null : DeactivationReason.ERROR,
-      status: status ? SubscriptionStatus.RUNNING : SubscriptionStatus.CANCELLED
+      deactivationReason: status ? null : DeactivationReason.Error,
+      status: status ? SubscriptionStatus.Running : SubscriptionStatus.Cancelled
     });
 
     const childDonation = await this.donationService.create({
       email: donation.email,
       fullName: donation.fullName,
       parentDonationId: donation.id,
-      customPriceAmount: undefined,
-      customPriceCurrency: undefined,
-      customRepeatInterval: undefined,
-      notes: undefined,
+      customPriceAmount: null,
+      customPriceCurrency: null,
+      customRepeatInterval: null,
+      notes: null,
       packageId: donation.packageId,
       quantity: donation.quantity,
       usingAmex: donation.usingAmex
@@ -327,7 +324,7 @@ export class PayuServiceImpl implements PayuService {
     };
   };
 
-  public getFormContents = async (donation: DonationModel, pkg: PackageModel, language: LanguageCode) => {
+  public getFormContents = async (donation: Donation, pkg: Package, language: LanguageCode) => {
     const credentials = this.getCredentials(donation.usingAmex, false);
     const hashInput = this.createHashInput(donation, pkg, language, credentials.merchant);
     const hash = await this.generateHashWithLength(hashInput, credentials.secret);
@@ -381,7 +378,7 @@ export class PayuServiceImpl implements PayuService {
           id: subscription.id,
           processHistory: [lastProcess],
           paymentToken,
-          status: SubscriptionStatus.RUNNING
+          status: SubscriptionStatus.Running
         });
       } else {
         try {
@@ -390,7 +387,7 @@ export class PayuServiceImpl implements PayuService {
             id: subscription.id,
             processHistory: [lastProcess],
             paymentToken: paymentTokenFromReference,
-            status: SubscriptionStatus.RUNNING,
+            status: SubscriptionStatus.Running,
             deactivationReason: null
           });
         } catch (error) {
@@ -410,8 +407,8 @@ export class PayuServiceImpl implements PayuService {
             id: subscription.id,
             processHistory: [errorProcess],
             paymentToken: null,
-            status: SubscriptionStatus.CANCELLED,
-            deactivationReason: DeactivationReason.ERROR
+            status: SubscriptionStatus.Cancelled,
+            deactivationReason: DeactivationReason.Error
           });
         }
       }

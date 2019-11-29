@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { chain } from "lodash";
 import { isDefined } from "../utilities/helpers";
-import { Validator } from "./Validator";
+import { Validator } from "../models/Validator";
 
 @injectable()
 export abstract class BaseEntityService<Creator> {

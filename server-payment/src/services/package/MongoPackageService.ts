@@ -1,14 +1,15 @@
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
-import { PackageCreator, PackageEntity, PackageFilters, PackageModel, PackageModifier } from "../models/Package";
-import { PackageService } from "../models/PackageService";
-import { RepeatInterval } from "../models/RepeatInterval";
-import { Validator } from "../models/Validator";
-import { BaseMongoService } from "./BaseMongoService";
+import { PackageCreator, PackageEntity, PackageModifier } from "../../models/Package";
+import { PackageService } from "./PackageService";
+import { Validator } from "../../models/Validator";
+import { BaseMongoService } from "../BaseMongoService";
+import { RepeatInterval, Package, PackageFilter } from "../../generated/graphql";
+import { isDefined } from "../../utilities/helpers";
 
 @injectable()
 export class MongoPackageService
-  extends BaseMongoService<PackageEntity, PackageModel, PackageFilters, PackageCreator, PackageModifier>
+  extends BaseMongoService<PackageEntity, Package, PackageFilter, PackageCreator, PackageModifier>
   implements PackageService {
   protected static collectionName = "packages";
 
@@ -29,19 +30,12 @@ export class MongoPackageService
   }
   protected creatorValidator: Validator<PackageCreator> = {};
 
-  protected getFilters = ({
-    onlyActive,
-    ids,
-    onlyOriginal,
-    repeatInterval,
-    amount,
-    currency,
-    search
-  }: PackageFilters): object[] => {
+  protected getFilters = (filter: Partial<PackageFilter> | null): object[] => {
+    const { onlyActive, ids, onlyOriginal, repeatInterval, amount, currency, search } = filter || {};
     return [
       onlyActive === true ? { isActive: true } : undefined,
       onlyOriginal === true ? { isCustom: false } : undefined,
-      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       repeatInterval !== undefined ? { repeatInterval } : undefined,
       amount !== undefined ? { "price.amount": amount } : undefined,
       currency !== undefined ? { "price.currency": currency } : undefined,
@@ -49,7 +43,7 @@ export class MongoPackageService
     ].filter(el => el !== undefined) as any;
   };
 
-  protected toModel = (entity: PackageEntity): PackageModel => {
+  protected toModel = (entity: PackageEntity): Package => {
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,
@@ -63,15 +57,16 @@ export class MongoPackageService
       reference: entity.reference,
       repeatInterval: entity.repeatInterval,
       tags: entity.tags,
-      updatedAt: entity.updatedAt
+      updatedAt: entity.updatedAt,
+      donationCount: 0 // TODO: fix this
     };
   };
 
-  public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<PackageModel[]> => {
-    return this.getAll({ repeatInterval }, null);
+  public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<Package[]> => {
+    return this.getAll({ repeatInterval }, null, null, []);
   };
 
-  public getDefaultFilters = (): PackageFilters => {
-    return { onlyActive: true, ids: undefined, onlyOriginal: true };
+  public getDefaultFilters = (): Partial<PackageFilter> => {
+    return { onlyActive: true, onlyOriginal: true };
   };
 }

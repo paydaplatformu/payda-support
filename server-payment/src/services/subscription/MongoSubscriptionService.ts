@@ -10,29 +10,32 @@ import {
 } from "date-fns";
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
-import { DeactivationReason } from "../models/DeactivationReason";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { RepeatInterval } from "../models/RepeatInterval";
-import { SortingSettings } from "../models/SortingSettings";
+import { PaginationSettings } from "../../models/PaginationSettings";
+import { SortingSettings } from "../../models/SortingSettings";
 import {
-  RunningSubscriptionModel,
+  RunningSubscription,
   SubscriptionCreator,
   SubscriptionEntity,
-  SubscriptionFilters,
-  SubscriptionModel,
   SubscriptionModifier
-} from "../models/Subscription";
-import { SubscriptionService } from "../models/SubscriptionService";
-import { SubscriptionStatus } from "../models/SubscriptionStatus";
-import { Validator } from "../models/Validator";
-import { BaseMongoService } from "./BaseMongoService";
+} from "../../models/Subscription";
+import { SubscriptionService } from "./SubscriptionService";
+import { Validator } from "../../models/Validator";
+import { BaseMongoService } from "../BaseMongoService";
+import {
+  RepeatInterval,
+  SubscriptionStatus,
+  DeactivationReason,
+  Subscription,
+  SubscriptionFilter
+} from "../../generated/graphql";
+import { isDefined } from "../../utilities/helpers";
 
 @injectable()
 export class MongoSubscriptionService
   extends BaseMongoService<
     SubscriptionEntity,
-    SubscriptionModel,
-    SubscriptionFilters,
+    Subscription,
+    SubscriptionFilter,
     SubscriptionCreator,
     SubscriptionModifier
   >
@@ -44,13 +47,13 @@ export class MongoSubscriptionService
     const now = new Date();
     const packageIdsConverted = packageIds.map(id => new ObjectId(id));
     switch (repeatInterval) {
-      case RepeatInterval.YEARLY:
+      case RepeatInterval.Yearly:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subYears, startOfYear);
-      case RepeatInterval.MONTHLY:
+      case RepeatInterval.Monthly:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMonths, startOfMonth);
-      case RepeatInterval.TEST_A:
+      case RepeatInterval.TestA:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subHours, startOfHour);
-      case RepeatInterval.TEST_B:
+      case RepeatInterval.TestB:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subMinutes, startOfMinute);
       default:
         throw new Error("Unknown repeat interval.");
@@ -76,7 +79,7 @@ export class MongoSubscriptionService
   ): object[] => {
     return [
       {
-        status: SubscriptionStatus.RUNNING
+        status: SubscriptionStatus.Running
       },
       { packageId: { $in: packageIds } },
       {
@@ -106,7 +109,7 @@ export class MongoSubscriptionService
 
   protected creatorValidator: Validator<SubscriptionCreator> = {};
 
-  protected toModel = (entity: SubscriptionEntity): SubscriptionModel => {
+  protected toModel = (entity: SubscriptionEntity): Subscription => {
     return {
       id: entity._id.toString(),
       packageId: entity.packageId.toString(),
@@ -126,7 +129,7 @@ export class MongoSubscriptionService
     return {
       ...fromSuper,
       ...creator,
-      status: SubscriptionStatus.CREATED,
+      status: SubscriptionStatus.Created,
       donationId: new ObjectId(creator.donationId),
       packageId: new ObjectId(creator.packageId),
       processHistory: [],
@@ -136,10 +139,10 @@ export class MongoSubscriptionService
   }
 
   public cancelSubscription = (id: string) => {
-    return this.edit({ id, status: SubscriptionStatus.CANCELLED, deactivationReason: DeactivationReason.USER_REQUEST });
+    return this.edit({ id, status: SubscriptionStatus.Cancelled, deactivationReason: DeactivationReason.UserRequest });
   };
 
-  public getByDonationId = async (donationId: string): Promise<SubscriptionModel | null> => {
+  public getByDonationId = async (donationId: string): Promise<Subscription | null> => {
     const result = await this.getEntityByDonationId(donationId);
     if (result) {
       return this.toModel(result);
@@ -150,22 +153,22 @@ export class MongoSubscriptionService
   public getByChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: SubscriptionFilters,
+    filters: SubscriptionFilter,
     pagination: PaginationSettings,
     sorting: SortingSettings
-  ): Promise<RunningSubscriptionModel[]> => {
+  ): Promise<RunningSubscription[]> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     const subscriptions = await this.getAll(filters, pagination, sorting, extraFilters);
-    return subscriptions.filter<RunningSubscriptionModel>(this.isRunningSubscription);
+    return subscriptions.filter<RunningSubscription>(this.isRunningSubscription);
   };
 
   public getByIdForRepeatIntervalAndPackageIds = async (
     id: string,
     repeatInterval: RepeatInterval,
     packageIds: string[]
-  ): Promise<RunningSubscriptionModel | null> => {
+  ): Promise<RunningSubscription | null> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
-    const subscriptions = await this.getAll({ ids: [id] }, null, undefined, extraFilters);
+    const subscriptions = await this.getAll({ ids: [id] }, null, null, extraFilters);
     if (subscriptions.length === 0) return null;
     else if (subscriptions.length > 1) throw new Error("Conflicting ids for subscriptions");
     const head = subscriptions[0];
@@ -176,7 +179,7 @@ export class MongoSubscriptionService
   public countChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: SubscriptionFilters
+    filters: SubscriptionFilter
   ): Promise<number> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
     return this.count(filters, extraFilters);
@@ -188,14 +191,15 @@ export class MongoSubscriptionService
     return entity.paymentToken;
   };
 
-  protected getFilters = ({ ids, status, hasPaymentToken }: SubscriptionFilters): object[] => {
+  protected getFilters = (filter: Partial<SubscriptionFilter> | null): object[] => {
+    const { ids, status, hasPaymentToken } = filter || {};
     return [
       status !== undefined ? { status } : undefined,
       hasPaymentToken !== true ? undefined : { paymentToken: { $exists: true, $ne: null } },
-      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
+      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
     ].filter(el => el !== undefined) as any;
   };
 
-  public isRunningSubscription = (subscription: SubscriptionModel): subscription is RunningSubscriptionModel =>
-    subscription.status === SubscriptionStatus.RUNNING;
+  public isRunningSubscription = (subscription: Subscription): subscription is RunningSubscription =>
+    subscription.status === SubscriptionStatus.Running;
 }

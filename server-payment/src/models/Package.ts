@@ -1,20 +1,16 @@
 import { ObjectId } from "mongodb";
-import { Currency } from "./Currency";
-import { MonetaryAmount } from "./MonetaryAmount";
-import { PackageCustomizationConfig } from "./PackageCustomizationConfig";
-import { PackageTag } from "./PackageTag";
-import { RepeatInterval } from "./RepeatInterval";
+import { MonetaryAmount, Currency, RepeatInterval, PackageTag, PackageCustomizationConfig } from "../generated/graphql";
 
 export interface PackageCreator {
   defaultTag: PackageTag;
-  reference?: string;
+  reference?: string | null;
   repeatInterval: RepeatInterval;
-  image?: string;
+  image?: string | null;
   price: MonetaryAmount;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
-  tags: PackageTag[];
+  tags: ReadonlyArray<PackageTag>;
 }
 
 export interface PackageModifier {
@@ -25,47 +21,21 @@ export interface PackageModifier {
   isActive?: string;
   customizationConfig?: PackageCustomizationConfig;
   priority: number;
-  tags: PackageTag[];
-}
-
-export interface PackageFilters {
-  ids?: string[];
-  onlyActive?: boolean;
-  onlyOriginal?: boolean;
-  repeatInterval?: RepeatInterval;
-  amount?: number;
-  currency?: Currency;
-  search?: string;
-}
-
-export interface PackageModel {
-  id: string;
-  defaultTag: PackageTag;
-  reference?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  repeatInterval: RepeatInterval;
-  image?: string;
-  price: MonetaryAmount;
-  customizationConfig: PackageCustomizationConfig;
-  isCustom: boolean;
-  priority: number;
-  tags: PackageTag[];
-  isActive: boolean;
+  tags: ReadonlyArray<PackageTag>;
 }
 
 export interface PackageEntity {
   _id: ObjectId;
   defaultTag: PackageTag;
-  reference?: string;
+  reference: string | null;
   createdAt: Date;
   updatedAt: Date;
   repeatInterval: RepeatInterval;
-  image?: string;
+  image: string | null;
   price: MonetaryAmount;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
-  tags: PackageTag[];
+  tags: ReadonlyArray<PackageTag>;
   isActive: boolean;
 }
