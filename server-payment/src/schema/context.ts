@@ -1,15 +1,15 @@
 import { inject, injectable } from "inversify";
 import { Client } from "oauth2-server";
 import "reflect-metadata";
-import { DonationManagerService } from "../models/DonationManagerService";
-import { DonationService } from "../models/DonationService";
-import { PackageService } from "../models/PackageService";
-import { PayuService } from "../models/PayuService";
-import { SubscriptionService } from "../models/SubscriptionService";
+import { DonationManagerService } from "../services/donation-manager/DonationManagerService";
+import { DonationService } from "../services/donation/DonationService";
+import { PackageService } from "../services/package/PackageService";
+import { PayuService } from "../services/payu/PayuService";
+import { SubscriptionService } from "../services/subscription/SubscriptionService";
 import { UserModel } from "../models/User";
-import { UserService } from "../models/UserService";
+import { UserService } from "../services/user/UserService";
 import { TYPES } from "../types";
-import { SubscriptionManagerService } from "../models/SubscriptionManagerService";
+import { SubscriptionManagerService } from "../services/subscription-manager/SubscriptionManagerService";
 
 export const Type = Symbol.for("IContextProvider");
 

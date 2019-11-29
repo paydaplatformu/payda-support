@@ -11,7 +11,7 @@ export const typeDef = gql`
     onlyDirect: Boolean
   }
 
-  input DonationCreator {
+  input DonationInput {
     fullName: String!
     email: String!
     packageId: String!
@@ -43,6 +43,6 @@ export const typeDef = gql`
     package: Package!
     subscription: Subscription
     formUrl: String!
-    formFields: [FormField!]!
+    formFields: [KeyValue!]!
   }
 `;

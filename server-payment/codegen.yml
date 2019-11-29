@@ -1,0 +1,28 @@
+overwrite: true
+schema: "./src/schema/index.ts"
+documents: null
+config:
+  immutableTypes: true
+  contextType: "../schema/context#IContext"
+  scalars:
+    Date: Date
+    JSON: any
+generates:
+  src/generated/graphql.ts:
+    hooks:
+      afterOneFileWrite:
+        - prettier --write    
+    plugins:
+      - typescript:
+          avoidOptionals: true
+      - typescript-resolvers:
+          avoidOptionals: false
+          useIndexSignature: true
+          mappers:
+            ChargableSubscription: ./../models/Subscription#RunningSubscription
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"
+require:
+  - ts-node/register/
+  

@@ -1,23 +1,23 @@
 import { ContainerModule } from "inversify";
 import "reflect-metadata";
 import { Authentication } from "./models/Authentication";
-import { DonationManagerService } from "./models/DonationManagerService";
-import { DonationService } from "./models/DonationService";
-import { PackageService } from "./models/PackageService";
-import { PayuService } from "./models/PayuService";
-import { SubscriptionManagerService } from "./models/SubscriptionManagerService";
-import { SubscriptionService } from "./models/SubscriptionService";
-import { UserService } from "./models/UserService";
+import { DonationManagerService } from "./services/donation-manager/DonationManagerService";
+import { DonationService } from "./services/donation/DonationService";
+import { PackageService } from "./services/package/PackageService";
+import { PayuService } from "./services/payu/PayuService";
+import { SubscriptionManagerService } from "./services/subscription-manager/SubscriptionManagerService";
+import { SubscriptionService } from "./services/subscription/SubscriptionService";
+import { UserService } from "./services/user/UserService";
 import { ContextProvider, IContextProvider } from "./schema/context";
-import { DonationManagerServiceImpl } from "./services/DonationManagerServiceImpl";
+import { DonationManagerServiceImpl } from "./services/donation-manager/DonationManagerServiceImpl";
 import { JwtAuthentication } from "./services/JwtAuthentication";
 import { MongoDbConnectionProvider } from "./services/MongoDbConnectionProvider";
-import { MongoDonationService } from "./services/MongoDonationService";
-import { MongoPackageService } from "./services/MongoPackageService";
-import { MongoSubscriptionService } from "./services/MongoSubscriptionService";
-import { MongoUserService } from "./services/MongoUserService";
-import { PayuServiceImpl } from "./services/PayuServiceImpl";
-import { SubscriptionManagerServiceImpl } from "./services/SubscriptionManagerServiceImpl";
+import { MongoDonationService } from "./services/donation/MongoDonationService";
+import { MongoPackageService } from "./services/package/MongoPackageService";
+import { MongoSubscriptionService } from "./services/subscription/MongoSubscriptionService";
+import { MongoUserService } from "./services/user/MongoUserService";
+import { PayuServiceImpl } from "./services/payu/PayuServiceImpl";
+import { SubscriptionManagerServiceImpl } from "./services/subscription-manager/SubscriptionManagerServiceImpl";
 import { TYPES } from "./types";
 
 const production = new ContainerModule(bind => {

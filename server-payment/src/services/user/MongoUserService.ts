@@ -1,11 +1,11 @@
 import { injectable } from "inversify";
 import { Cursor } from "mongodb";
-import { Modifier } from "../models/Modifier";
-import { UserModel, UserCreator, UserEntity } from "../models/User";
-import { UserService } from "../models/UserService";
-import { Validator } from "../models/Validator";
-import { comparePassword, hashPassword } from "../utilities/password";
-import { BaseMongoService } from "./BaseMongoService";
+import { Modifier } from "../../models/Modifier";
+import { UserModel, UserCreator, UserEntity } from "../../models/User";
+import { UserService } from "./UserService";
+import { Validator } from "../../models/Validator";
+import { comparePassword, hashPassword } from "../../utilities/password";
+import { BaseMongoService } from "../BaseMongoService";
 
 @injectable()
 export class MongoUserService extends BaseMongoService<UserEntity, UserModel, {}, UserCreator, Modifier>

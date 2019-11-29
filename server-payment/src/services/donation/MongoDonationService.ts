@@ -2,15 +2,17 @@ import { subHours } from "date-fns";
 import { injectable } from "inversify";
 import { ObjectId } from "mongodb";
 import { isAlpha, isEmail, isLength } from "validator";
-import { DonationCreator, DonationEntity, DonationFilters, DonationModel, DonationModifier } from "../models/Donation";
-import { DonationService } from "../models/DonationService";
-import { FieldErrorCode } from "../models/Errors";
-import { Validator } from "../models/Validator";
-import { BaseMongoService } from "./BaseMongoService";
+import { DonationEntity, DonationModifier, DonationCreator } from "../../models/Donation";
+import { DonationService } from "./DonationService";
+import { FieldErrorCode } from "../../models/Errors";
+import { Validator } from "../../models/Validator";
+import { BaseMongoService } from "../BaseMongoService";
+import { Donation, DonationFilter } from "../../generated/graphql";
+import { isDefined } from "../../utilities/helpers";
 
 @injectable()
 export class MongoDonationService
-  extends BaseMongoService<DonationEntity, DonationModel, DonationFilters, DonationCreator, DonationModifier>
+  extends BaseMongoService<DonationEntity, Donation, DonationFilter, DonationCreator, DonationModifier>
   implements DonationService {
   protected static collectionName = "donations";
 
@@ -53,17 +55,18 @@ export class MongoDonationService
     }
   };
 
-  protected getFilters = ({ paymentConfirmed, ids, search, packageId, onlyDirect }: DonationFilters): object[] => {
+  protected getFilters = (filter: Partial<DonationFilter> | null): object[] => {
+    const { paymentConfirmed, ids, search, packageId, onlyDirect } = filter || {};
     return [
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
-      ids !== undefined ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
       onlyDirect === true ? { parentDonationId: { $exists: false } } : undefined,
-      packageId !== undefined ? { packageId: new ObjectId(packageId) } : undefined
+      isDefined(packageId) ? { packageId: new ObjectId(packageId) } : undefined
     ].filter(el => el !== undefined) as any;
   };
 
-  protected toModel = (entity: DonationEntity): DonationModel => {
+  protected toModel = (entity: DonationEntity): Donation => {
     return {
       id: entity._id.toString(),
       date: entity.date,
@@ -74,7 +77,7 @@ export class MongoDonationService
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
       usingAmex: entity.usingAmex,
-      parentDonationId: entity.parentDonationId ? entity.parentDonationId.toString() : undefined
+      parentDonationId: entity.parentDonationId ? entity.parentDonationId.toString() : null
     };
   };
 
@@ -86,7 +89,7 @@ export class MongoDonationService
     return result.deletedCount || 0;
   };
 
-  public confirmPayment = async (donationId: string): Promise<DonationModel | null> => {
+  public confirmPayment = async (donationId: string): Promise<Donation | null> => {
     return this.edit({ id: donationId, paymentConfirmed: true });
   };
 
@@ -94,7 +97,7 @@ export class MongoDonationService
     return this.collection.find({ packageId: new ObjectId(packageId) }).count();
   };
 
-  public getByPackageId = async (packageId: string): Promise<DonationModel[]> => {
+  public getByPackageId = async (packageId: string): Promise<Donation[]> => {
     const results = await this.collection.find({ packageId: new ObjectId(packageId) }).toArray();
     return results.map(this.toModel);
   };

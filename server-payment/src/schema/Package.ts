@@ -1,8 +1,6 @@
 import { gql } from "apollo-server-core";
-import { IResolvers } from "graphql-tools";
 import { AuthenticationRequired } from "../models/Errors";
-import { PackageModel } from "../models/Package";
-import { IContext } from "./context";
+import { PackageResolvers } from "../generated/graphql";
 
 export const typeDef = gql`
   input PackageFilter {
@@ -17,7 +15,7 @@ export const typeDef = gql`
 
   type Package {
     id: String!
-    defaultTag: PackageTag
+    defaultTag: PackageTag!
     reference: String
     createdAt: Date!
     updatedAt: Date!
@@ -27,17 +25,15 @@ export const typeDef = gql`
     price: MonetaryAmount!
     customizationConfig: PackageCustomizationConfig!
     isCustom: Boolean!
-    priority: Int
+    priority: Int!
     tags: [PackageTag!]!
     isActive: Boolean!
   }
 `;
 
-export const resolvers: IResolvers<PackageModel, IContext> = {
-  Package: {
-    donationCount: (parent, args, { donationService, user }) => {
-      if (!user) throw new AuthenticationRequired();
-      return donationService.countByPackageId(parent.id);
-    }
+export const resolvers: PackageResolvers = {
+  donationCount: (parent, args, { donationService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return donationService.countByPackageId(parent.id);
   }
 };

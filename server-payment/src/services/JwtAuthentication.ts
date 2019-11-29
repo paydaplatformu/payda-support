@@ -3,7 +3,7 @@ import { AuthorizationCode, Client, Falsey, RefreshToken, Token, User } from "oa
 import { config } from "../config";
 import { Authentication } from "../models/Authentication";
 import { UserModel } from "../models/User";
-import { UserService } from "../models/UserService";
+import { UserService } from "./user/UserService";
 import { TYPES } from "../types";
 import { sign, verify } from "../utilities/jwt";
 

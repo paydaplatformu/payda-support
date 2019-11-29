@@ -1,17 +1,20 @@
 import { inject, injectable } from "inversify";
-import { config } from "../config";
-import { DonationCreator, DonationModel } from "../models/Donation";
-import { DonationCreationResult } from "../models/DonationCreationResult";
-import { DonationManagerService } from "../models/DonationManagerService";
-import { DonationService } from "../models/DonationService";
-import { LanguageCode } from "../models/LanguageCode";
-import { PackageModel } from "../models/Package";
-import { PackageService } from "../models/PackageService";
-import { PayuService } from "../models/PayuService";
-import { RepeatInterval } from "../models/RepeatInterval";
-import { SubscriptionModel } from "../models/Subscription";
-import { SubscriptionService } from "../models/SubscriptionService";
-import { TYPES } from "../types";
+import { config } from "../../config";
+import { DonationCreator } from "../../models/Donation";
+import { DonationManagerService } from "./DonationManagerService";
+import { DonationService } from "../donation/DonationService";
+import { PackageService } from "../package/PackageService";
+import { PayuService } from "../payu/PayuService";
+import { SubscriptionService } from "../subscription/SubscriptionService";
+import { TYPES } from "../../types";
+import {
+  Donation,
+  RepeatInterval,
+  LanguageCode,
+  Subscription,
+  DonationCreationResult,
+  Package
+} from "../../generated/graphql";
 
 @injectable()
 export class DonationManagerServiceImpl implements DonationManagerService {
@@ -73,18 +76,18 @@ export class DonationManagerServiceImpl implements DonationManagerService {
   };
 
   private getSubscription = async (
-    donation: DonationModel,
-    pkg: PackageModel,
+    donation: Donation,
+    pkg: Package,
     language: LanguageCode
-  ): Promise<SubscriptionModel | undefined> => {
-    if (pkg.repeatInterval !== RepeatInterval.NONE) {
+  ): Promise<Subscription | null> => {
+    if (pkg.repeatInterval !== RepeatInterval.None) {
       return this.subscriptionService.create({
         donationId: donation.id,
         packageId: pkg.id,
         language
       });
     }
-    return undefined;
+    return null;
   };
 
   public createDonation = async (

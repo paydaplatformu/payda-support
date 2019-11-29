@@ -1,4 +1,4 @@
-import { ApolloServer, registerServer } from "apollo-server-express";
+import { ApolloServer } from "apollo-server-express";
 import * as bodyParser from "body-parser";
 import chalk from "chalk";
 import cors from "cors";
@@ -12,16 +12,16 @@ import { config } from "./config";
 import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { Authentication } from "./models/Authentication";
-import { DonationService } from "./models/DonationService";
-import { PayuService } from "./models/PayuService";
-import { UserService } from "./models/UserService";
-import { resolvers, typeDefs } from "./schema";
+import { DonationService } from "./services/donation/DonationService";
+import { PayuService } from "./services/payu/PayuService";
+import { UserService } from "./services/user/UserService";
+import schema from "./schema";
 import { TYPES } from "./types";
 import { bindMongoDb, createAdminUser, createGraphQLContext } from "./utilities/server";
 import { isNonProduction } from "./utilities/helpers";
 import axios from "axios";
-import { PackageService } from "./models/PackageService";
-import { RepeatInterval } from "./models/RepeatInterval";
+import { PackageService } from "./services/package/PackageService";
+import { RepeatInterval } from "./generated/graphql";
 
 const STATIC_DIR = path.resolve(__dirname, "./static");
 const MOCK_HTML = fs.readFileSync(`${STATIC_DIR}/mock.html`).toString("utf-8");
@@ -68,8 +68,7 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
 
     const server = new ApolloServer({
       context,
-      typeDefs,
-      resolvers,
+      schema,
       playground: true,
       introspection: true,
       formatError: (error: any) => {
@@ -140,7 +139,7 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
             const pkg = await packageService.getById(donation.packageId);
             if (!pkg) return res.send("Package not found.");
 
-            const isRepeating = pkg.repeatInterval !== RepeatInterval.NONE;
+            const isRepeating = pkg.repeatInterval !== RepeatInterval.None;
 
             const dummyInput = {
               HASH: "somehash",

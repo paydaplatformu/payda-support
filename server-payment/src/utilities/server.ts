@@ -5,7 +5,7 @@ import { Container } from "inversify";
 import { Db } from "mongodb";
 import { config } from "../config";
 import { Authentication } from "../models/Authentication";
-import { UserService } from "../models/UserService";
+import { UserService } from "../services/user/UserService";
 import { IContextProvider } from "../schema/context";
 import { MongoDbConnectionProvider } from "../services/MongoDbConnectionProvider";
 import { TYPES } from "../types";
@@ -44,10 +44,10 @@ export const createGraphQLContext: (container: Container, model: Authentication)
 
   const authorizationData = token
     ? {
-        user: token.user,
-        scope: token.scope,
-        client: token.client
-      }
+      user: token.user,
+      scope: token.scope,
+      client: token.client
+    }
     : {};
 
   const tools = container.get<IContextProvider>(TYPES.IContextProvider);

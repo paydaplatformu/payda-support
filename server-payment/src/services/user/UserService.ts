@@ -1,6 +1,6 @@
-import { PaginationSettings } from "./PaginationSettings";
-import { SortingSettings } from "./SortingSettings";
-import { UserCreator, UserModel } from "./User";
+import { PaginationSettings } from "../../models/PaginationSettings";
+import { SortingSettings } from "../../models/SortingSettings";
+import { UserCreator, UserModel } from "../../models/User";
 
 export interface UserService {
   getUserCount(): Promise<number>;

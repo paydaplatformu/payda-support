@@ -1,11 +1,12 @@
 import { inject, injectable } from "inversify";
 import { Collection, Cursor, Db, ObjectId } from "mongodb";
-import { BaseEntityService } from "../models/BaseEntityService";
+import { BaseEntityService } from "./BaseEntityService";
 import { Modifier } from "../models/Modifier";
 import { MongoEntity } from "../models/MongoEntity";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
 import { TYPES } from "../types";
+import { isDefined } from "../utilities/helpers";
 
 @injectable()
 export abstract class BaseMongoService<
@@ -43,7 +44,7 @@ export abstract class BaseMongoService<
     return this.collection.findOne({ _id: new ObjectId(id) });
   };
 
-  protected abstract getFilters: (filters: Filters) => object[];
+  protected abstract getFilters: (filters: Partial<Filters> | null) => object[];
 
   protected paginate = (cursor: Cursor<Entity>, pagination: PaginationSettings) => {
     const perPage = pagination.perPage || 10;
@@ -52,9 +53,9 @@ export abstract class BaseMongoService<
   };
 
   protected prepareQuery = (
-    filters: Filters,
+    filters: Partial<Filters> | null,
     pagination: PaginationSettings | null,
-    sorting?: SortingSettings,
+    sorting: SortingSettings | null,
     extraFilters?: object[]
   ): Cursor<Entity> => {
     const filterArray = this.getFilters(filters);
@@ -78,13 +79,13 @@ export abstract class BaseMongoService<
   protected sort = (cursor: Cursor<Entity>, sorting: SortingSettings) => {
     const field = sorting.sortField === "id" ? "_id" : sorting.sortField;
     const order = sorting.sortOrder === "ASC" ? 1 : -1;
-    return cursor.sort({ [field]: order });
+    return isDefined(field) ? cursor.sort({ [field]: order }) : cursor;
   };
 
   protected abstract toModel: (entity: Entity) => Model;
 
-  public count = (filters: Filters, extraFilters?: object[]): Promise<number> => {
-    const query = this.prepareQuery(filters, null, undefined, extraFilters);
+  public count = (filters: Partial<Filters>, extraFilters?: object[]): Promise<number> => {
+    const query = this.prepareQuery(filters, null, null, extraFilters);
     return this.countQuery(query);
   };
 
@@ -113,9 +114,9 @@ export abstract class BaseMongoService<
   };
 
   public getAll = async (
-    filters: Filters,
+    filters: Partial<Filters> | null,
     pagination: PaginationSettings | null,
-    sorting?: SortingSettings,
+    sorting: SortingSettings | null,
     extraFilters?: object[]
   ): Promise<Model[]> => {
     const query = this.prepareQuery(filters, pagination, sorting, extraFilters);

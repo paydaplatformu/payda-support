@@ -1,9 +1,11 @@
 import { ObjectId } from "mongodb";
-import { DeactivationReason } from "./DeactivationReason";
-import { LanguageCode } from "./LanguageCode";
-import { PaymentProcess } from "./PaymentProcess";
-import { RepeatInterval } from "./RepeatInterval";
-import { SubscriptionStatus } from "./SubscriptionStatus";
+import {
+  LanguageCode,
+  Subscription,
+  SubscriptionStatus,
+  DeactivationReason,
+  PaymentProcess
+} from "../generated/graphql";
 
 export interface SubscriptionCreator {
   packageId: string;
@@ -19,42 +21,20 @@ export interface SubscriptionModifier {
   deactivationReason?: DeactivationReason | null;
 }
 
-export interface SubscriptionFilters {
-  ids?: string[];
-  status?: SubscriptionStatus;
-  repeatInterval?: RepeatInterval;
-  hasPaymentToken?: boolean;
-}
-
-export interface SubscriptionBaseModel {
-  id: string;
-  status: SubscriptionStatus;
-  packageId: string;
-  donationId: string;
-  processHistory: PaymentProcess[];
-  language: LanguageCode;
-  deactivationReason: DeactivationReason | null;
-  createdAt: Date;
-  updatedAt: Date;
-  hasPaymentToken: boolean;
-}
-
-export interface CreatedSubscriptionModel extends SubscriptionBaseModel {
-  status: SubscriptionStatus.CREATED;
+export interface CreatedSubscription extends Subscription {
+  status: SubscriptionStatus.Created;
   deactivationReason: null;
 }
 
-export interface RunningSubscriptionModel extends SubscriptionBaseModel {
-  status: SubscriptionStatus.RUNNING;
+export interface RunningSubscription extends Subscription {
+  status: SubscriptionStatus.Running;
   deactivationReason: null;
 }
 
-export interface CancelledSubscriptionModel extends SubscriptionBaseModel {
-  status: SubscriptionStatus.CANCELLED;
+export interface CancelledSubscription extends Subscription {
+  status: SubscriptionStatus.Cancelled;
   deactivationReason: DeactivationReason;
 }
-
-export type SubscriptionModel = CreatedSubscriptionModel | RunningSubscriptionModel | CancelledSubscriptionModel;
 
 export interface SubscriptionBaseEntity {
   _id: ObjectId;
@@ -69,19 +49,19 @@ export interface SubscriptionBaseEntity {
 }
 
 export interface CreatedSubscriptionEntity extends SubscriptionBaseEntity {
-  status: SubscriptionStatus.CREATED;
+  status: SubscriptionStatus.Created;
   deactivationReason: null;
   paymentToken: null;
 }
 
 export interface RunningSubscriptionEntity extends SubscriptionBaseEntity {
-  status: SubscriptionStatus.RUNNING;
+  status: SubscriptionStatus.Running;
   deactivationReason: null;
   paymentToken: string;
 }
 
 export interface CancelledSubscriptionEntity extends SubscriptionBaseEntity {
-  status: SubscriptionStatus.CANCELLED;
+  status: SubscriptionStatus.Cancelled;
   deactivationReason: DeactivationReason;
   paymentToken: null;
 }
