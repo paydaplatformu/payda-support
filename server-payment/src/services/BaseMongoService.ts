@@ -44,7 +44,7 @@ export abstract class BaseMongoService<
     return this.collection.findOne({ _id: new ObjectId(id) });
   };
 
-  protected abstract getFilters: (filters: Partial<Filters> | null) => object[];
+  protected abstract getFilters: (filters: Partial<Filters>) => object[];
 
   protected paginate = (cursor: Cursor<Entity>, pagination: PaginationSettings) => {
     const perPage = pagination.perPage || 10;
@@ -53,7 +53,7 @@ export abstract class BaseMongoService<
   };
 
   protected prepareQuery = (
-    filters: Partial<Filters> | null,
+    filters: Partial<Filters>,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null,
     extraFilters?: object[]
@@ -114,7 +114,7 @@ export abstract class BaseMongoService<
   };
 
   public getAll = async (
-    filters: Partial<Filters> | null,
+    filters: Partial<Filters>,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null,
     extraFilters?: object[]

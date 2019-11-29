@@ -6,11 +6,11 @@ import { RepeatInterval, PackageFilter, Package } from "../../generated/graphql"
 export interface PackageService {
   getDefaultFilters(): Partial<PackageFilter>;
   getAll(
-    filters: Partial<PackageFilter> | null,
+    filters: Partial<PackageFilter>,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null
   ): Promise<Package[]>;
-  count(filters: Partial<PackageFilter> | null): Promise<number>;
+  count(filters: Partial<PackageFilter>): Promise<number>;
   getById(id: string): Promise<Package | null>;
   getByRepeatInterval(repeatInterval: RepeatInterval): Promise<Package[]>;
   create(packageCreator: PackageCreator): Promise<Package>;
