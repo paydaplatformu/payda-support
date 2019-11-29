@@ -35,11 +35,11 @@ const resolvers: Resolvers = {
       const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
       if (!user) return packageService.getAll(packageService.getDefaultFilters() || {}, null, sorting);
-      return packageService.getAll(filter, pagination, sorting);
+      return packageService.getAll(filter || {}, pagination, sorting);
     },
     _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return { count: await packageService.count(filter) };
+      return { count: await packageService.count(filter || {}) };
     },
 
     Donation: (parent, { id }, { donationService, user }) => {
@@ -50,11 +50,11 @@ const resolvers: Resolvers = {
       if (!user) throw new AuthenticationRequired();
       const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
-      return donationService.getAll(filter, pagination, sorting);
+      return donationService.getAll(filter || {}, pagination, sorting);
     },
     _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return { count: await donationService.count(filter) };
+      return { count: await donationService.count(filter || {}) };
     },
 
     Subscription: (parent, { id }, { subscriptionService, user }) => {
@@ -65,11 +65,11 @@ const resolvers: Resolvers = {
       if (!user) throw new AuthenticationRequired();
       const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
       const sorting = { sortField, sortOrder };
-      return subscriptionService.getAll(filter, pagination, sorting);
+      return subscriptionService.getAll(filter || {}, pagination, sorting);
     },
     _allSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
       if (!user) throw new AuthenticationRequired();
-      return { count: await subscriptionService.count(filter) };
+      return { count: await subscriptionService.count(filter || {}) };
     },
 
     ChargableSubscription: (parent, { id }, { subscriptionManagerService, user }) => {

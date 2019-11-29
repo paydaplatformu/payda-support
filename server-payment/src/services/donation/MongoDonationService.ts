@@ -55,7 +55,7 @@ export class MongoDonationService
     }
   };
 
-  protected getFilters = (filter: Partial<DonationFilter> | null): object[] => {
+  protected getFilters = (filter: Partial<DonationFilter>): object[] => {
     const { paymentConfirmed, ids, search, packageId, onlyDirect } = filter || {};
     return [
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },

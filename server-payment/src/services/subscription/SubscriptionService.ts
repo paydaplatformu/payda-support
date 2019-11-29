@@ -5,7 +5,7 @@ import { RepeatInterval, Subscription, SubscriptionFilter } from "../../generate
 
 export interface SubscriptionService {
   getAll(
-    filters: Partial<SubscriptionFilter> | null,
+    filters: Partial<SubscriptionFilter>,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null
   ): Promise<Subscription[]>;
@@ -26,7 +26,7 @@ export interface SubscriptionService {
     packageIds: string[],
     filters: SubscriptionFilter | null
   ): Promise<number>;
-  count(filters: Partial<SubscriptionFilter> | null): Promise<number>;
+  count(filters: Partial<SubscriptionFilter>): Promise<number>;
   getById(id: string): Promise<Subscription | null>;
   getPaymentTokenById(id: string): Promise<string | null>;
   getByDonationId(donationId: string): Promise<Subscription | null>;

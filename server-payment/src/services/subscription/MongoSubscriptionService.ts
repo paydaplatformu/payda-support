@@ -191,7 +191,7 @@ export class MongoSubscriptionService
     return entity.paymentToken;
   };
 
-  protected getFilters = (filter: Partial<SubscriptionFilter> | null): object[] => {
+  protected getFilters = (filter: Partial<SubscriptionFilter>): object[] => {
     const { ids, status, hasPaymentToken } = filter || {};
     return [
       status !== undefined ? { status } : undefined,

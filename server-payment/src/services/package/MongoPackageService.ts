@@ -30,7 +30,7 @@ export class MongoPackageService
   }
   protected creatorValidator: Validator<PackageCreator> = {};
 
-  protected getFilters = (filter: Partial<PackageFilter> | null): object[] => {
+  protected getFilters = (filter: Partial<PackageFilter>): object[] => {
     const { onlyActive, ids, onlyOriginal, repeatInterval, amount, currency, search } = filter || {};
     return [
       onlyActive === true ? { isActive: true } : undefined,

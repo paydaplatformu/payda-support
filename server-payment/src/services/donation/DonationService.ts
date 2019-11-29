@@ -5,12 +5,12 @@ import { Donation, DonationFilter } from "../../generated/graphql";
 
 export interface DonationService {
   getAll(
-    filters: Partial<DonationFilter> | null,
+    filters: Partial<DonationFilter>,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null
   ): Promise<Donation[]>;
   confirmPayment(donationId: string): Promise<Donation | null>;
-  count(filters: Partial<DonationFilter> | null): Promise<number>;
+  count(filters: Partial<DonationFilter>): Promise<number>;
   getByPackageId(packageId: string): Promise<Donation[]>;
   countByPackageId(packageId: string): Promise<number>;
   getById(id: string): Promise<Donation | null>;
