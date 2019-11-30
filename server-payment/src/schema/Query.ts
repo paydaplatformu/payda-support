@@ -1,7 +1,8 @@
 import { gql } from "apollo-server-core";
 import { QueryResolvers } from "../generated/graphql";
 import { AuthorizationError, AuthenticationRequired } from "../models/Errors";
-import { isDefined, getPaginationFromNullable } from "../utilities/helpers";
+import { isDefined } from "../utilities/helpers";
+import { PaginationSettings } from "../models/PaginationSettings";
 
 export const typeDef = gql`
   type Query {
@@ -52,6 +53,14 @@ export const typeDef = gql`
     ): ListMetadata
   }
 `;
+
+const getPaginationFromNullable = (page?: number | null, perPage?: number | null): PaginationSettings | null => {
+  function isDefined<T>(value: T | undefined | null): value is T {
+    return <T>value !== undefined && <T>value !== null;
+  }
+
+  return isDefined(page) && isDefined(perPage) ? { page, perPage } : null;
+};
 
 export const resolvers: QueryResolvers = {
   Package: (parent, { id }, { packageService }) => packageService.getById(id),
