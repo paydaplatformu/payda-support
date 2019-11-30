@@ -1,6 +1,7 @@
 import { gql } from "apollo-server-core";
 import { QueryResolvers } from "../generated/graphql";
 import { AuthorizationError, AuthenticationRequired } from "../models/Errors";
+import { isDefined, getPaginationFromNullable } from "../utilities/helpers";
 
 export const typeDef = gql`
   type Query {
@@ -57,7 +58,7 @@ export const resolvers: QueryResolvers = {
   allPackages: (parent, { filter, sortField, sortOrder, page, perPage }, { packageService, user }) => {
     if (!user && filter && filter.onlyActive === false)
       throw new AuthorizationError("Only admins can view non-active packages.");
-    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const pagination = getPaginationFromNullable(page, perPage);
     const sorting = { sortField, sortOrder };
     if (!user) return packageService.getAll(packageService.getDefaultFilters() || {}, null, sorting);
     return packageService.getAll(filter || {}, pagination, sorting);
@@ -73,7 +74,7 @@ export const resolvers: QueryResolvers = {
   },
   allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
     if (!user) throw new AuthenticationRequired();
-    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const pagination = getPaginationFromNullable(page, perPage);
     const sorting = { sortField, sortOrder };
     return donationService.getAll(filter || {}, pagination, sorting);
   },
@@ -88,7 +89,7 @@ export const resolvers: QueryResolvers = {
   },
   allSubscriptions: (parent, { filter, sortField, sortOrder, page, perPage }, { subscriptionService, user }) => {
     if (!user) throw new AuthenticationRequired();
-    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const pagination = getPaginationFromNullable(page, perPage);
     const sorting = { sortField, sortOrder };
     return subscriptionService.getAll(filter || {}, pagination, sorting);
   },
@@ -107,7 +108,7 @@ export const resolvers: QueryResolvers = {
     { subscriptionManagerService, user }
   ) => {
     if (!user) throw new AuthenticationRequired();
-    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const pagination = getPaginationFromNullable(page, perPage);
     const sorting = { sortField, sortOrder };
     return subscriptionManagerService.getChargableSubscriptions(filter, pagination, sorting);
   },
