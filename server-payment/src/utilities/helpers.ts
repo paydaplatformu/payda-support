@@ -1,9 +1,6 @@
-import { drop, sortBy } from "lodash";
 import { Token } from "oauth2-server";
 import { config } from "../config";
 import { Authentication } from "../models/Authentication";
-import { PaginationSettings } from "../models/PaginationSettings";
-import { SortingSettings } from "../models/SortingSettings";
 
 export function isDefined<T>(value: T | undefined | null): value is T {
   return <T>value !== undefined && <T>value !== null;
@@ -31,10 +28,6 @@ export const splitName = (fullName: string) => {
     firstName,
     lastName
   };
-};
-
-export const getPaginationFromNullable = (page?: number | null, perPage?: number | null): PaginationSettings | null => {
-  return isDefined(page) && isDefined(perPage) ? { page, perPage } : null;
 };
 
 export const createTokenGetter = (authenticationModel: Authentication) => async (
