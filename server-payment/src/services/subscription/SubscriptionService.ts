@@ -10,9 +10,8 @@ export interface SubscriptionService {
     sorting: SortingSettings | null
   ): Promise<Subscription[]>;
   getByChargableSubscriptionsForRepeatIntervalAndPackageIds(
-    repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: SubscriptionFilter | null,
+    filters: SubscriptionFilter,
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null
   ): Promise<RunningSubscription[]>;
@@ -22,16 +21,15 @@ export interface SubscriptionService {
     packageIds: string[]
   ): Promise<RunningSubscription | null>;
   countChargableSubscriptionsForRepeatIntervalAndPackageIds(
-    repeatInterval: RepeatInterval,
     packageIds: string[],
-    filters: SubscriptionFilter | null
+    filters: SubscriptionFilter
   ): Promise<number>;
   count(filters: Partial<SubscriptionFilter>): Promise<number>;
   getById(id: string): Promise<Subscription | null>;
   getPaymentTokenById(id: string): Promise<string | null>;
   getByDonationId(donationId: string): Promise<Subscription | null>;
   create(SubscriptionCreator: SubscriptionCreator): Promise<Subscription>;
-  edit(SubscriptionModifier: SubscriptionModifier): Promise<Subscription | null>;
+  edit(id: string, modifier: Partial<SubscriptionModifier>): Promise<Subscription | null>;
   cancelSubscription(id: string): Promise<Subscription | null>;
   isRunningSubscription(subscription: Subscription): subscription is RunningSubscription;
 }

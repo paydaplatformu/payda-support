@@ -14,5 +14,5 @@ export interface PackageService {
   getById(id: string): Promise<Package | null>;
   getByRepeatInterval(repeatInterval: RepeatInterval): Promise<Package[]>;
   create(packageCreator: PackageCreator): Promise<Package>;
-  edit(packageModifier: PackageModifier): Promise<Package | null>;
+  edit(id: String, packageModifier: Partial<PackageModifier>): Promise<Package | null>;
 }

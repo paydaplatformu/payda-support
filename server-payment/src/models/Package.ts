@@ -14,12 +14,11 @@ export interface PackageCreator {
 }
 
 export interface PackageModifier {
-  id: string;
   defaultTag: PackageTag;
-  reference?: string;
-  image?: string;
-  isActive?: string;
-  customizationConfig?: PackageCustomizationConfig;
+  reference: string | null;
+  image: string | null;
+  isActive: boolean;
+  customizationConfig: PackageCustomizationConfig;
   priority: number;
   tags: ReadonlyArray<PackageTag>;
 }

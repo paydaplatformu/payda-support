@@ -139,7 +139,7 @@ export class MongoSubscriptionService
   }
 
   public cancelSubscription = (id: string) => {
-    return this.edit({ id, status: SubscriptionStatus.Cancelled, deactivationReason: DeactivationReason.UserRequest });
+    return this.edit(id, { status: SubscriptionStatus.Cancelled, deactivationReason: DeactivationReason.UserRequest });
   };
 
   public getByDonationId = async (donationId: string): Promise<Subscription | null> => {
@@ -151,13 +151,12 @@ export class MongoSubscriptionService
   };
 
   public getByChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
-    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: SubscriptionFilter,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<RunningSubscription[]> => {
-    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
+    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(filters.repeatInterval, packageIds);
     const subscriptions = await this.getAll(filters, pagination, sorting, extraFilters);
     return subscriptions.filter<RunningSubscription>(this.isRunningSubscription);
   };
@@ -177,11 +176,10 @@ export class MongoSubscriptionService
   };
 
   public countChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
-    repeatInterval: RepeatInterval,
     packageIds: string[],
     filters: SubscriptionFilter
   ): Promise<number> => {
-    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(repeatInterval, packageIds);
+    const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(filters.repeatInterval, packageIds);
     return this.count(filters, extraFilters);
   };
 

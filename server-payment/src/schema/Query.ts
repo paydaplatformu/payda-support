@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-core";
+import { QueryResolvers } from "../generated/graphql";
+import { AuthorizationError, AuthenticationRequired } from "../models/Errors";
 
-export const Query = gql`
+export const typeDef = gql`
   type Query {
     Package(id: String!): Package
     allPackages(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PackageFilter): [Package!]!
@@ -49,3 +51,70 @@ export const Query = gql`
     ): ListMetadata
   }
 `;
+
+export const resolvers: QueryResolvers = {
+  Package: (parent, { id }, { packageService }) => packageService.getById(id),
+  allPackages: (parent, { filter, sortField, sortOrder, page, perPage }, { packageService, user }) => {
+    if (!user && filter && filter.onlyActive === false)
+      throw new AuthorizationError("Only admins can view non-active packages.");
+    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const sorting = { sortField, sortOrder };
+    if (!user) return packageService.getAll(packageService.getDefaultFilters() || {}, null, sorting);
+    return packageService.getAll(filter || {}, pagination, sorting);
+  },
+  _allPackagesMeta: async (parent, { filter }, { packageService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return { count: await packageService.count(filter || {}) };
+  },
+
+  Donation: (parent, { id }, { donationService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return donationService.getById(id);
+  },
+  allDonations: (parent, { filter, sortField, sortOrder, page, perPage }, { donationService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const sorting = { sortField, sortOrder };
+    return donationService.getAll(filter || {}, pagination, sorting);
+  },
+  _allDonationsMeta: async (parent, { filter }, { donationService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return { count: await donationService.count(filter || {}) };
+  },
+
+  Subscription: (parent, { id }, { subscriptionService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return subscriptionService.getById(id);
+  },
+  allSubscriptions: (parent, { filter, sortField, sortOrder, page, perPage }, { subscriptionService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const sorting = { sortField, sortOrder };
+    return subscriptionService.getAll(filter || {}, pagination, sorting);
+  },
+  _allSubscriptionsMeta: async (parent, { filter }, { subscriptionService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return { count: await subscriptionService.count(filter || {}) };
+  },
+
+  ChargableSubscription: (parent, { id }, { subscriptionManagerService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return subscriptionManagerService.getChargableSubscriptionById(id);
+  },
+  allChargableSubscriptions: (
+    parent,
+    { filter, sortField, sortOrder, page, perPage },
+    { subscriptionManagerService, user }
+  ) => {
+    if (!user) throw new AuthenticationRequired();
+    const pagination = { page: page || 0, perPage: perPage || Number.MAX_SAFE_INTEGER };
+    const sorting = { sortField, sortOrder };
+    return subscriptionManagerService.getChargableSubscriptions(filter, pagination, sorting);
+  },
+  _allChargableSubscriptionsMeta: async (parent, { filter }, { subscriptionManagerService, user }) => {
+    if (!user) throw new AuthenticationRequired();
+    return {
+      count: await subscriptionManagerService.countChargableSubscriptions(filter)
+    };
+  }
+};
