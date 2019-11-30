@@ -90,7 +90,7 @@ export class MongoDonationService
   };
 
   public confirmPayment = async (donationId: string): Promise<Donation | null> => {
-    return this.edit({ id: donationId, paymentConfirmed: true });
+    return this.edit(donationId, { paymentConfirmed: true });
   };
 
   public countByPackageId = (packageId: string): Promise<number> => {

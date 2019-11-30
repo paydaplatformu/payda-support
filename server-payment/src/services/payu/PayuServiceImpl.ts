@@ -295,8 +295,7 @@ export class PayuServiceImpl implements PayuService {
       }
     };
 
-    await this.subscriptionService.edit({
-      id: subscription.id,
+    await this.subscriptionService.edit(subscription.id, {
       processHistory: [...currentProcessHistory, lastProcess],
       paymentToken,
       deactivationReason: status ? null : DeactivationReason.Error,
@@ -374,8 +373,7 @@ export class PayuServiceImpl implements PayuService {
       };
 
       if (paymentToken) {
-        await this.subscriptionService.edit({
-          id: subscription.id,
+        await this.subscriptionService.edit(subscription.id, {
           processHistory: [lastProcess],
           paymentToken,
           status: SubscriptionStatus.Running
@@ -383,7 +381,7 @@ export class PayuServiceImpl implements PayuService {
       } else {
         try {
           const paymentTokenFromReference = await this.getPaymentToken(donation.usingAmex, payuReferenceNumber);
-          await this.subscriptionService.edit({
+          await this.subscriptionService.edit(subscription.id, {
             id: subscription.id,
             processHistory: [lastProcess],
             paymentToken: paymentTokenFromReference,
@@ -403,8 +401,7 @@ export class PayuServiceImpl implements PayuService {
               payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber, error: error.message }
             }
           };
-          await this.subscriptionService.edit({
-            id: subscription.id,
+          await this.subscriptionService.edit(subscription.id, {
             processHistory: [errorProcess],
             paymentToken: null,
             status: SubscriptionStatus.Cancelled,

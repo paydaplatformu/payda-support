@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Collection, Cursor, Db, ObjectId } from "mongodb";
 import { BaseEntityService } from "./BaseEntityService";
-import { Modifier } from "../models/Modifier";
 import { MongoEntity } from "../models/MongoEntity";
 import { PaginationSettings } from "../models/PaginationSettings";
 import { SortingSettings } from "../models/SortingSettings";
@@ -14,7 +13,7 @@ export abstract class BaseMongoService<
   Model,
   Filters,
   Creator,
-  BaseModifier extends Modifier
+  BaseModifier extends {}
 > extends BaseEntityService<Creator> {
   protected static collectionName: string;
 
@@ -101,8 +100,8 @@ export abstract class BaseMongoService<
     return this.toModel(newPackage);
   };
 
-  public edit = async (modifier: BaseModifier) => {
-    const current = await this.getEntityById(modifier.id);
+  public edit = async (id: string, modifier: Partial<BaseModifier>) => {
+    const current = await this.getEntityById(id);
     if (!current) return null;
     const next: Entity = {
       ...current,

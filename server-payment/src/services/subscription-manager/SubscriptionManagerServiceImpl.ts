@@ -24,7 +24,6 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     const allowedPackages = await this.packageService.getByRepeatInterval(filters.repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
     return this.subscriptionService.getByChargableSubscriptionsForRepeatIntervalAndPackageIds(
-      filters.repeatInterval,
       allowedPackageIds,
       filters,
       pagination,
@@ -36,7 +35,6 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     const allowedPackages = await this.packageService.getByRepeatInterval(filters.repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
     return this.subscriptionService.countChargableSubscriptionsForRepeatIntervalAndPackageIds(
-      filters.repeatInterval,
       allowedPackageIds,
       filters
     );

@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import { Currency, RepeatInterval } from "../generated/graphql";
 
 export interface DonationModifier {
-  id: string;
   paymentConfirmed: boolean;
 }
 
