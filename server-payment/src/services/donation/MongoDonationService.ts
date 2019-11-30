@@ -62,7 +62,7 @@ export class MongoDonationService
       isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
       onlyDirect === true ? { parentDonationId: { $exists: false } } : undefined,
-      isDefined(packageId) ? { packageId: new ObjectId(packageId) } : undefined
+      packageId !== undefined ? { packageId: packageId === null ? null : new ObjectId(packageId) } : undefined
     ].filter(el => el !== undefined) as any;
   };
 
@@ -77,7 +77,7 @@ export class MongoDonationService
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
       usingAmex: entity.usingAmex,
-      parentDonationId: entity.parentDonationId ? entity.parentDonationId.toString() : null
+      parentDonationId: entity?.parentDonationId?.toString() || null
     };
   };
 
