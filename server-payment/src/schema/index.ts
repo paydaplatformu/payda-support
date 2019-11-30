@@ -20,9 +20,8 @@ import { resolvers as queryResolver, typeDef as Query } from "./Query";
 import { resolvers as mutationResolver, typeDef as Mutation } from "./Mutation";
 import { makeExecutableSchema } from "graphql-tools";
 import { SchemaDefinition } from "./SchemaDefinition";
-import { Resolvers } from "../generated/graphql";
 
-const resolvers: Resolvers = {
+const resolvers = {
   Query: queryResolver,
   Mutation: mutationResolver,
   Date: dateResolver,

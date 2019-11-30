@@ -40,7 +40,8 @@ export abstract class BaseMongoService<
   };
 
   protected getEntityById = async (id: string): Promise<Entity | null> => {
-    return this.collection.findOne({ _id: new ObjectId(id) });
+    // TODO: remove as any when typescript bug is solved
+    return this.collection.findOne({ _id: new ObjectId(id) } as any);
   };
 
   protected abstract getFilters: (filters: Partial<Filters>) => object[];
@@ -59,8 +60,11 @@ export abstract class BaseMongoService<
   ): Cursor<Entity> => {
     const filterArray = this.getFilters(filters);
     const combinedFilterArray = extraFilters ? [...filterArray, ...extraFilters] : filterArray;
+    // TODO: remove as any when typescript bug is solved
     const filteredQuery =
-      combinedFilterArray.length > 0 ? this.collection.find({ $and: combinedFilterArray }) : this.collection.find();
+      combinedFilterArray.length > 0
+        ? this.collection.find({ $and: combinedFilterArray } as any)
+        : this.collection.find();
     const sorted = sorting ? this.sort(filteredQuery, sorting) : filteredQuery;
     const paginated = pagination ? this.paginate(sorted, pagination) : sorted;
     return paginated;
@@ -108,7 +112,8 @@ export abstract class BaseMongoService<
       ...modifier,
       updatedAt: new Date()
     };
-    await this.collection.updateOne({ _id: current._id }, { $set: next });
+    // TODO: remove as any when typescript bug is solved
+    await this.collection.updateOne({ _id: current._id } as any, { $set: next });
     return this.toModel(next);
   };
 

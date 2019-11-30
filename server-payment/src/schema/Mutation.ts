@@ -42,14 +42,8 @@ export const resolvers: MutationResolvers = {
   createPackage: (parent, args, { packageService, user }) => {
     if (!user) throw new AuthenticationRequired();
     const creator: PackageCreator = {
-      defaultTag: args.defaultTag,
-      reference: args.reference,
-      repeatInterval: args.repeatInterval,
-      image: args.image,
-      price: args.price,
-      customizationConfig: args.customizationConfig,
+      ...args,
       isCustom: false,
-      priority: args.priority,
       tags: args.tags || []
     };
     return packageService.create(creator);
