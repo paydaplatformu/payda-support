@@ -33,6 +33,10 @@ export const splitName = (fullName: string) => {
   };
 };
 
+export const getPaginationFromNullable = (page?: number | null, perPage?: number | null): PaginationSettings | null => {
+  return isDefined(page) && isDefined(perPage) ? { page, perPage } : null;
+};
+
 export const createTokenGetter = (authenticationModel: Authentication) => async (
   header: string | undefined
 ): Promise<Token | null> => {
