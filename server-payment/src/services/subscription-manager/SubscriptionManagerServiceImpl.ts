@@ -6,7 +6,7 @@ import { RunningSubscription } from "../../models/Subscription";
 import { SubscriptionManagerService } from "./SubscriptionManagerService";
 import { SubscriptionService } from "../subscription/SubscriptionService";
 import { TYPES } from "../../types";
-import { RepeatInterval, SubscriptionFilter } from "../../generated/graphql";
+import { ChargableSubscriptionFilter } from "../../generated/graphql";
 
 @injectable()
 export class SubscriptionManagerServiceImpl implements SubscriptionManagerService {
@@ -17,7 +17,7 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
   private subscriptionService: SubscriptionService = null as any;
 
   public getChargableSubscriptions = async (
-    filters: SubscriptionFilter,
+    filters: ChargableSubscriptionFilter,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<RunningSubscription[]> => {
@@ -31,7 +31,7 @@ export class SubscriptionManagerServiceImpl implements SubscriptionManagerServic
     );
   };
 
-  public countChargableSubscriptions = async (filters: SubscriptionFilter): Promise<number> => {
+  public countChargableSubscriptions = async (filters: ChargableSubscriptionFilter): Promise<number> => {
     const allowedPackages = await this.packageService.getByRepeatInterval(filters.repeatInterval);
     const allowedPackageIds = allowedPackages.map(p => p.id);
     return this.subscriptionService.countChargableSubscriptionsForRepeatIntervalAndPackageIds(

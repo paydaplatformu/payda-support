@@ -60,6 +60,7 @@ export abstract class BaseMongoService<
   ): Cursor<Entity> => {
     const filterArray = this.getFilters(filters);
     const combinedFilterArray = extraFilters ? [...filterArray, ...extraFilters] : filterArray;
+
     // TODO: remove as any when typescript bug is solved
     const filteredQuery =
       combinedFilterArray.length > 0

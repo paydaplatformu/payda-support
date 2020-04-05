@@ -1,10 +1,17 @@
 import { gql } from "apollo-server-core";
 
 export const typeDef = gql`
-  input SubscriptionFilter {
+  input ChargableSubscriptionFilter {
     ids: [String!]
     status: SubscriptionStatus
     repeatInterval: RepeatInterval!
+    hasPaymentToken: Boolean
+  }
+
+  input SubscriptionFilter {
+    ids: [String!]
+    status: SubscriptionStatus
+    repeatInterval: RepeatInterval
     hasPaymentToken: Boolean
   }
 

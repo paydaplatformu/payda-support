@@ -23,7 +23,7 @@ const CancelSubscriptionButton = ({
   <Mutation
     mutation={CANCEL_SUBSCRIPTION}
     onCompleted={data => {
-      if (data.cancelSubscription.status) {
+      if (data.cancelSubscription.id) {
         showNotification("Subscription cancelled");
         refreshView();
       } else {
@@ -52,10 +52,7 @@ CancelSubscriptionButton.propTypes = {
   refreshView: PropTypes.func
 };
 
-export default connect(
-  null,
-  {
-    showNotification,
-    refreshView
-  }
-)(CancelSubscriptionButton);
+export default connect(null, {
+  showNotification,
+  refreshView
+})(CancelSubscriptionButton);

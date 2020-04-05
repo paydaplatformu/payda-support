@@ -589,7 +589,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "SubscriptionFilter",
+                    "name": "ChargableSubscriptionFilter",
                     "ofType": null
                   }
                 },
@@ -668,7 +668,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "SubscriptionFilter",
+                    "name": "ChargableSubscriptionFilter",
                     "ofType": null
                   }
                 },
@@ -1896,13 +1896,9 @@
             "name": "repeatInterval",
             "description": "",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "RepeatInterval",
-                "ofType": null
-              }
+              "kind": "ENUM",
+              "name": "RepeatInterval",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -2093,6 +2089,69 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "ChargableSubscriptionFilter",
+        "description": "",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "ids",
+            "description": "",
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "status",
+            "description": "",
+            "type": {
+              "kind": "ENUM",
+              "name": "SubscriptionStatus",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "repeatInterval",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "RepeatInterval",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "hasPaymentToken",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
