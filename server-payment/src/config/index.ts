@@ -187,15 +187,19 @@ const config = convict({
   }
 });
 
-if (["development", "test"].includes(config.get("environment"))) {
-  config.set("db.url", "");
+if (["development", "test", "staging"].includes(config.get("environment"))) {
+  config.set("db.url", "mongodb://payda:paydapw@localhost:27017/paydadb?authSource=admin");
   config.set("jwt.secret", "secret");
   config.set("defaultUser.password", "123456");
   config.set("payu.backRef", "http://localhost:8080/thank-you");
   config.set("payu.defaultCredentials.merchant", "payu_default");
   config.set("payu.defaultCredentials.secret", "123456");
+  config.set("payu.recurringDefaultCredentials.merchant", "payu_default");
+  config.set("payu.recurringDefaultCredentials.secret", "123456");
   config.set("payu.amexCredentials.merchant", "payu_amex");
   config.set("payu.amexCredentials.secret", "654321");
+  config.set("payu.recurringAmexCredentials.merchant", "payu_amex");
+  config.set("payu.recurringAmexCredentials.secret", "654321");
   config.set(
     "clients",
     JSON.stringify([

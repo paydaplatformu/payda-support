@@ -26,7 +26,8 @@ import {
   SubscriptionStatus,
   DeactivationReason,
   Subscription,
-  SubscriptionFilter
+  SubscriptionFilter,
+  ChargableSubscriptionFilter
 } from "../../generated/graphql";
 import { isDefined } from "../../utilities/helpers";
 
@@ -152,7 +153,7 @@ export class MongoSubscriptionService
 
   public getByChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     packageIds: string[],
-    filters: SubscriptionFilter,
+    filters: ChargableSubscriptionFilter,
     pagination: PaginationSettings,
     sorting: SortingSettings
   ): Promise<RunningSubscription[]> => {
@@ -177,7 +178,7 @@ export class MongoSubscriptionService
 
   public countChargableSubscriptionsForRepeatIntervalAndPackageIds = async (
     packageIds: string[],
-    filters: SubscriptionFilter
+    filters: ChargableSubscriptionFilter
   ): Promise<number> => {
     const extraFilters = this.generateByRepeatIntervalAndPackageIdsFilters(filters.repeatInterval, packageIds);
     return this.count(filters, extraFilters);

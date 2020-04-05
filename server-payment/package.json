@@ -63,6 +63,7 @@
     "start": "node ./dist/index.js",
     "watch:staging": "NODE_ENV=staging ts-node-dev src/index.ts",
     "watch:development": "NODE_ENV=development TS_NODE_FILES=true ts-node-dev src/index.ts",
+    "develop": "TS_NODE_FILES=true yarn watch:staging",
     "format": "prettier --write ./src/**/*.ts",
     "lint": "tslint --fix -p .",
     "test:debug": "NODE_ENV=test TS_NODE_FILES=true jest --watch",

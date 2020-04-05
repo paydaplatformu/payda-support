@@ -9,10 +9,10 @@ import { TranslationContext } from "../../translations";
 
 const CREATE_DONATION = gql`
   mutation CreateDonation(
-    $donationCreator: DonationCreator!
+    $donationInput: DonationInput!
     $language: LanguageCode!
   ) {
-    createDonation(donationCreator: $donationCreator, language: $language) {
+    createDonation(donationInput: $donationInput, language: $language) {
       formFields {
         key
         value

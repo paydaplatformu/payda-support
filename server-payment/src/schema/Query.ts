@@ -42,14 +42,14 @@ export const typeDef = gql`
       perPage: Int
       sortField: String
       sortOrder: String
-      filter: SubscriptionFilter!
+      filter: ChargableSubscriptionFilter!
     ): [ChargableSubscription!]!
     _allChargableSubscriptionsMeta(
       page: Int
       perPage: Int
       sortField: String
       sortOrder: String
-      filter: SubscriptionFilter!
+      filter: ChargableSubscriptionFilter!
     ): ListMetadata
   }
 `;

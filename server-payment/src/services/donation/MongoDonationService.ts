@@ -61,7 +61,7 @@ export class MongoDonationService
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
       isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
-      onlyDirect === true ? { parentDonationId: { $exists: false } } : undefined,
+      onlyDirect === true ? { parentDonationId: null } : undefined,
       packageId !== undefined ? { packageId: packageId === null ? null : new ObjectId(packageId) } : undefined
     ].filter(el => el !== undefined) as any;
   };

@@ -33,6 +33,13 @@ export type ChargableSubscription = {
   readonly updatedAt: Scalars["Date"];
 };
 
+export type ChargableSubscriptionFilter = {
+  readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
+  readonly status: Maybe<SubscriptionStatus>;
+  readonly repeatInterval: RepeatInterval;
+  readonly hasPaymentToken: Maybe<Scalars["Boolean"]>;
+};
+
 export enum Currency {
   Usd = "USD",
   Try = "TRY"
@@ -312,7 +319,7 @@ export type QueryAllChargableSubscriptionsArgs = {
   perPage: Maybe<Scalars["Int"]>;
   sortField: Maybe<Scalars["String"]>;
   sortOrder: Maybe<Scalars["String"]>;
-  filter: SubscriptionFilter;
+  filter: ChargableSubscriptionFilter;
 };
 
 export type Query_AllChargableSubscriptionsMetaArgs = {
@@ -320,7 +327,7 @@ export type Query_AllChargableSubscriptionsMetaArgs = {
   perPage: Maybe<Scalars["Int"]>;
   sortField: Maybe<Scalars["String"]>;
   sortOrder: Maybe<Scalars["String"]>;
-  filter: SubscriptionFilter;
+  filter: ChargableSubscriptionFilter;
 };
 
 export enum RepeatInterval {
@@ -356,7 +363,7 @@ export type SubscriptionChargeResult = {
 export type SubscriptionFilter = {
   readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
   readonly status: Maybe<SubscriptionStatus>;
-  readonly repeatInterval: RepeatInterval;
+  readonly repeatInterval: Maybe<RepeatInterval>;
   readonly hasPaymentToken: Maybe<Scalars["Boolean"]>;
 };
 
@@ -461,6 +468,7 @@ export type ResolversTypes = ResolversObject<{
   SubscriptionStatus: SubscriptionStatus;
   SubscriptionFilter: SubscriptionFilter;
   ChargableSubscription: ResolverTypeWrapper<RunningSubscription>;
+  ChargableSubscriptionFilter: ChargableSubscriptionFilter;
   Mutation: ResolverTypeWrapper<{}>;
   PackageTagInput: PackageTagInput;
   PackageCustomizationConfigInput: PackageCustomizationConfigInput;
@@ -497,6 +505,7 @@ export type ResolversParentTypes = ResolversObject<{
   SubscriptionStatus: SubscriptionStatus;
   SubscriptionFilter: SubscriptionFilter;
   ChargableSubscription: RunningSubscription;
+  ChargableSubscriptionFilter: ChargableSubscriptionFilter;
   Mutation: {};
   PackageTagInput: PackageTagInput;
   PackageCustomizationConfigInput: PackageCustomizationConfigInput;

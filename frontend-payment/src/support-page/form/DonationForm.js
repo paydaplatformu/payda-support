@@ -31,7 +31,11 @@ const DonationFormInner = props => {
       createDonation({
         variables: {
           // TODO: remove usingamex hack
-          donationCreator: { ...fieldValues, usingAmex: false, agreementsAccepted: undefined },
+          donationInput: {
+            ...fieldValues,
+            usingAmex: false,
+            agreementsAccepted: undefined
+          },
           language: langCode.toUpperCase()
         }
       });

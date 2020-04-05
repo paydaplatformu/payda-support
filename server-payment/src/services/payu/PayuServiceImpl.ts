@@ -65,7 +65,7 @@ export class PayuServiceImpl implements PayuService {
     return {
       MERCHANT: merchant,
       ORDER_REF: ref || null,
-      ORDER_DATE: format(donation.date, "YYYY-MM-DD HH:mm:ss"),
+      ORDER_DATE: format(donation.date, "yyyy-MM-dd HH:mm:ss"),
       "ORDER_PNAME[0]": tag.name,
       "ORDER_PCODE[0]": pkg.id,
       "ORDER_PINFO[0]": tag.description || "",
@@ -188,13 +188,13 @@ export class PayuServiceImpl implements PayuService {
   private getReference = (automated: boolean, pkg: Package, donation: Donation) => {
     const automatedString = automated ? "AUTO" : "FIRST_TIME";
     if (pkg.repeatInterval === RepeatInterval.TestB) {
-      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH-mm")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "yyyy-MM-dd-HH-mm")}`;
     } else if (pkg.repeatInterval === RepeatInterval.TestA) {
-      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM-DD-HH")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "yyyy-MM-dd-HH")}`;
     } else if (pkg.repeatInterval === RepeatInterval.None) {
       return `${automatedString}.${donation.id}`;
     } else {
-      return `${automatedString}.${donation.id}.${format(new Date(), "YYYY-MM")}`;
+      return `${automatedString}.${donation.id}.${format(new Date(), "yyyy-MM")}`;
     }
   };
 
@@ -254,7 +254,7 @@ export class PayuServiceImpl implements PayuService {
       CC_TOKEN: paymentToken,
       LANGUAGE: subscription.language,
       MERCHANT: credentials.merchant,
-      ORDER_DATE: format(new Date(), "YYYY-MM-DD HH:mm:ss"),
+      ORDER_DATE: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
       "ORDER_PCODE[0]": pkg.id,
       "ORDER_PINFO[0]": tag.description || "",
       "ORDER_PNAME[0]": tag.name,
@@ -338,6 +338,7 @@ export class PayuServiceImpl implements PayuService {
 
     const donation = await this.donationService.getById(donationId);
     if (!donation) throw new Error("Donation id not found.");
+
     const credentials = this.getCredentials(donation.usingAmex, false);
 
     if (mode === "AUTO") {
@@ -345,7 +346,7 @@ export class PayuServiceImpl implements PayuService {
         IPN_PID: data["IPN_PID[]"],
         IPN_PNAME: data["IPN_PNAME[]"],
         IPN_DATE: data.IPN_DATE,
-        DATE: format(new Date(), "YYYYMMDDHHmmss")
+        DATE: format(new Date(), "yyyyMMddHHmmss")
       };
 
       const returnHashAuto = await this.generateHashWithLength(payuAuto, credentials.secret);
@@ -389,10 +390,7 @@ export class PayuServiceImpl implements PayuService {
             deactivationReason: null
           });
         } catch (error) {
-          console.error(error);
-          console.error(error && error.response);
-          console.error(error && error.response && error.response.data);
-          console.error(error && error.response && error.response.data && error.response.data.error);
+          console.error(error?.response?.data?.error);
           const errorProcess: PaymentProcess = {
             date: new Date(),
             isSuccess: false,
@@ -415,7 +413,7 @@ export class PayuServiceImpl implements PayuService {
       IPN_PID: data["IPN_PID[]"],
       IPN_PNAME: data["IPN_PNAME[]"],
       IPN_DATE: data.IPN_DATE,
-      DATE: format(new Date(), "YYYYMMDDHHmmss")
+      DATE: format(new Date(), "yyyyMMddHHmmss")
     };
 
     const returnHash = await this.generateHashWithLength(payu, credentials.secret);
