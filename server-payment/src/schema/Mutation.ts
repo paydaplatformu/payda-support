@@ -3,6 +3,7 @@ import { MutationResolvers } from "../generated/graphql";
 import { AuthenticationRequired } from "../models/Errors";
 import { PackageModifier, PackageCreator } from "../models/Package";
 import { DonationCreator } from "../models/Donation";
+import { isDefined } from "../utilities/helpers";
 
 export const typeDef = gql`
   type Mutation {
@@ -48,10 +49,18 @@ export const resolvers: MutationResolvers = {
     };
     return packageService.create(creator);
   },
-  updatePackage: (parent, args, { packageService, user }) => {
+  updatePackage: async (parent, args, { packageService, user }) => {
     if (!user) throw new AuthenticationRequired();
+    const current = await packageService.getById(args.id);
+    if (!current) throw new Error("Package not found");
     const modifier: Partial<PackageModifier> = {
-      defaultTag: args.defaultTag || undefined
+      isActive: isDefined(args.isActive) ? args.isActive : current.isActive,
+      customizationConfig: isDefined(args.customizationConfig) ? args.customizationConfig : current.customizationConfig,
+      priority: isDefined(args.priority) ? args.priority : current.priority,
+      tags: isDefined(args.tags) ? args.tags : current.tags,
+      defaultTag: isDefined(args.defaultTag) ? args.defaultTag : current.defaultTag,
+      reference: args.reference === null ? null : args.reference,
+      image: args.image === null ? null : args.image
     };
     return packageService.edit(args.id, modifier);
   },
