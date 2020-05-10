@@ -3,7 +3,10 @@ import { MutationResolvers } from "../generated/graphql";
 import { AuthenticationRequired } from "../models/Errors";
 import { PackageModifier, PackageCreator } from "../models/Package";
 import { DonationCreator } from "../models/Donation";
-import { isDefined } from "../utilities/helpers";
+
+export function isDefined<T>(value: T | undefined | null): value is T {
+  return <T>value !== undefined && <T>value !== null;
+}
 
 export const typeDef = gql`
   type Mutation {
