@@ -2677,6 +2677,13 @@ convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   dependencies:
     safe-buffer "~5.1.1"
 
+convict-format-with-validator@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/convict-format-with-validator/-/convict-format-with-validator-6.0.0.tgz#94734abd7ac077adca9769c1dbed3e838e972f66"
+  integrity sha512-3E8cLYkHKQDTCF4MYOzReVeHrObfulUR5hw/Ur/hE/CPwXRcJHZO7Jt0JyE86IpvAZsgrOjMpVy93USjrubVqg==
+  dependencies:
+    validator "^11.1.0"
+
 convict@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/convict/-/convict-6.0.0.tgz#4be829f001a778d337d32ec79e9ae7f2e39df1a6"
@@ -7509,6 +7516,11 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+validator@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-11.1.0.tgz#ac18cac42e0aa5902b603d7a5d9b7827e2346ac4"
+  integrity sha512-qiQ5ktdO7CD6C/5/mYV4jku/7qnqzjrxb3C/Q5wR3vGGinHTgJZN/TdFT3ZX4vXhX2R1PXx42fB1cn5W+uJ4lg==
 
 validator@^13.1.17:
   version "13.1.17"

@@ -1,6 +1,9 @@
 import convict from "convict";
 import { isNonProduction } from "../utilities/helpers";
 
+const convict_format_with_validator = require('convict-format-with-validator');
+convict.addFormats(convict_format_with_validator);
+
 convict.addFormat({
   name: "clients-array",
   coerce: (value: string) => JSON.parse(value),
