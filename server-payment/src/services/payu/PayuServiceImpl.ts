@@ -19,7 +19,8 @@ import {
   SubscriptionStatus,
   DeactivationReason,
   PaymentProcess,
-  Package
+  Package,
+  Subscription
 } from "../../generated/graphql";
 
 @injectable()
@@ -330,10 +331,74 @@ export class PayuServiceImpl implements PayuService {
     return this.finalizeFormFields(hashInput, donation, pkg, language, hash);
   };
 
+  private handleSubscriptionFirstPayment = async (donation: Donation, subscription: Subscription, data: any) => {
+    const { REFNO: payuReferenceNumber, REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
+
+    const firstPaymentProcess: PaymentProcess = {
+      date: new Date(),
+      isSuccess: true,
+      result: {
+        reason: "FIRST_PAYMENT",
+        payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber }
+      }
+    };
+
+    if (paymentToken) {
+      await this.subscriptionService.edit(subscription.id, {
+        processHistory: [firstPaymentProcess],
+        paymentToken,
+        status: SubscriptionStatus.Running,
+        deactivationReason: null
+      });
+    } else {
+      try {
+        const paymentTokenFromReference = await this.getPaymentToken(donation.usingAmex, payuReferenceNumber);
+        await this.subscriptionService.edit(subscription.id, {
+          processHistory: [firstPaymentProcess],
+          paymentToken: paymentTokenFromReference,
+          status: SubscriptionStatus.Running,
+          deactivationReason: null
+        });
+      } catch (error) {
+        console.error(error?.response?.data?.error);
+        await this.subscriptionService.edit(subscription.id, {
+          processHistory: [
+            {
+              date: new Date(),
+              isSuccess: false,
+              result: {
+                reason: "FIRST_PAYMENT",
+                payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber, error: error.message }
+              }
+            }
+          ],
+          paymentToken: null,
+          status: SubscriptionStatus.Cancelled,
+          deactivationReason: DeactivationReason.Error
+        });
+      }
+    }
+  };
+
+  private respondToVerificationSuccess = async (donation: Donation, data: any, secret: string) => {
+    const payuObject = {
+      IPN_PID: data["IPN_PID[]"],
+      IPN_PNAME: data["IPN_PNAME[]"],
+      IPN_DATE: data.IPN_DATE,
+      DATE: format(new Date(), "yyyyMMddHHmmss")
+    };
+
+    const returnHashAuto = await this.generateHashWithLength(payuObject, secret);
+    return {
+      donationId: donation.id,
+      returnHash: "<epayment>" + payuObject.DATE + "|" + returnHashAuto + "</epayment>"
+    };
+  };
+
   public verifyNotification = async (input: any) => {
     console.log(input);
     const { HASH: hash, ...data } = input;
-    const { REFNO: payuReferenceNumber, REFNOEXT: reference, TOKEN_HASH: paymentToken, ...restData } = data;
+    const { REFNOEXT: reference } = data;
     const [mode, donationId] = reference.split(".");
 
     const donation = await this.donationService.getById(donationId);
@@ -341,85 +406,20 @@ export class PayuServiceImpl implements PayuService {
 
     const credentials = this.getCredentials(donation.usingAmex, false);
 
-    if (mode === "AUTO") {
-      const payuAuto = {
-        IPN_PID: data["IPN_PID[]"],
-        IPN_PNAME: data["IPN_PNAME[]"],
-        IPN_DATE: data.IPN_DATE,
-        DATE: format(new Date(), "yyyyMMddHHmmss")
-      };
-
-      const returnHashAuto = await this.generateHashWithLength(payuAuto, credentials.secret);
-      return {
-        donationId,
-        returnHash: "<epayment>" + payuAuto.DATE + "|" + returnHashAuto + "</epayment>"
-      };
-    }
-
     if (isProduction()) {
       const hashCalculated = await this.generateHashWithLength(data, credentials.secret);
       if (hashCalculated !== hash) throw new Error("Incorrect hash given.");
     }
 
-    const subscription = await this.subscriptionService.getByDonationId(donationId);
-
-    if (subscription) {
-      const lastProcess: PaymentProcess = {
-        date: new Date(),
-        isSuccess: true,
-        result: {
-          reason: "FIRST_PAYMENT",
-          payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber }
-        }
-      };
-
-      if (paymentToken) {
-        await this.subscriptionService.edit(subscription.id, {
-          processHistory: [lastProcess],
-          paymentToken,
-          status: SubscriptionStatus.Running
-        });
-      } else {
-        try {
-          const paymentTokenFromReference = await this.getPaymentToken(donation.usingAmex, payuReferenceNumber);
-          await this.subscriptionService.edit(subscription.id, {
-            id: subscription.id,
-            processHistory: [lastProcess],
-            paymentToken: paymentTokenFromReference,
-            status: SubscriptionStatus.Running,
-            deactivationReason: null
-          });
-        } catch (error) {
-          console.error(error?.response?.data?.error);
-          const errorProcess: PaymentProcess = {
-            date: new Date(),
-            isSuccess: false,
-            result: {
-              reason: "FIRST_PAYMENT",
-              payload: { ...restData, REFNOEXT: reference, REFNO: payuReferenceNumber, error: error.message }
-            }
-          };
-          await this.subscriptionService.edit(subscription.id, {
-            processHistory: [errorProcess],
-            paymentToken: null,
-            status: SubscriptionStatus.Cancelled,
-            deactivationReason: DeactivationReason.Error
-          });
-        }
-      }
+    if (mode === "AUTO") {
+      return this.respondToVerificationSuccess(donation, data, credentials.secret);
     }
 
-    const payu = {
-      IPN_PID: data["IPN_PID[]"],
-      IPN_PNAME: data["IPN_PNAME[]"],
-      IPN_DATE: data.IPN_DATE,
-      DATE: format(new Date(), "yyyyMMddHHmmss")
-    };
+    const subscription = await this.subscriptionService.getByDonationId(donationId);
+    if (subscription) {
+      await this.handleSubscriptionFirstPayment(donation, subscription, data);
+    }
 
-    const returnHash = await this.generateHashWithLength(payu, credentials.secret);
-    return {
-      donationId: donation.id,
-      returnHash: "<epayment>" + payu.DATE + "|" + returnHash + "</epayment>"
-    };
+    return this.respondToVerificationSuccess(donation, data, credentials.secret);
   };
 }
