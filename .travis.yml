@@ -3,7 +3,7 @@ branches:
   only:
   - master
 node_js:
-- 10.13.0
+- 12.17.0
 env:
 - NODE_ENV=PRODUCTION
 before_install:
