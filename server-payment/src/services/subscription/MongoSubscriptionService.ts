@@ -9,7 +9,7 @@ import {
   subYears
 } from "date-fns";
 import { injectable } from "inversify";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { PaginationSettings } from "../../models/PaginationSettings";
 import { SortingSettings } from "../../models/SortingSettings";
 import {
@@ -110,7 +110,7 @@ export class MongoSubscriptionService
 
   protected creatorValidator: Validator<SubscriptionCreator> = {};
 
-  protected toModel = (entity: SubscriptionEntity): Subscription => {
+  protected toModel = (entity: WithId<SubscriptionEntity>): Subscription => {
     return {
       id: entity._id.toString(),
       packageId: entity.packageId.toString(),

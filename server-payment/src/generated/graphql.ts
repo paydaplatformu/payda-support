@@ -2,6 +2,7 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from "
 import { RunningSubscription } from "./../models/Subscription";
 import { IContext } from "../schema/context";
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } &
   { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -42,12 +43,12 @@ export type ChargableSubscriptionFilter = {
 
 export enum Currency {
   Usd = "USD",
-  Try = "TRY"
+  Try = "TRY",
 }
 
 export enum DeactivationReason {
   Error = "ERROR",
-  UserRequest = "USER_REQUEST"
+  UserRequest = "USER_REQUEST",
 }
 
 export type Donation = {
@@ -103,7 +104,7 @@ export type KeyValue = {
 
 export enum LanguageCode {
   Tr = "TR",
-  En = "EN"
+  En = "EN",
 }
 
 export type ListMetadata = {
@@ -335,7 +336,7 @@ export enum RepeatInterval {
   Monthly = "MONTHLY",
   Yearly = "YEARLY",
   TestA = "TEST_A",
-  TestB = "TEST_B"
+  TestB = "TEST_B",
 }
 
 export type Subscription = {
@@ -370,7 +371,7 @@ export type SubscriptionFilter = {
 export enum SubscriptionStatus {
   Created = "CREATED",
   Running = "RUNNING",
-  Cancelled = "CANCELLED"
+  Cancelled = "CANCELLED",
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -378,21 +379,28 @@ export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
+export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
+  fragment: string;
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+
+export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
+  selectionSet: string;
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+  | ResolverFn<TResult, TParent, TContext, TArgs>
+  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Promise<TResult> | TResult;
-
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string;
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
-
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>;
 
 export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -430,7 +438,13 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
-) => Maybe<TTypes>;
+) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
+  obj: T,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
@@ -485,12 +499,9 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars["String"];
   Package: Package;
   PackageTag: PackageTag;
-  LanguageCode: LanguageCode;
   Date: Scalars["Date"];
-  RepeatInterval: RepeatInterval;
   Int: Scalars["Int"];
   MonetaryAmount: MonetaryAmount;
-  Currency: Currency;
   Float: Scalars["Float"];
   PackageCustomizationConfig: PackageCustomizationConfig;
   Boolean: Scalars["Boolean"];
@@ -501,8 +512,6 @@ export type ResolversParentTypes = ResolversObject<{
   Subscription: {};
   PaymentProcess: PaymentProcess;
   JSON: Scalars["JSON"];
-  DeactivationReason: DeactivationReason;
-  SubscriptionStatus: SubscriptionStatus;
   SubscriptionFilter: SubscriptionFilter;
   ChargableSubscription: RunningSubscription;
   ChargableSubscriptionFilter: ChargableSubscriptionFilter;
@@ -530,6 +539,7 @@ export type ChargableSubscriptionResolvers<
   status?: Resolver<ResolversTypes["SubscriptionStatus"], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes["Date"], any> {
@@ -550,6 +560,7 @@ export type DonationResolvers<
   usingAmex?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   parentDonationId?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type DonationCreationResultResolvers<
@@ -561,6 +572,7 @@ export type DonationCreationResultResolvers<
   subscription?: Resolver<Maybe<ResolversTypes["Subscription"]>, ParentType, ContextType>;
   formUrl?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   formFields?: Resolver<ReadonlyArray<ResolversTypes["KeyValue"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes["JSON"], any> {
@@ -573,6 +585,7 @@ export type KeyValueResolvers<
 > = ResolversObject<{
   key?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   value?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ListMetadataResolvers<
@@ -580,6 +593,7 @@ export type ListMetadataResolvers<
   ParentType extends ResolversParentTypes["ListMetadata"] = ResolversParentTypes["ListMetadata"]
 > = ResolversObject<{
   count?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MonetaryAmountResolvers<
@@ -588,6 +602,7 @@ export type MonetaryAmountResolvers<
 > = ResolversObject<{
   currency?: Resolver<ResolversTypes["Currency"], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type MutationResolvers<
@@ -654,6 +669,7 @@ export type PackageResolvers<
   priority?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   tags?: Resolver<ReadonlyArray<ResolversTypes["PackageTag"]>, ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PackageCustomizationConfigResolvers<
@@ -663,6 +679,7 @@ export type PackageCustomizationConfigResolvers<
   allowPriceAmountCustomization?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   allowPriceCurrencyCustomization?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   allowRepeatIntervalCustomization?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PackageTagResolvers<
@@ -672,6 +689,7 @@ export type PackageTagResolvers<
   code?: Resolver<ResolversTypes["LanguageCode"], ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PaymentProcessResolvers<
@@ -681,6 +699,7 @@ export type PaymentProcessResolvers<
   date?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
   result?: Resolver<Maybe<ResolversTypes["JSON"]>, ParentType, ContextType>;
   isSuccess?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<
@@ -688,12 +707,17 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = ResolversObject<{
   Package?: Resolver<Maybe<ResolversTypes["Package"]>, ParentType, ContextType, RequireFields<QueryPackageArgs, "id">>;
-  allPackages?: Resolver<ReadonlyArray<ResolversTypes["Package"]>, ParentType, ContextType, QueryAllPackagesArgs>;
+  allPackages?: Resolver<
+    ReadonlyArray<ResolversTypes["Package"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAllPackagesArgs, never>
+  >;
   _allPackagesMeta?: Resolver<
     Maybe<ResolversTypes["ListMetadata"]>,
     ParentType,
     ContextType,
-    Query_AllPackagesMetaArgs
+    RequireFields<Query_AllPackagesMetaArgs, never>
   >;
   Donation?: Resolver<
     Maybe<ResolversTypes["Donation"]>,
@@ -701,12 +725,17 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryDonationArgs, "id">
   >;
-  allDonations?: Resolver<ReadonlyArray<ResolversTypes["Donation"]>, ParentType, ContextType, QueryAllDonationsArgs>;
+  allDonations?: Resolver<
+    ReadonlyArray<ResolversTypes["Donation"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAllDonationsArgs, never>
+  >;
   _allDonationsMeta?: Resolver<
     Maybe<ResolversTypes["ListMetadata"]>,
     ParentType,
     ContextType,
-    Query_AllDonationsMetaArgs
+    RequireFields<Query_AllDonationsMetaArgs, never>
   >;
   Subscription?: Resolver<
     Maybe<ResolversTypes["Subscription"]>,
@@ -718,13 +747,13 @@ export type QueryResolvers<
     ReadonlyArray<ResolversTypes["Subscription"]>,
     ParentType,
     ContextType,
-    QueryAllSubscriptionsArgs
+    RequireFields<QueryAllSubscriptionsArgs, never>
   >;
   _allSubscriptionsMeta?: Resolver<
     Maybe<ResolversTypes["ListMetadata"]>,
     ParentType,
     ContextType,
-    Query_AllSubscriptionsMetaArgs
+    RequireFields<Query_AllSubscriptionsMetaArgs, never>
   >;
   ChargableSubscription?: Resolver<
     Maybe<ResolversTypes["ChargableSubscription"]>,
@@ -778,6 +807,7 @@ export type SubscriptionChargeResultResolvers<
 > = ResolversObject<{
   status?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   body?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = IContext> = ResolversObject<{

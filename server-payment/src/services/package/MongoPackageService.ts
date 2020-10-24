@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { PackageCreator, PackageEntity, PackageModifier } from "../../models/Package";
 import { PackageService } from "./PackageService";
 import { Validator } from "../../models/Validator";
@@ -43,7 +43,7 @@ export class MongoPackageService
     ].filter(el => el !== undefined) as any;
   };
 
-  protected toModel = (entity: PackageEntity): Package => {
+  protected toModel = (entity: WithId<PackageEntity>): Package => {
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,

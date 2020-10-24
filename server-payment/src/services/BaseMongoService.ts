@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { Collection, Cursor, Db, ObjectId } from "mongodb";
+import { Collection, Cursor, Db, ObjectId, OptionalId, WithId } from "mongodb";
 import { BaseEntityService } from "./BaseEntityService";
 import { MongoEntity } from "../models/MongoEntity";
 import { PaginationSettings } from "../models/PaginationSettings";
@@ -23,11 +23,11 @@ export abstract class BaseMongoService<
     return Promise.resolve();
   }
 
-  protected async createEntity(creator: Creator): Promise<Entity> {
+  protected async createEntity(creator: Creator): Promise<WithId<Entity>> {
     return ({
       ...creator,
       ...this.generateCommonFields()
-    } as any) as Entity;
+    } as any) as WithId<Entity>;
   }
 
   protected generateCommonFields = () => {
@@ -39,7 +39,7 @@ export abstract class BaseMongoService<
     };
   };
 
-  protected getEntityById = async (id: string): Promise<Entity | null> => {
+  protected getEntityById = async (id: string): Promise<WithId<Entity> | null> => {
     // TODO: remove as any when typescript bug is solved
     return this.collection.findOne({ _id: new ObjectId(id) } as any);
   };
@@ -57,7 +57,7 @@ export abstract class BaseMongoService<
     pagination: PaginationSettings | null,
     sorting: SortingSettings | null,
     extraFilters?: object[]
-  ): Cursor<Entity> => {
+  ): Cursor<WithId<Entity>> => {
     const filterArray = this.getFilters(filters);
     const combinedFilterArray = extraFilters ? [...filterArray, ...extraFilters] : filterArray;
 
@@ -68,14 +68,14 @@ export abstract class BaseMongoService<
         : this.collection.find();
     const sorted = sorting ? this.sort(filteredQuery, sorting) : filteredQuery;
     const paginated = pagination ? this.paginate(sorted, pagination) : sorted;
-    return paginated;
+    return paginated as any;
   };
 
-  protected countQuery = (cursor: Cursor<Entity>): Promise<number> => {
+  protected countQuery = (cursor: Cursor<WithId<Entity>>): Promise<number> => {
     return cursor.count();
   };
 
-  protected executeQuery = async (cursor: Cursor<Entity>): Promise<Model[]> => {
+  protected executeQuery = async (cursor: Cursor<WithId<Entity>>): Promise<Model[]> => {
     const results = await cursor.toArray();
     return results.map(this.toModel);
   };
@@ -86,7 +86,7 @@ export abstract class BaseMongoService<
     return isDefined(field) ? cursor.sort({ [field]: order }) : cursor;
   };
 
-  protected abstract toModel: (entity: Entity) => Model;
+  protected abstract toModel: <T extends Entity>(entity: WithId<T>) => Model;
 
   public count = (filters: Partial<Filters>, extraFilters?: object[]): Promise<number> => {
     const query = this.prepareQuery(filters, null, null, extraFilters);
@@ -94,13 +94,13 @@ export abstract class BaseMongoService<
   };
 
   public create = async (creator: Creator): Promise<Model> => {
-    const mongoInput: Entity = await this.createEntity(creator);
-    const result = await this.collection.insertOne(mongoInput);
+    const mongoInput: WithId<Entity> = await this.createEntity(creator);
+    const result = await this.collection.insertOne(mongoInput as any);
 
-    const newPackage: Entity = {
+    const newPackage: WithId<Entity> = {
+      ...mongoInput,
       _id: result.insertedId,
-      ...mongoInput
-    };
+    } as any;
 
     return this.toModel(newPackage);
   };
@@ -108,13 +108,13 @@ export abstract class BaseMongoService<
   public edit = async (id: string, modifier: Partial<BaseModifier>) => {
     const current = await this.getEntityById(id);
     if (!current) return null;
-    const next: Entity = {
+    const next: WithId<Entity> = {
       ...current,
       ...modifier,
       updatedAt: new Date()
     };
     // TODO: remove as any when typescript bug is solved
-    await this.collection.updateOne({ _id: current._id } as any, { $set: next });
+    await this.collection.updateOne({ _id: current._id } as any, { $set: next } as any);
     return this.toModel(next);
   };
 

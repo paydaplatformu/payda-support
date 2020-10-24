@@ -4,13 +4,14 @@ import { UserService } from "./UserService";
 import { Validator } from "../../models/Validator";
 import { comparePassword, hashPassword } from "../../utilities/password";
 import { BaseMongoService } from "../BaseMongoService";
+import { WithId } from "mongodb";
 
 @injectable()
 export class MongoUserService extends BaseMongoService<UserEntity, UserModel, {}, UserCreator, {}>
   implements UserService {
   protected getFilters = (): object[] => [];
 
-  protected toModel = (entity: UserEntity): UserModel => {
+  protected toModel = (entity: WithId<UserEntity>): UserModel => {
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,
