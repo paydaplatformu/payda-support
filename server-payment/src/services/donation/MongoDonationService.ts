@@ -1,7 +1,7 @@
 import { subHours } from "date-fns";
 import { injectable } from "inversify";
-import { ObjectId } from "mongodb";
-import { isAlpha, isEmail, isLength } from "validator";
+import { ObjectId, WithId } from "mongodb";
+import validator from "validator";
 import { DonationEntity, DonationModifier, DonationCreator } from "../../models/Donation";
 import { DonationService } from "./DonationService";
 import { FieldErrorCode } from "../../models/Errors";
@@ -37,12 +37,12 @@ export class MongoDonationService
 
   protected creatorValidator: Validator<DonationCreator> = {
     email: async value => {
-      if (!isEmail(value)) return [FieldErrorCode.INVALID_EMAIL];
+      if (!validator.isEmail(value)) return [FieldErrorCode.INVALID_EMAIL];
       return null;
     },
     fullName: async value => {
-      if (!isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME];
-      else if (!isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL];
+      if (!validator.isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME];
+      else if (!validator.isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL];
       return null;
     },
     quantity: async value => {
@@ -66,7 +66,7 @@ export class MongoDonationService
     ].filter(el => el !== undefined) as any;
   };
 
-  protected toModel = (entity: DonationEntity): Donation => {
+  protected toModel = (entity: WithId<DonationEntity>): Donation => {
     return {
       id: entity._id.toString(),
       date: entity.date,

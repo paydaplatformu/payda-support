@@ -13,15 +13,15 @@
       {
         "kind": "OBJECT",
         "name": "Query",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "Package",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -44,11 +44,11 @@
           },
           {
             "name": "allPackages",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -58,7 +58,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -68,7 +68,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -78,7 +78,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -88,7 +88,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PackageFilter",
@@ -119,11 +119,11 @@
           },
           {
             "name": "_allPackagesMeta",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -133,7 +133,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -143,7 +143,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -153,7 +153,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -163,7 +163,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PackageFilter",
@@ -182,11 +182,11 @@
           },
           {
             "name": "Donation",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -209,11 +209,11 @@
           },
           {
             "name": "allDonations",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -223,7 +223,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -233,7 +233,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -243,7 +243,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -253,7 +253,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "DonationFilter",
@@ -284,11 +284,11 @@
           },
           {
             "name": "_allDonationsMeta",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -298,7 +298,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -308,7 +308,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -318,7 +318,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -328,7 +328,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "DonationFilter",
@@ -347,11 +347,11 @@
           },
           {
             "name": "Subscription",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -374,11 +374,11 @@
           },
           {
             "name": "allSubscriptions",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -388,7 +388,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -398,7 +398,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -408,7 +408,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -418,7 +418,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "SubscriptionFilter",
@@ -449,11 +449,11 @@
           },
           {
             "name": "_allSubscriptionsMeta",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -463,7 +463,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -473,7 +473,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -483,7 +483,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -493,7 +493,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "SubscriptionFilter",
@@ -512,11 +512,11 @@
           },
           {
             "name": "ChargableSubscription",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -539,11 +539,11 @@
           },
           {
             "name": "allChargableSubscriptions",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -553,7 +553,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -563,7 +563,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -573,7 +573,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -583,7 +583,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -618,11 +618,11 @@
           },
           {
             "name": "_allChargableSubscriptionsMeta",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "page",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -632,7 +632,7 @@
               },
               {
                 "name": "perPage",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -642,7 +642,7 @@
               },
               {
                 "name": "sortField",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -652,7 +652,7 @@
               },
               {
                 "name": "sortOrder",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -662,7 +662,7 @@
               },
               {
                 "name": "filter",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -702,11 +702,11 @@
       {
         "kind": "OBJECT",
         "name": "Package",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "id",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -722,7 +722,7 @@
           },
           {
             "name": "defaultTag",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -738,7 +738,7 @@
           },
           {
             "name": "reference",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -750,7 +750,7 @@
           },
           {
             "name": "createdAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -766,7 +766,7 @@
           },
           {
             "name": "updatedAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -782,7 +782,7 @@
           },
           {
             "name": "repeatInterval",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -798,7 +798,7 @@
           },
           {
             "name": "donationCount",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -814,7 +814,7 @@
           },
           {
             "name": "image",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -826,7 +826,7 @@
           },
           {
             "name": "price",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -842,7 +842,7 @@
           },
           {
             "name": "customizationConfig",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -858,7 +858,7 @@
           },
           {
             "name": "isCustom",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -874,7 +874,7 @@
           },
           {
             "name": "priority",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -890,7 +890,7 @@
           },
           {
             "name": "tags",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -914,7 +914,7 @@
           },
           {
             "name": "isActive",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -937,11 +937,11 @@
       {
         "kind": "OBJECT",
         "name": "PackageTag",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "code",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -957,7 +957,7 @@
           },
           {
             "name": "name",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -973,7 +973,7 @@
           },
           {
             "name": "description",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -992,20 +992,20 @@
       {
         "kind": "ENUM",
         "name": "LanguageCode",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "TR",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "EN",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1025,38 +1025,38 @@
       {
         "kind": "ENUM",
         "name": "RepeatInterval",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "NONE",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "MONTHLY",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "YEARLY",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "TEST_A",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "TEST_B",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1076,11 +1076,11 @@
       {
         "kind": "OBJECT",
         "name": "MonetaryAmount",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "currency",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1096,7 +1096,7 @@
           },
           {
             "name": "amount",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1119,20 +1119,20 @@
       {
         "kind": "ENUM",
         "name": "Currency",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "USD",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "TRY",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1152,11 +1152,11 @@
       {
         "kind": "OBJECT",
         "name": "PackageCustomizationConfig",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "allowPriceAmountCustomization",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1172,7 +1172,7 @@
           },
           {
             "name": "allowPriceCurrencyCustomization",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1188,7 +1188,7 @@
           },
           {
             "name": "allowRepeatIntervalCustomization",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1221,12 +1221,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "PackageFilter",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "ids",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1244,7 +1244,7 @@
           },
           {
             "name": "onlyActive",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
@@ -1254,7 +1254,7 @@
           },
           {
             "name": "onlyOriginal",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
@@ -1264,7 +1264,7 @@
           },
           {
             "name": "repeatInterval",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "RepeatInterval",
@@ -1274,7 +1274,7 @@
           },
           {
             "name": "amount",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -1284,7 +1284,7 @@
           },
           {
             "name": "currency",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "Currency",
@@ -1294,7 +1294,7 @@
           },
           {
             "name": "search",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -1310,11 +1310,11 @@
       {
         "kind": "OBJECT",
         "name": "ListMetadata",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "count",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1337,11 +1337,11 @@
       {
         "kind": "OBJECT",
         "name": "Donation",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "id",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1357,7 +1357,7 @@
           },
           {
             "name": "fullName",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1373,7 +1373,7 @@
           },
           {
             "name": "email",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1389,7 +1389,7 @@
           },
           {
             "name": "packageId",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1405,7 +1405,7 @@
           },
           {
             "name": "notes",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -1417,7 +1417,7 @@
           },
           {
             "name": "paymentConfirmed",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1433,7 +1433,7 @@
           },
           {
             "name": "date",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1449,7 +1449,7 @@
           },
           {
             "name": "usingAmex",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1465,7 +1465,7 @@
           },
           {
             "name": "quantity",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1500,12 +1500,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "DonationFilter",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "paymentConfirmed",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
@@ -1515,7 +1515,7 @@
           },
           {
             "name": "search",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -1525,7 +1525,7 @@
           },
           {
             "name": "ids",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1543,7 +1543,7 @@
           },
           {
             "name": "packageId",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -1569,11 +1569,11 @@
       {
         "kind": "OBJECT",
         "name": "Subscription",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "id",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1589,7 +1589,7 @@
           },
           {
             "name": "packageId",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1637,7 +1637,7 @@
           },
           {
             "name": "processHistory",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1661,7 +1661,7 @@
           },
           {
             "name": "deactivationReason",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "ENUM",
@@ -1673,7 +1673,7 @@
           },
           {
             "name": "hasPaymentToken",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1689,7 +1689,7 @@
           },
           {
             "name": "status",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1705,7 +1705,7 @@
           },
           {
             "name": "createdAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1721,7 +1721,7 @@
           },
           {
             "name": "updatedAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1744,11 +1744,11 @@
       {
         "kind": "OBJECT",
         "name": "PaymentProcess",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "date",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1764,7 +1764,7 @@
           },
           {
             "name": "result",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -1776,7 +1776,7 @@
           },
           {
             "name": "isSuccess",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1809,20 +1809,20 @@
       {
         "kind": "ENUM",
         "name": "DeactivationReason",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "ERROR",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "USER_REQUEST",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1832,26 +1832,26 @@
       {
         "kind": "ENUM",
         "name": "SubscriptionStatus",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "CREATED",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "RUNNING",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "CANCELLED",
-            "description": "",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1861,12 +1861,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "SubscriptionFilter",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "ids",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1884,7 +1884,7 @@
           },
           {
             "name": "status",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "SubscriptionStatus",
@@ -1894,7 +1894,7 @@
           },
           {
             "name": "repeatInterval",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "RepeatInterval",
@@ -1904,7 +1904,7 @@
           },
           {
             "name": "hasPaymentToken",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
@@ -1920,11 +1920,11 @@
       {
         "kind": "OBJECT",
         "name": "ChargableSubscription",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "id",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1940,7 +1940,7 @@
           },
           {
             "name": "packageId",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1988,7 +1988,7 @@
           },
           {
             "name": "processHistory",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2012,7 +2012,7 @@
           },
           {
             "name": "deactivationReason",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "ENUM",
@@ -2024,7 +2024,7 @@
           },
           {
             "name": "hasPaymentToken",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2040,7 +2040,7 @@
           },
           {
             "name": "status",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2056,7 +2056,7 @@
           },
           {
             "name": "createdAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2072,7 +2072,7 @@
           },
           {
             "name": "updatedAt",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2095,12 +2095,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "ChargableSubscriptionFilter",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "ids",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "LIST",
               "name": null,
@@ -2118,7 +2118,7 @@
           },
           {
             "name": "status",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "SubscriptionStatus",
@@ -2128,7 +2128,7 @@
           },
           {
             "name": "repeatInterval",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2142,7 +2142,7 @@
           },
           {
             "name": "hasPaymentToken",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
@@ -2158,15 +2158,15 @@
       {
         "kind": "OBJECT",
         "name": "Mutation",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "createPackage",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "defaultTag",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2180,7 +2180,7 @@
               },
               {
                 "name": "customizationConfig",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2194,7 +2194,7 @@
               },
               {
                 "name": "reference",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -2204,7 +2204,7 @@
               },
               {
                 "name": "repeatInterval",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2218,7 +2218,7 @@
               },
               {
                 "name": "image",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -2228,7 +2228,7 @@
               },
               {
                 "name": "price",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2242,7 +2242,7 @@
               },
               {
                 "name": "priority",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2256,7 +2256,7 @@
               },
               {
                 "name": "tags",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2287,11 +2287,11 @@
           },
           {
             "name": "updatePackage",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2305,7 +2305,7 @@
               },
               {
                 "name": "defaultTag",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PackageTagInput",
@@ -2315,7 +2315,7 @@
               },
               {
                 "name": "isActive",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -2325,7 +2325,7 @@
               },
               {
                 "name": "customizationConfig",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
                   "name": "PackageCustomizationConfigInput",
@@ -2335,7 +2335,7 @@
               },
               {
                 "name": "reference",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -2345,7 +2345,7 @@
               },
               {
                 "name": "image",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -2355,7 +2355,7 @@
               },
               {
                 "name": "priority",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -2365,7 +2365,7 @@
               },
               {
                 "name": "tags",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2392,11 +2392,11 @@
           },
           {
             "name": "createDonation",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "donationInput",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2410,7 +2410,7 @@
               },
               {
                 "name": "language",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2437,7 +2437,7 @@
           },
           {
             "name": "cleanPendingDonations",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2453,11 +2453,11 @@
           },
           {
             "name": "updateSubscription",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2471,7 +2471,7 @@
               },
               {
                 "name": "status",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2494,11 +2494,11 @@
           },
           {
             "name": "chargeSubscription",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2525,11 +2525,11 @@
           },
           {
             "name": "cancelSubscription",
-            "description": "",
+            "description": null,
             "args": [
               {
                 "name": "id",
-                "description": "",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -2559,12 +2559,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "PackageTagInput",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "code",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2578,7 +2578,7 @@
           },
           {
             "name": "name",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2592,7 +2592,7 @@
           },
           {
             "name": "description",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -2608,12 +2608,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "PackageCustomizationConfigInput",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "allowPriceAmountCustomization",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2627,7 +2627,7 @@
           },
           {
             "name": "allowPriceCurrencyCustomization",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2641,7 +2641,7 @@
           },
           {
             "name": "allowRepeatIntervalCustomization",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2661,12 +2661,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "MonetaryAmountInput",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "currency",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2680,7 +2680,7 @@
           },
           {
             "name": "amount",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2700,12 +2700,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "DonationInput",
-        "description": "",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "fullName",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2719,7 +2719,7 @@
           },
           {
             "name": "email",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2733,7 +2733,7 @@
           },
           {
             "name": "packageId",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2747,7 +2747,7 @@
           },
           {
             "name": "customPriceAmount",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Float",
@@ -2757,7 +2757,7 @@
           },
           {
             "name": "customPriceCurrency",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "Currency",
@@ -2767,7 +2767,7 @@
           },
           {
             "name": "customRepeatInterval",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "ENUM",
               "name": "RepeatInterval",
@@ -2777,7 +2777,7 @@
           },
           {
             "name": "notes",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -2787,7 +2787,7 @@
           },
           {
             "name": "quantity",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2801,7 +2801,7 @@
           },
           {
             "name": "usingAmex",
-            "description": "",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -2821,11 +2821,11 @@
       {
         "kind": "OBJECT",
         "name": "DonationCreationResult",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "donation",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2841,7 +2841,7 @@
           },
           {
             "name": "package",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2857,7 +2857,7 @@
           },
           {
             "name": "subscription",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
@@ -2869,7 +2869,7 @@
           },
           {
             "name": "formUrl",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2885,7 +2885,7 @@
           },
           {
             "name": "formFields",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2916,11 +2916,11 @@
       {
         "kind": "OBJECT",
         "name": "KeyValue",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "key",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2936,7 +2936,7 @@
           },
           {
             "name": "value",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2959,11 +2959,11 @@
       {
         "kind": "OBJECT",
         "name": "SubscriptionChargeResult",
-        "description": "",
+        "description": null,
         "fields": [
           {
             "name": "status",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -2979,7 +2979,7 @@
           },
           {
             "name": "body",
-            "description": "",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
