@@ -96,8 +96,8 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
 
     if (isProduction()) {
       app.use((req, res, next) => {
-        if (req.secure) {
-          next();
+        if (req.headers["x-forwarded-proto"] === "https" || req.secure) {
+          return next();
         } else {
           res.redirect("https://" + req.headers.host + req.url);
         }
