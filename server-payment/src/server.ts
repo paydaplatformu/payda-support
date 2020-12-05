@@ -174,8 +174,11 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
 
     app.post("/iyzico/webhook", async (req, res) => {
       console.log(req.body);
+      console.log(req.headers);
       const received = req.header("X-IYZ-SIGNATURE");
+      console.log({ received });
       const expected = iyzicoService.getWebhookSignature(req.body.iyziEventType, req.body.token);
+      console.log({ received, expected });
 
       if (req.body.paymentId && !req.body.token) {
         return res.status(201).send();
@@ -189,7 +192,10 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
       const result = await iyzicoService.retrievePaymentResult(req.body.token);
       console.log({ result });
       const donationId = iyzicoService.extractDonationIdFromReference(result.basketId);
+      console.log({ result, donationId });
+
       const donation = await donationService.getById(donationId);
+      console.log({ result, donationId, donation });
       if (!donation) throw new Error("Donation id not found.");
       await donationService.confirmPayment(donationId);
       return res.status(201).send();
