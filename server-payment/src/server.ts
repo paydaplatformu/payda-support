@@ -93,6 +93,15 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     server.applyMiddleware({ app });
+
+    app.use((req, res, next) => {
+      if (req.secure) {
+        next();
+      } else {
+        res.redirect("https://" + req.headers.host + req.url);
+      }
+    });
+
     app.use(errorHandler);
 
     /**
