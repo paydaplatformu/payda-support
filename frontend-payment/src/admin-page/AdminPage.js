@@ -5,10 +5,7 @@ import authProvider from "./authProvider";
 import { client } from "./dataProvider";
 import { DonationList, DonationShow } from "./donation";
 import { SubscriptionList, SubscriptionShow } from "./subscription";
-import {
-  ChargableSubscriptionList,
-  ChargableSubscriptionShow
-} from "./chargable-subscription";
+import { ChargableSubscriptionList, ChargableSubscriptionShow } from "./chargable-subscription";
 import i18nProvider from "./i18nProvider";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 
@@ -16,9 +13,7 @@ class AdminPage extends Component {
   state = { provider: null };
 
   componentDidMount() {
-    buildGraphQLProvider({ client }).then(provider =>
-      this.setState({ provider })
-    );
+    buildGraphQLProvider({ client }).then(provider => this.setState({ provider }));
   }
 
   render() {
@@ -27,28 +22,11 @@ class AdminPage extends Component {
     }
 
     return (
-      <Admin
-        dataProvider={this.state.provider}
-        authProvider={authProvider}
-        i18nProvider={i18nProvider}
-      >
+      <Admin dataProvider={this.state.provider} authProvider={authProvider}>
         <Resource name="Donation" list={DonationList} show={DonationShow} />
-        <Resource
-          name="Package"
-          list={PackageList}
-          edit={PackageEdit}
-          create={PackageCreate}
-        />
-        <Resource
-          name="Subscription"
-          list={SubscriptionList}
-          show={SubscriptionShow}
-        />
-        <Resource
-          name="ChargableSubscription"
-          list={ChargableSubscriptionList}
-          show={ChargableSubscriptionShow}
-        />
+        <Resource name="Package" list={PackageList} edit={PackageEdit} create={PackageCreate} />
+        <Resource name="Subscription" list={SubscriptionList} show={SubscriptionShow} />
+        <Resource name="ChargableSubscription" list={ChargableSubscriptionList} show={ChargableSubscriptionShow} />
       </Admin>
     );
   }

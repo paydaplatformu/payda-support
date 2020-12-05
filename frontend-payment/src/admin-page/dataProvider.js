@@ -2,9 +2,8 @@ import {
   ApolloClient,
   ApolloLink,
   InMemoryCache,
-  HttpLink
+  HttpLink,
 } from "apollo-boost";
-import { baseURL } from "../constants";
 
 const requestFormatterLink = new ApolloLink((operation, forward) => {
   console.log(operation.variables);
@@ -19,7 +18,7 @@ const requestFormatterLink = new ApolloLink((operation, forward) => {
 });
 
 const httpLink = new HttpLink({
-  uri: `${baseURL}/graphql`
+  uri: "/graphql",
 });
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -29,8 +28,8 @@ const authLink = new ApolloLink((operation, forward) => {
   // Use the setContext method to set the HTTP headers.
   operation.setContext({
     headers: {
-      Authorization: token ? `Bearer ${token}` : ""
-    }
+      Authorization: token ? `Bearer ${token}` : "",
+    },
   });
 
   // Call the next link in the middleware chain.
@@ -39,5 +38,5 @@ const authLink = new ApolloLink((operation, forward) => {
 
 export const client = new ApolloClient({
   link: authLink.concat(requestFormatterLink).concat(httpLink), // Chain it with the HttpLink
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });

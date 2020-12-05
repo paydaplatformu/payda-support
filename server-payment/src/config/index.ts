@@ -1,7 +1,7 @@
 import convict from "convict";
 import { isNonProduction } from "../utilities/helpers";
 
-const convict_format_with_validator = require('convict-format-with-validator');
+const convict_format_with_validator = require("convict-format-with-validator");
 convict.addFormats(convict_format_with_validator);
 
 convict.addFormat({
@@ -11,8 +11,8 @@ convict.addFormat({
     if (!Array.isArray(value)) {
       throw new Error("Clients should be an array");
     }
-    const isValid = value.every(client =>
-      ["id", "secret", "grants", "accessTokenLifetime", "refreshTokenLifetime"].every(key => key in client)
+    const isValid = value.every((client) =>
+      ["id", "secret", "grants", "accessTokenLifetime", "refreshTokenLifetime"].every((key) => key in client)
     );
 
     if (!isValid) {
@@ -20,7 +20,7 @@ convict.addFormat({
         "Invalid clients format. Clients should have id, secret, grants, accessTokenLifetime and refreshTokenLifetime"
       );
     }
-  }
+  },
 });
 
 const config = convict({
@@ -28,181 +28,124 @@ const config = convict({
     doc: "The application environment.",
     format: ["production", "staging", "development", "test"],
     default: "production",
-    env: "NODE_ENV"
+    env: "NODE_ENV",
   },
   host: {
     doc: "The IP address to bind.",
     format: "ipaddress",
     default: "0.0.0.0",
-    env: "HOST"
+    env: "HOST",
   },
   port: {
     doc: "The port to bind.",
     format: "port",
     default: 8080,
-    env: "PORT"
+    env: "PORT",
   },
   db: {
     url: {
       doc: "Database connection url",
       format: String,
       default: null,
-      env: "DATABASE_URL"
-    }
+      env: "DATABASE_URL",
+    },
   },
   clients: {
     doc: "Clients",
     format: "clients-array",
     default: null,
-    env: "CLIENTS"
+    env: "CLIENTS",
   },
   defaultUser: {
     email: {
       doc: "User email to create if no user exists",
       format: String,
       default: "admin@paydaplatformu.org",
-      env: "DEFAULT_USER_EMAIL"
+      env: "DEFAULT_USER_EMAIL",
     },
     password: {
       doc: "User password to create if no user exists",
       format: String,
       default: null,
-      env: "DEFAULT_USER_PASSWORD"
-    }
+      env: "DEFAULT_USER_PASSWORD",
+    },
   },
   jwt: {
     issuer: {
       doc: "JWT Issuer",
       format: String,
       default: "payda",
-      env: "JWT_ISSUER"
+      env: "JWT_ISSUER",
     },
     audience: {
       doc: "JWT Audience",
       format: String,
       default: "payda-supporters",
-      env: "JWT_AUDIENCE"
+      env: "JWT_AUDIENCE",
     },
     subject: {
       doc: "JWT Subject",
       format: String,
       default: "login",
-      env: "JWT_SUBJECT"
+      env: "JWT_SUBJECT",
     },
     secret: {
       doc: "JWT Secret",
       format: String,
       default: null,
-      env: "JWT_SECRET"
+      env: "JWT_SECRET",
     },
     accessTokenLifetime: {
       doc: "Access token lifetime in seconds (clients setting overrides this value)",
       format: "int",
-      default: 24 * 60 * 60
+      default: 24 * 60 * 60,
     },
     refreshTokenLifetime: {
       doc: "Refresh token lifetime in seconds (clients setting overrides this value)",
       format: "int",
-      default: 3 * 24 * 60 * 60
-    }
+      default: 3 * 24 * 60 * 60,
+    },
   },
-  payu: {
-    luUrl: {
-      doc: "Payu lu url",
+  iyzico: {
+    baseUrl: {
+      doc: "Iyzico base url",
       format: "url",
-      default: "https://secure.payu.com.tr/order/lu.php",
-      env: "PAYU_URL"
+      default: null,
+      env: "IYZICO_BASE_URL",
     },
-    aluUrl: {
-      doc: "Payu alu url",
-      format: "url",
-      default: "https://secure.payu.com.tr/order/alu/v3",
-      env: "PAYU_ALU_URL"
-    },
-    merchantTokenUrl: {
-      doc: "Payu merchant token url",
-      format: "url",
-      default: "https://secure.payu.com.tr/order/token/v2/merchantToken/",
-      env: "PAYU_MERCHANT_TOKEN_URL"
-    },
-    backRef: {
-      doc: "Payu backref",
+    apiKey: {
+      doc: "Iyzico api key",
       format: String,
       default: null,
-      env: "PAYU_BACK_REF"
+      env: "IYZICO_API_KEY",
     },
-    defaultCredentials: {
-      merchant: {
-        doc: "Payu merchant name",
-        format: String,
-        default: null,
-        env: "PAYU_DEFAULT_CREDENTIALS_MERCHANT"
-      },
-      secret: {
-        doc: "Payu secret",
-        format: String,
-        default: null,
-        env: "PAYU_DEFAULT_CREDENTIALS_SECRET"
-      }
+    secretKey: {
+      doc: "Iyzico secret key",
+      format: String,
+      default: null,
+      env: "IYZICO_SECRET_KEY",
     },
-    recurringDefaultCredentials: {
-      merchant: {
-        doc: "Payu merchant name",
-        format: String,
-        default: null,
-        env: "PAYU_RECURRING_DEFAULT_CREDENTIALS_MERCHANT"
-      },
-      secret: {
-        doc: "Payu secret",
-        format: String,
-        default: null,
-        env: "PAYU_RECURRING_DEFAULT_CREDENTIALS_SECRET"
-      }
+    callbackUrl: {
+      doc: "Iyzico callback url",
+      format: String,
+      default: null,
+      env: "IYZICO_CALLBACK_URL",
     },
-    amexCredentials: {
-      merchant: {
-        doc: "Payu merchant name",
-        format: String,
-        default: null,
-        env: "PAYU_AMEX_CREDENTIALS_MERCHANT"
-      },
-      secret: {
-        doc: "Payu secret",
-        format: String,
-        default: null,
-        env: "PAYU_AMEX_CREDENTIALS_SECRET"
-      }
-    },
-    recurringAmexCredentials: {
-      merchant: {
-        doc: "Payu merchant name",
-        format: String,
-        default: null,
-        env: "PAYU_RECURRING_AMEX_CREDENTIALS_MERCHANT"
-      },
-      secret: {
-        doc: "Payu secret",
-        format: String,
-        default: null,
-        env: "PAYU_RECURRING_AMEX_CREDENTIALS_SECRET"
-      }
-    }
-  }
+  },
 });
 
 if (["development", "test", "staging"].includes(config.get("environment"))) {
   config.set("db.url", "mongodb://payda:paydapw@localhost:27017/paydadb?authSource=admin");
+
   config.set("jwt.secret", "secret");
+
   config.set("defaultUser.password", "123456");
-  config.set("payu.backRef", "http://localhost:8080/thank-you");
-  config.set("payu.defaultCredentials.merchant", "payu_default");
-  config.set("payu.defaultCredentials.secret", "123456");
-  config.set("payu.recurringDefaultCredentials.merchant", "payu_default");
-  config.set("payu.recurringDefaultCredentials.secret", "123456");
-  config.set("payu.amexCredentials.merchant", "payu_amex");
-  config.set("payu.amexCredentials.secret", "654321");
-  config.set("payu.recurringAmexCredentials.merchant", "payu_amex");
-  config.set("payu.recurringAmexCredentials.secret", "654321");
+
+  config.set("iyzico.baseUrl", "https://sandbox-api.iyzipay.com");
+  config.set("iyzico.apiKey", "sandbox-v6mUQCgtToxpNffEvSXjMhdXgkZqRbQ5");
+  config.set("iyzico.secretKey", "sandbox-PuJMxTCqTUb1aj7EgGhTsMdWDfwGX6jy");
+  config.set("iyzico.callbackUrl", "http://localhost:3000/iyzico/form-callback");
+
   config.set(
     "clients",
     JSON.stringify([
@@ -211,18 +154,10 @@ if (["development", "test", "staging"].includes(config.get("environment"))) {
         secret: "123456",
         grants: ["password", "refresh_token"],
         accessTokenLifetime: 60 * 60,
-        refreshTokenLifetime: 24 * 60 * 60
-      }
+        refreshTokenLifetime: 24 * 60 * 60,
+      },
     ])
   );
-}
-
-if (isNonProduction() && !config.has("payu.backRef")) {
-  config.set("payu.backRef", `http://${config.get("host")}:${config.get("port")}/thank-you`);
-}
-
-if (isNonProduction() && !config.has("payu.luUrl")) {
-  config.set("payu.luUrl", `http://${config.get("host")}:${config.get("port")}/mock`);
 }
 
 // Perform validation

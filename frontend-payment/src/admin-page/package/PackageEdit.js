@@ -5,35 +5,32 @@ import {
   SimpleFormIterator,
   SelectInput,
   TextInput,
-  LongTextInput,
   BooleanInput,
   Toolbar,
-  SaveButton
+  SaveButton,
 } from "react-admin";
 
 import {
   repeatIntervalChoices,
   currencyChoices,
-  languageChoices
+  languageChoices,
 } from "../../utils";
 
 import {
   StyledTextInput,
-  StyledLongTextInput,
   StyledSelectInput,
   StyledNumberInput,
   StyledArrayInput,
-  StyledDisabledInput,
-  StyledDivider
+  StyledDivider,
 } from "./PackageFormComponents";
 
-const PackageEditToolbar = props => (
+const PackageEditToolbar = (props) => (
   <Toolbar {...props}>
     <SaveButton />
   </Toolbar>
 );
 
-const PackageEdit = props => (
+const PackageEdit = (props) => (
   <Edit undoable={false} {...props}>
     <SimpleForm toolbar={<PackageEditToolbar />}>
       <h2>Package Information</h2>
@@ -44,7 +41,8 @@ const PackageEdit = props => (
         choices={languageChoices}
       />
       <StyledTextInput source="defaultTag.name" label="Default Package Name" />
-      <StyledLongTextInput
+      <StyledTextInput
+        multiline
         source="defaultTag.description"
         label="Default Package Description"
       />
@@ -60,18 +58,20 @@ const PackageEdit = props => (
             choices={languageChoices}
           />
           <TextInput source="name" label="Name" />
-          <LongTextInput source="description" label="Description" />
+          <TextInput multiline source="description" label="Description" />
         </SimpleFormIterator>
       </StyledArrayInput>
       <h2 style={{ marginTop: 30 }}>Price Information</h2>
       <StyledDivider />
-      <StyledDisabledInput
+      <StyledTextInput
+        disabled
         source="price.currency"
         label="Currency"
         choices={currencyChoices}
       />
-      <StyledDisabledInput source="price.amount" label="Price" />
-      <StyledDisabledInput
+      <StyledTextInput disabled source="price.amount" label="Price" />
+      <StyledTextInput
+        disabled
         source="repeatInterval"
         label="Repetitive Payment Interval"
         choices={repeatIntervalChoices}

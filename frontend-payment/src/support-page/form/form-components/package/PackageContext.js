@@ -46,7 +46,7 @@ export const PackageContext = React.createContext();
 
 export const PackageContextProvider = ({ children }) => {
   const initialState = {
-    selectedPackage: null
+    selectedPackage: null,
   };
 
   const reducer = (state = initialState, action) => {
@@ -60,25 +60,20 @@ export const PackageContextProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const selectPackage = selectedPackage =>
-    dispatch({ type: "selectPackage", payload: selectedPackage });
+  const selectPackage = selectedPackage => dispatch({ type: "selectPackage", payload: selectedPackage });
 
   return (
-    <Query
-      query={query}
-      variables={{ sortOrder: "DESC", sortField: "priority" }}
-    >
+    <Query query={query} variables={{ sortOrder: "DESC", sortField: "priority" }}>
       {({ loading, error, data }) => {
         if (error) return <p>error</p>;
+        if (loading) return <p></p>;
 
         return (
           <PackageContext.Provider
             value={{
               loading,
               packages: data.allPackages,
-              availableCurrencies:
-                data.availableCurrencies &&
-                data.availableCurrencies.enumValues.map(c => c.name),
+              availableCurrencies: data.availableCurrencies && data.availableCurrencies.enumValues.map(c => c.name),
               availableRepeatIntervals:
                 data.availableRepeatIntervals &&
                 data.availableRepeatIntervals.enumValues
@@ -86,7 +81,7 @@ export const PackageContextProvider = ({ children }) => {
                   .filter(c => !!c)
                   .filter(c => !c.toLowerCase().includes("test")),
               selectedPackage: state && state.selectedPackage,
-              selectPackage
+              selectPackage,
             }}
           >
             {children}

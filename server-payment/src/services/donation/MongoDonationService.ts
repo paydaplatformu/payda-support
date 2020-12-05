@@ -31,39 +31,39 @@ export class MongoDonationService
       paymentConfirmed: false,
       packageId: new ObjectId(creator.packageId),
       parentDonationId: creator.parentDonationId !== undefined ? new ObjectId(creator.parentDonationId) : undefined,
-      date: new Date()
+      date: new Date(),
     };
   }
 
   protected creatorValidator: Validator<DonationCreator> = {
-    email: async value => {
+    email: async (value) => {
       if (!validator.isEmail(value)) return [FieldErrorCode.INVALID_EMAIL];
       return null;
     },
-    fullName: async value => {
+    fullName: async (value) => {
       if (!validator.isAlpha(value.replace(/[ .]/g, ""))) return [FieldErrorCode.INVALID_NAME];
       else if (!validator.isLength(value, { min: 1, max: 100 })) return [FieldErrorCode.INVALID_EMAIL];
       return null;
     },
-    quantity: async value => {
+    quantity: async (value) => {
       if (value <= 0) return [FieldErrorCode.INVALID_QUANTITY];
       return null;
     },
-    customPriceAmount: async value => {
+    customPriceAmount: async (value) => {
       if (value && value <= 0) return [FieldErrorCode.INVALID_AMOUNT];
       return null;
-    }
+    },
   };
 
   protected getFilters = (filter: Partial<DonationFilter>): object[] => {
     const { paymentConfirmed, ids, search, packageId, onlyDirect } = filter || {};
     return [
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
-      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      isDefined(ids) ? { _id: { $in: ids.map((id) => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
       onlyDirect === true ? { parentDonationId: null } : undefined,
-      packageId !== undefined ? { packageId: packageId === null ? null : new ObjectId(packageId) } : undefined
-    ].filter(el => el !== undefined) as any;
+      packageId !== undefined ? { packageId: packageId === null ? null : new ObjectId(packageId) } : undefined,
+    ].filter((el) => el !== undefined) as any;
   };
 
   protected toModel = (entity: WithId<DonationEntity>): Donation => {
@@ -72,19 +72,19 @@ export class MongoDonationService
       date: entity.date,
       email: entity.email,
       fullName: entity.fullName,
+      ip: entity.ip,
       packageId: entity.packageId.toString(),
       notes: entity.notes,
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
-      usingAmex: entity.usingAmex,
-      parentDonationId: entity?.parentDonationId?.toString() || null
+      parentDonationId: entity?.parentDonationId?.toString() || null,
     };
   };
 
   public cleanPendingDonations = async (): Promise<number> => {
     const result = await this.collection.deleteMany({
       paymentConfirmed: false,
-      date: { $lt: subHours(new Date(), 1) }
+      date: { $lt: subHours(new Date(), 1) },
     });
     return result.deletedCount || 0;
   };
