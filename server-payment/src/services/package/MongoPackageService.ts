@@ -25,7 +25,7 @@ export class MongoPackageService
     return {
       ...fromSuper,
       ...creator,
-      tags: fromSuper.tags || []
+      tags: fromSuper.tags || [],
     };
   }
   protected creatorValidator: Validator<PackageCreator> = {};
@@ -35,12 +35,12 @@ export class MongoPackageService
     return [
       onlyActive === true ? { isActive: true } : undefined,
       onlyOriginal === true ? { isCustom: false } : undefined,
-      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined,
+      isDefined(ids) ? { _id: { $in: ids.map((id) => new ObjectId(id)) } } : undefined,
       repeatInterval !== undefined ? { repeatInterval } : undefined,
       amount !== undefined ? { "price.amount": amount } : undefined,
       currency !== undefined ? { "price.currency": currency } : undefined,
-      search !== undefined ? { $text: { $search: search } } : undefined
-    ].filter(el => el !== undefined) as any;
+      search !== undefined ? { $text: { $search: search } } : undefined,
+    ].filter((el) => el !== undefined) as any;
   };
 
   protected toModel = (entity: WithId<PackageEntity>): Package => {
@@ -58,7 +58,7 @@ export class MongoPackageService
       repeatInterval: entity.repeatInterval,
       tags: entity.tags,
       updatedAt: entity.updatedAt,
-      donationCount: 0 // TODO: fix this
+      donationCount: null as never,
     };
   };
 

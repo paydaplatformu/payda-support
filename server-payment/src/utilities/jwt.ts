@@ -10,10 +10,11 @@ export const sign = (payload: string | object | Buffer, expiresIn: number): Prom
         audience: config.get("jwt.audience"),
         expiresIn,
         issuer: config.get("jwt.issuer"),
-        subject: config.get("jwt.subject")
+        subject: config.get("jwt.subject"),
       },
       (err, encoded) => {
         if (err) return reject(err);
+        if (!encoded) return reject(new Error("unexpected result"));
         return resolve(encoded);
       }
     );
@@ -27,7 +28,7 @@ export const verify = <T>(token: string): Promise<T> =>
       {
         audience: config.get("jwt.audience"),
         issuer: config.get("jwt.issuer"),
-        subject: config.get("jwt.subject")
+        subject: config.get("jwt.subject"),
       },
       (err, result) => {
         if (err) return reject(err);

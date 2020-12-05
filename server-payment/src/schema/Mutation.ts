@@ -48,7 +48,7 @@ export const resolvers: MutationResolvers = {
     const creator: PackageCreator = {
       ...args,
       isCustom: false,
-      tags: args.tags || []
+      tags: args.tags || [],
     };
     return packageService.create(creator);
   },
@@ -63,14 +63,15 @@ export const resolvers: MutationResolvers = {
       tags: isDefined(args.tags) ? args.tags : current.tags,
       defaultTag: isDefined(args.defaultTag) ? args.defaultTag : current.defaultTag,
       reference: args.reference === null ? null : args.reference,
-      image: args.image === null ? null : args.image
+      image: args.image === null ? null : args.image,
     };
     return packageService.edit(args.id, modifier);
   },
-  createDonation: async (parent, { donationInput, language }, { donationManagerService }) => {
+  createDonation: async (parent, { donationInput, language }, { donationManagerService, ip }) => {
     const donationCreator: DonationCreator = {
       ...donationInput,
-      parentDonationId: undefined
+      ip,
+      parentDonationId: undefined,
     };
     return donationManagerService.createDonation(donationCreator, language);
   },
@@ -84,13 +85,13 @@ export const resolvers: MutationResolvers = {
     return subscriptionService.edit(modifier.id, { status: modifier.status });
   },
 
-  chargeSubscription: (parent, { id }, { payuService, user }) => {
+  chargeSubscription: (parent, { id }, { iyzicoService, user }) => {
     if (!user) throw new AuthenticationRequired();
-    return payuService.chargeUsingToken(id);
+    return iyzicoService.chargeUsingToken(id);
   },
 
   cancelSubscription: (parent, { id }, { subscriptionService, user }) => {
     if (!user) throw new AuthenticationRequired();
     return subscriptionService.cancelSubscription(id);
-  }
+  },
 };

@@ -26,7 +26,7 @@ export abstract class BaseMongoService<
   protected async createEntity(creator: Creator): Promise<WithId<Entity>> {
     return ({
       ...creator,
-      ...this.generateCommonFields()
+      ...this.generateCommonFields(),
     } as any) as WithId<Entity>;
   }
 
@@ -35,7 +35,7 @@ export abstract class BaseMongoService<
       _id: new ObjectId(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      isActive: true
+      isActive: true,
     };
   };
 
@@ -111,7 +111,7 @@ export abstract class BaseMongoService<
     const next: WithId<Entity> = {
       ...current,
       ...modifier,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
     // TODO: remove as any when typescript bug is solved
     await this.collection.updateOne({ _id: current._id } as any, { $set: next } as any);

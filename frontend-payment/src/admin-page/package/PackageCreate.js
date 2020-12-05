@@ -5,26 +5,24 @@ import {
   SimpleFormIterator,
   SelectInput,
   TextInput,
-  LongTextInput,
-  BooleanInput
+  BooleanInput,
 } from "react-admin";
 
 import {
   languageChoices,
   repeatIntervalChoices,
-  currencyChoices
+  currencyChoices,
 } from "../../utils";
 
 import {
   StyledTextInput,
-  StyledLongTextInput,
   StyledSelectInput,
   StyledNumberInput,
   StyledArrayInput,
-  StyledDivider
+  StyledDivider,
 } from "./PackageFormComponents";
 
-const PackageCreate = props => (
+const PackageCreate = (props) => (
   <Create {...props}>
     <SimpleForm>
       <h2>Package Information</h2>
@@ -35,7 +33,8 @@ const PackageCreate = props => (
         choices={languageChoices}
       />
       <StyledTextInput source="defaultTag.name" label="Default Package Name" />
-      <StyledLongTextInput
+      <StyledTextInput
+        multiline
         source="defaultTag.description"
         label="Default Package Description"
       />
@@ -51,7 +50,7 @@ const PackageCreate = props => (
             choices={languageChoices}
           />
           <TextInput source="name" label="Name" />
-          <LongTextInput source="description" label="Description" />
+          <TextInput multiline source="description" label="Description" />
         </SimpleFormIterator>
       </StyledArrayInput>
       <h2 style={{ marginTop: 30 }}>Price Information</h2>

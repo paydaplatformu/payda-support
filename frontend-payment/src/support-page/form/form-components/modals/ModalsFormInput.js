@@ -15,22 +15,16 @@ const modalLinkStyles = {
 };
 
 const ModalsFormInput = props => {
-  const [termsOfServiceModalVisible, setTermsOfServiceModalVisible] = useState(
-    false,
-  );
+  const [termsOfServiceModalVisible, setTermsOfServiceModalVisible] = useState(false);
 
-  const [returnPolicyModalVisible, setReturnPolicyModalVisible] = useState(
-    false,
-  );
+  const [returnPolicyModalVisible, setReturnPolicyModalVisible] = useState(false);
 
   const { translate, langCode } = useContext(TranslationContext);
 
-  const validateCheckBox = (rule, value, callback) => {
+  const validateCheckBox = async (rule, value, callback) => {
     if (!value) {
-      callback(new Error(translate("agreements_accepted_validation_error")));
+      throw new Error(translate("agreements_accepted_validation_error"));
     }
-
-    callback();
   };
 
   return (
@@ -39,37 +33,31 @@ const ModalsFormInput = props => {
         visible={termsOfServiceModalVisible}
         dismissModal={() => setTermsOfServiceModalVisible(false)}
       />
-      <ReturnPolicyModal
-        visible={returnPolicyModalVisible}
-        dismissModal={() => setReturnPolicyModalVisible(false)}
-      />
-      <Form.Item style={{ marginBottom: 40 }}>
-        {props.getFieldDecorator("agreementsAccepted", {
-          valuePropName: "checked",
-          rules: [
-            {
-              required: true,
-              validator: validateCheckBox,
-            },
-          ],
-        })(<Checkbox />)}
-        <span>
-          {langCode === LANG_CODES.EN ? translate("read_and_accept") : null}
-          <span
-            style={modalLinkStyles}
-            onClick={() => setTermsOfServiceModalVisible(true)}
-          >
-            {translate("terms_and_conditions")}
+      <ReturnPolicyModal visible={returnPolicyModalVisible} dismissModal={() => setReturnPolicyModalVisible(false)} />
+      <Form.Item
+        name="agreementsAccepted"
+        valuePropName="checked"
+        style={{ marginBottom: 20 }}
+        rules={[
+          {
+            required: true,
+            validator: validateCheckBox,
+          },
+        ]}
+      >
+        <Checkbox>
+          <span>
+            {langCode === LANG_CODES.EN ? translate("read_and_accept") : null}
+            <span style={modalLinkStyles} onClick={() => setTermsOfServiceModalVisible(true)}>
+              {translate("terms_and_conditions")}
+            </span>
+            {` ${translate("and")} `}
+            <span style={modalLinkStyles} onClick={() => setReturnPolicyModalVisible(true)}>
+              {translate("refund_policy")}
+            </span>
+            {langCode === LANG_CODES.TR ? translate("read_and_accept") : null}
           </span>
-          {` ${translate("and")} `}
-          <span
-            style={modalLinkStyles}
-            onClick={() => setReturnPolicyModalVisible(true)}
-          >
-            {translate("refund_policy")}
-          </span>
-          {langCode === LANG_CODES.TR ? translate("read_and_accept") : null}
-        </span>
+        </Checkbox>
       </Form.Item>
     </>
   );

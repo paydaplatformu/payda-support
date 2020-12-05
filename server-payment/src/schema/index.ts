@@ -20,13 +20,14 @@ import { resolvers as queryResolver, typeDef as Query } from "./Query";
 import { resolvers as mutationResolver, typeDef as Mutation } from "./Mutation";
 import { makeExecutableSchema } from "graphql-tools";
 import { SchemaDefinition } from "./SchemaDefinition";
+import { defaultTo } from "lodash";
 
 const resolvers = {
   Query: queryResolver,
   Mutation: mutationResolver,
   Date: dateResolver,
   Package: packageResolvers,
-  JSON: jsonResolver
+  JSON: jsonResolver,
 };
 
 const typeDefs = [
@@ -50,7 +51,7 @@ const typeDefs = [
   Donation,
   Subscription,
   ListMetadata,
-  ChargableSubscription
+  ChargableSubscription,
 ];
 
 export default makeExecutableSchema({ typeDefs, resolvers });

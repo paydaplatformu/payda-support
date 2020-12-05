@@ -3,18 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^3.16.3",
-    "apollo-boost": "^0.3.1",
-    "graphql": "^14.2.1",
+    "antd": "^4.9.1",
+    "apollo-boost": "^0.4.9",
+    "dangerously-set-html-content": "^1.0.8",
+    "graphql": "^15.4.0",
     "qs": "^6.7.0",
-    "ra-data-graphql-simple": "^2.8.5",
-    "react": "16.8.6",
-    "react-admin": "^2.8.5",
-    "react-apollo": "^2.5.4",
-    "react-dom": "16.8.6",
+    "ra-data-graphql-simple": "^3.10.2",
+    "react": "17.0.1",
+    "react-admin": "^3.10.3",
+    "react-apollo": "^3.1.5",
+    "react-dom": "17.0.1",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8",
-    "styled-components": "^4.2.0"
+    "react-scripts": "4.0.1",
+    "styled-components": "^5.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,6 +37,14 @@
     "yarn": "^1.12.3"
   },
   "devDependencies": {
-    "terser": "^3.14.1"
+    "http-proxy-middleware": "^1.0.6",
+    "terser": "^5.5.1"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "printWidth": 120,
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": false
   }
 }

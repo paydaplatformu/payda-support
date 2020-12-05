@@ -20,7 +20,6 @@ export const typeDef = gql`
     customRepeatInterval: RepeatInterval
     notes: String
     quantity: Int!
-    usingAmex: Boolean!
   }
 
   type Donation {
@@ -31,8 +30,9 @@ export const typeDef = gql`
     notes: String
     paymentConfirmed: Boolean!
     date: Date!
-    usingAmex: Boolean!
     quantity: Int!
+
+    ip: String
 
     "If the donation is created because of a subscription, this will point to the original user donation"
     parentDonationId: String
@@ -42,7 +42,6 @@ export const typeDef = gql`
     donation: Donation!
     package: Package!
     subscription: Subscription
-    formUrl: String!
-    formFields: [KeyValue!]!
+    formHtmlTags: [String!]!
   }
 `;

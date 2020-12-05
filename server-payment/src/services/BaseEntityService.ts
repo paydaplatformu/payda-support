@@ -15,10 +15,7 @@ export abstract class BaseEntityService<Creator> {
 
     const results = await Promise.all(promises);
 
-    const errors = chain(results)
-      .filter(isDefined)
-      .flatten()
-      .value();
+    const errors = chain(results).filter(isDefined).flatten().value();
 
     if (errors.length === 0) return null;
     return errors;

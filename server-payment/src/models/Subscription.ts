@@ -4,7 +4,7 @@ import {
   Subscription,
   SubscriptionStatus,
   DeactivationReason,
-  PaymentProcess
+  PaymentProcess,
 } from "../generated/graphql";
 
 export interface SubscriptionCreator {
@@ -38,6 +38,7 @@ export interface CancelledSubscription extends Subscription {
 
 export interface SubscriptionBaseEntity {
   _id: ObjectId;
+  status: SubscriptionStatus.Created | SubscriptionStatus.Running | SubscriptionStatus.Cancelled;
   paymentToken: string | null;
   packageId: ObjectId;
   donationId: ObjectId;

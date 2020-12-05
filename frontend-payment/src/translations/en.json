@@ -1,6 +1,5 @@
 {
   "support_now": "Support Now!",
-  "pay_using_amex": "Check this box if you'd like to use American Express for payment. Otherwise leave empty.",
   "email_address": "Email Address",
   "supporter_name": "Supporter Name",
   "quantity": "Quantity",
@@ -15,7 +14,6 @@
   "fullname_validation_error": "Please enter your full name",
   "email_validation_error": "Please enter a valid email address",
   "agreements_accepted_validation_error": "You have to accept these to make a donation",
-  "redirection_message": "You are being redirected to PayU",
   "package_details": "Please click to see details of the packages",
   "notes": "Additional notes for your donation",
   "custom_amount_placeholder": "Amount of donation",
@@ -24,6 +22,8 @@
   "thank_you_page_title": "Thank You!",
   "thank_you_page_description": "We'd like to say thank you for support and donation.",
   "thank_you_page_contact": "If you have any question or requests including cancellation you can contact us at info@paydaplatformu.org",
+  "error_page_title": "An error has occurred",
+  "error_page_contact": "Please try again or contact us at info@paydaplatformu.org",
   "recurring_monthly": "(Once per month)",
   "recurring_yearly": "(Once per year)",
   "recurring_a": "(Test interval a)",

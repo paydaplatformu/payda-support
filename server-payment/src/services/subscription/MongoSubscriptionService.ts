@@ -6,7 +6,7 @@ import {
   subHours,
   subMinutes,
   subMonths,
-  subYears
+  subYears,
 } from "date-fns";
 import { injectable } from "inversify";
 import { ObjectId, WithId } from "mongodb";
@@ -14,9 +14,10 @@ import { PaginationSettings } from "../../models/PaginationSettings";
 import { SortingSettings } from "../../models/SortingSettings";
 import {
   RunningSubscription,
+  SubscriptionBaseEntity,
   SubscriptionCreator,
   SubscriptionEntity,
-  SubscriptionModifier
+  SubscriptionModifier,
 } from "../../models/Subscription";
 import { SubscriptionService } from "./SubscriptionService";
 import { Validator } from "../../models/Validator";
@@ -27,7 +28,7 @@ import {
   DeactivationReason,
   Subscription,
   SubscriptionFilter,
-  ChargableSubscriptionFilter
+  ChargableSubscriptionFilter,
 } from "../../generated/graphql";
 import { isDefined } from "../../utilities/helpers";
 
@@ -46,7 +47,7 @@ export class MongoSubscriptionService
     packageIds: string[]
   ): object[] => {
     const now = new Date();
-    const packageIdsConverted = packageIds.map(id => new ObjectId(id));
+    const packageIdsConverted = packageIds.map((id) => new ObjectId(id));
     switch (repeatInterval) {
       case RepeatInterval.Yearly:
         return this.generateDateWithPackageIdFilters(packageIdsConverted, now, subYears, startOfYear);
@@ -80,25 +81,25 @@ export class MongoSubscriptionService
   ): object[] => {
     return [
       {
-        status: SubscriptionStatus.Running
+        status: SubscriptionStatus.Running,
       },
       { packageId: { $in: packageIds } },
       {
         processHistory: {
           $exists: true,
           $ne: [],
-          $elemMatch: { date: { $lt: lessThan, $gte: greaterThanOrEqual }, isSuccess: true }
-        }
+          $elemMatch: { date: { $lt: lessThan, $gte: greaterThanOrEqual }, isSuccess: true },
+        },
       },
       {
         processHistory: {
           $not: {
             $exists: true,
             $ne: [],
-            $elemMatch: { date: { $gt: lessThan } }
-          }
-        }
-      }
+            $elemMatch: { date: { $gt: lessThan } },
+          },
+        },
+      },
     ];
   };
 
@@ -110,18 +111,18 @@ export class MongoSubscriptionService
 
   protected creatorValidator: Validator<SubscriptionCreator> = {};
 
-  protected toModel = (entity: WithId<SubscriptionEntity>): Subscription => {
+  protected toModel = (entity: WithId<SubscriptionBaseEntity>): Subscription => {
     return {
       id: entity._id.toString(),
       packageId: entity.packageId.toString(),
       donationId: entity.donationId.toString(),
       processHistory: entity.processHistory,
-      deactivationReason: entity.deactivationReason as any,
-      status: entity.status as any,
+      deactivationReason: entity.deactivationReason,
+      status: entity.status,
       language: entity.language,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
-      hasPaymentToken: entity.paymentToken !== null
+      hasPaymentToken: entity.paymentToken !== null,
     };
   };
 
@@ -135,7 +136,7 @@ export class MongoSubscriptionService
       packageId: new ObjectId(creator.packageId),
       processHistory: [],
       deactivationReason: null,
-      paymentToken: null
+      paymentToken: null,
     };
   }
 
@@ -195,8 +196,8 @@ export class MongoSubscriptionService
     return [
       status !== undefined ? { status } : undefined,
       hasPaymentToken !== true ? undefined : { paymentToken: { $exists: true, $ne: null } },
-      isDefined(ids) ? { _id: { $in: ids.map(id => new ObjectId(id)) } } : undefined
-    ].filter(el => el !== undefined) as any;
+      isDefined(ids) ? { _id: { $in: ids.map((id) => new ObjectId(id)) } } : undefined,
+    ].filter((el) => el !== undefined) as any;
   };
 
   public isRunningSubscription = (subscription: Subscription): subscription is RunningSubscription =>

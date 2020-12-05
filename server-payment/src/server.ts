@@ -13,7 +13,6 @@ import { production, test } from "./container";
 import { errorHandler } from "./middleware/errorHandler";
 import { Authentication } from "./models/Authentication";
 import { DonationService } from "./services/donation/DonationService";
-import { PayuService } from "./services/payu/PayuService";
 import { UserService } from "./services/user/UserService";
 import schema from "./schema";
 import { TYPES } from "./types";
@@ -22,6 +21,7 @@ import { isNonProduction } from "./utilities/helpers";
 import axios from "axios";
 import { PackageService } from "./services/package/PackageService";
 import { RepeatInterval } from "./generated/graphql";
+import { IyzicoService } from "./services/iyzico/IyzicoService";
 
 const STATIC_DIR = path.resolve(__dirname, "./static");
 const MOCK_HTML = fs.readFileSync(`${STATIC_DIR}/mock.html`).toString("utf-8");
@@ -51,12 +51,12 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
 
     const userService = container.get<UserService>(TYPES.UserService);
     const model = container.get<Authentication>(TYPES.Authentication);
-    const payuService = container.get<PayuService>(TYPES.PayuService);
     const donationService = container.get<DonationService>(TYPES.DonationService);
     const packageService = container.get<PackageService>(TYPES.PackageService);
+    const iyzicoService = container.get<IyzicoService>(TYPES.IyzicoService);
 
     const initializationPromises = Object.values(TYPES)
-      .flatMap(type => container.getAll(type))
+      .flatMap((type) => container.getAll(type))
       .filter((instance: any) => instance.initiate)
       .map((instance: any) => instance.initiate());
 
@@ -76,13 +76,13 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
         console.error(error.extensions.exception);
         delete error.extensions.exception;
         return error;
-      }
+      },
     });
 
     const app: Express = express();
 
     const oauth = new OAuthServer({
-      model
+      model,
     });
 
     /**
@@ -101,15 +101,6 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     app.post("/oauth2/token", async (req, res) => {
       const response = await oauth.token(new Request(req), new Response(res));
       res.send(response);
-    });
-
-    /**
-     * Payu Endpoints
-     */
-    app.post("/notification", async (req, res) => {
-      const { returnHash, donationId } = await payuService.verifyNotification(req.body);
-      await donationService.confirmPayment(donationId);
-      res.send(returnHash);
     });
 
     /**
@@ -145,10 +136,10 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
               HASH: "somehash",
               REFNOEXT: donationId,
               TOKEN_HASH: isRepeating ? "mock_token" : undefined,
-              mockPayment: true
+              mockPayment: true,
             };
             await axios.post(`http://${host}:${port}/notification`, dummyInput);
-            return res.redirect(config.get("payu.backRef"));
+            return res.redirect(config.get("iyzico.callbackUrl"));
           }
           default:
             return res.send("Error");
@@ -157,10 +148,50 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     }
 
     /**
+     * Iyzico routes
+     */
+
+    app.post("/iyzico/form-callback", async (req, res) => {
+      const token = req.body.token;
+      const result = await iyzicoService.retrievePaymentResult(token);
+      console.log({ result });
+      if (result.status !== "success") {
+        return res.redirect("/error");
+      }
+      return res.redirect("/thank-you");
+    });
+
+    app.post("/iyzico/webhook", async (req, res) => {
+      console.log(req.body);
+      const received = req.header("X-IYZ-SIGNATURE");
+      const expected = iyzicoService.getWebhookSignature(req.body.iyziEventType, req.body.token);
+
+      if (req.body.paymentId && !req.body.token) {
+        return res.status(201).send();
+      }
+
+      if (!received || received !== expected) {
+        return res.status(400).json({ message: "Incorrect signature" });
+      }
+
+      console.log("webook success");
+      const result = await iyzicoService.retrievePaymentResult(req.body.token);
+      console.log({ result });
+      const donationId = iyzicoService.extractDonationIdFromReference(result.basketId);
+      const donation = await donationService.getById(donationId);
+      if (!donation) throw new Error("Donation id not found.");
+      await donationService.confirmPayment(donationId);
+      return res.status(201).send();
+    });
+
+    /**
      * Rest of the routes are managed by frontend
      */
     app.use(express.static(path.resolve(__dirname, "../frontend-dist")));
     app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "../frontend-dist", "index.html"));
+    });
+    app.post("*", (req, res) => {
       res.sendFile(path.resolve(__dirname, "../frontend-dist", "index.html"));
     });
 

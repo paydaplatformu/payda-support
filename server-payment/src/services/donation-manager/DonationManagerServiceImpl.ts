@@ -4,7 +4,6 @@ import { DonationCreator } from "../../models/Donation";
 import { DonationManagerService } from "./DonationManagerService";
 import { DonationService } from "../donation/DonationService";
 import { PackageService } from "../package/PackageService";
-import { PayuService } from "../payu/PayuService";
 import { SubscriptionService } from "../subscription/SubscriptionService";
 import { TYPES } from "../../types";
 import {
@@ -13,8 +12,9 @@ import {
   LanguageCode,
   Subscription,
   DonationCreationResult,
-  Package
+  Package,
 } from "../../generated/graphql";
+import { IyzicoService } from "../iyzico/IyzicoService";
 
 @injectable()
 export class DonationManagerServiceImpl implements DonationManagerService {
@@ -24,8 +24,8 @@ export class DonationManagerServiceImpl implements DonationManagerService {
   @inject(TYPES.PackageService)
   private packageService: PackageService = null as any;
 
-  @inject(TYPES.PayuService)
-  private payuService: PayuService = null as any;
+  @inject(TYPES.IyzicoService)
+  private iyzicoService: IyzicoService = null as any;
 
   @inject(TYPES.SubscriptionService)
   private subscriptionService: SubscriptionService = null as any;
@@ -56,19 +56,19 @@ export class DonationManagerServiceImpl implements DonationManagerService {
         customizationConfig: {
           allowPriceAmountCustomization: false,
           allowPriceCurrencyCustomization: false,
-          allowRepeatIntervalCustomization: false
+          allowRepeatIntervalCustomization: false,
         },
         defaultTag: pkg.defaultTag,
         image: pkg.image,
         price: {
           amount: priceAmount,
-          currency: priceCurrency
+          currency: priceCurrency,
         },
         priority: pkg.priority,
         reference: pkg.reference,
         repeatInterval,
         tags: pkg.tags,
-        isCustom: true
+        isCustom: true,
       });
     }
 
@@ -84,7 +84,7 @@ export class DonationManagerServiceImpl implements DonationManagerService {
       return this.subscriptionService.create({
         donationId: donation.id,
         packageId: pkg.id,
-        language
+        language,
       });
     }
     return null;
@@ -97,16 +97,15 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     const pkg = await this.getPackageForDonationCreator(donationCreator);
     const donation = await this.donationService.create({
       ...donationCreator,
-      packageId: pkg.id
+      packageId: pkg.id,
     });
     const subscription = await this.getSubscription(donation, pkg, language);
-    const formFields = await this.payuService.getFormContents(donation, pkg, language);
+    const formHtmlTags = await this.iyzicoService.getFormContents(donation, pkg, language);
     return {
       donation,
       subscription,
-      formUrl: config.get("payu.luUrl"),
-      formFields,
-      package: pkg
+      formHtmlTags,
+      package: pkg,
     };
   };
 }

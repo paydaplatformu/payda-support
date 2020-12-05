@@ -1,11 +1,9 @@
 import qs from "qs";
-import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR } from "react-admin";
-import { baseURL } from "../constants";
 
-export default (type, params) => {
-  if (type === AUTH_LOGIN) {
+const authProvider = {
+  login: params => {
     const { username, password } = params;
-    const request = new Request(`${baseURL}/oauth2/token`, {
+    const request = new Request("/oauth2/token", {
       method: "POST",
       body: qs.stringify({
         grant_type: "password",
@@ -13,11 +11,11 @@ export default (type, params) => {
         client_secret: "123456",
         username,
         password,
-        scope: "admin"
+        scope: "admin",
       }),
       headers: new Headers({
-        "Content-Type": "application/x-www-form-urlencoded"
-      })
+        "Content-Type": "application/x-www-form-urlencoded",
+      }),
     });
     return fetch(request)
       .then(response => {
@@ -29,21 +27,21 @@ export default (type, params) => {
       .then(({ accessToken }) => {
         localStorage.setItem("accessToken", accessToken);
       });
-  }
-  if (type === AUTH_ERROR) {
-    if (params.graphQLErrors) {
-      const authenticationError = params.graphQLErrors.find(
-        error => error.extensions.code === "UNAUTHENTICATED"
-      );
-      if (authenticationError) {
-        localStorage.removeItem("accessToken");
-        return Promise.reject();
-      }
+  },
+  checkError: error => {
+    if (error && error.message.includes("Authorization needed to access this function.")) {
+      localStorage.removeItem("accessToken");
+      return Promise.reject();
     }
-  }
-  if (type === AUTH_LOGOUT) {
+    return Promise.resolve();
+  },
+  checkAuth: params => (localStorage.getItem("accessToken") ? Promise.resolve() : Promise.reject()),
+  logout: () => {
     localStorage.removeItem("accessToken");
     return Promise.resolve();
-  }
-  return Promise.resolve();
+  },
+  getIdentity: () => Promise.resolve(),
+  getPermissions: params => Promise.resolve(),
 };
+
+export default authProvider;
