@@ -6,7 +6,6 @@ import { client } from "./dataProvider";
 import { DonationList, DonationShow } from "./donation";
 import { SubscriptionList, SubscriptionShow } from "./subscription";
 import { ChargableSubscriptionList, ChargableSubscriptionShow } from "./chargable-subscription";
-import i18nProvider from "./i18nProvider";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 
 class AdminPage extends Component {
