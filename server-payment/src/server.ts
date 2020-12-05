@@ -184,9 +184,10 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
         return res.status(201).send();
       }
 
-      if (!received || received !== expected) {
-        return res.status(400).json({ message: "Incorrect signature" });
-      }
+      // FIXME: iyzico sends empty header
+      // if (!received || received !== expected) {
+      //   return res.status(400).json({ message: "Incorrect signature" });
+      // }
 
       console.log("webook success");
       const result = await iyzicoService.retrievePaymentResult(req.body.token);
