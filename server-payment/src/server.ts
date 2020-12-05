@@ -17,7 +17,7 @@ import { UserService } from "./services/user/UserService";
 import schema from "./schema";
 import { TYPES } from "./types";
 import { bindMongoDb, createAdminUser, createGraphQLContext } from "./utilities/server";
-import { isNonProduction } from "./utilities/helpers";
+import { isNonProduction, isProduction } from "./utilities/helpers";
 import axios from "axios";
 import { PackageService } from "./services/package/PackageService";
 import { RepeatInterval } from "./generated/graphql";
@@ -94,13 +94,15 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
     app.use(bodyParser.urlencoded({ extended: false }));
     server.applyMiddleware({ app });
 
-    app.use((req, res, next) => {
-      if (req.secure) {
-        next();
-      } else {
-        res.redirect("https://" + req.headers.host + req.url);
-      }
-    });
+    if (isProduction()) {
+      app.use((req, res, next) => {
+        if (req.secure) {
+          next();
+        } else {
+          res.redirect("https://" + req.headers.host + req.url);
+        }
+      });
+    }
 
     app.use(errorHandler);
 
