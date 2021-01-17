@@ -36,7 +36,7 @@ export class MongoPackageService
       onlyActive === true ? { isActive: true } : undefined,
       onlyOriginal === true ? { isCustom: false } : undefined,
       isDefined(ids) ? { _id: { $in: ids.map((id) => new ObjectId(id)) } } : undefined,
-      repeatInterval !== undefined ? { repeatInterval } : undefined,
+      repeatInterval !== undefined ? { "recurrenceConfig.repeatInterval": repeatInterval } : undefined,
       amount !== undefined ? { "price.amount": amount } : undefined,
       currency !== undefined ? { "price.currency": currency } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
@@ -44,6 +44,9 @@ export class MongoPackageService
   };
 
   protected toModel = (entity: WithId<PackageEntity>): Package => {
+    if (!entity.recurrenceConfig) {
+      console.log(entity._id);
+    }
     return {
       id: entity._id.toString(),
       createdAt: entity.createdAt,
@@ -51,11 +54,11 @@ export class MongoPackageService
       image: entity.image,
       isActive: entity.isActive,
       price: entity.price,
+      recurrenceConfig: entity.recurrenceConfig,
       customizationConfig: entity.customizationConfig,
       isCustom: entity.isCustom,
       priority: entity.priority,
       reference: entity.reference,
-      repeatInterval: entity.repeatInterval,
       tags: entity.tags,
       updatedAt: entity.updatedAt,
       donationCount: null as never,
@@ -63,7 +66,7 @@ export class MongoPackageService
   };
 
   public getByRepeatInterval = (repeatInterval: RepeatInterval): Promise<Package[]> => {
-    return this.getAll({ repeatInterval }, null, null, []);
+    return this.getAll({ "recurrenceConfig.repeatInterval": repeatInterval } as any, null, null, []);
   };
 
   public getDefaultFilters = (): Partial<PackageFilter> => {

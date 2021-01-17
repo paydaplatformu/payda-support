@@ -11,23 +11,15 @@ import {
   SelectField,
   SelectInput,
   TextField,
-  TextInput
+  TextInput,
 } from "react-admin";
-import {
-  currencyChoices,
-  defaultDateFieldProps,
-  repeatIntervalChoices
-} from "../../utils";
+import { currencyChoices, defaultDateFieldProps, repeatIntervalChoices } from "../../utils";
 
 const PackageFilter = props => (
   <Filter {...props}>
     <TextInput label="Search" source="search" alwaysOn />
     <BooleanInput label="Only Active" source="onlyActive" alwaysOn />
-    <SelectInput
-      label="Repeat Interval"
-      source="repeatInterval"
-      choices={repeatIntervalChoices}
-    />
+    <SelectInput label="Repeat Interval" source="recurrenceConfig.repeatInterval" choices={repeatIntervalChoices} />
     <NumberInput label="Amount" source="amount" />
     <SelectInput label="Currency" source="currency" choices={currencyChoices} />
     <BooleanInput label="Only Original" source="onlyOriginal" alwaysOn />
@@ -49,23 +41,12 @@ const PackageList = props => (
       <NumberField source="priority" />
       <TextField label="Name" source="defaultTag.name" />
       <NumberField label="Donations" source="donationCount" />
-      <SelectField
-        label="Repeat Interval"
-        source="repeatInterval"
-        choices={repeatIntervalChoices}
-      />
+      <NumberField label="Repeat Count" source="recurrenceConfig.count" />
+      <SelectField label="Repeat Interval" source="recurrenceConfig.repeatInterval" choices={repeatIntervalChoices} />
       <TextField label="Price" source="price.amount" />
       <TextField label="Currency" source="price.currency" />
-      <DateField
-        {...defaultDateFieldProps}
-        label="Created"
-        source="createdAt"
-      />
-      <DateField
-        {...defaultDateFieldProps}
-        label="Last Updated"
-        source="updatedAt"
-      />
+      <DateField {...defaultDateFieldProps} label="Created" source="createdAt" />
+      <DateField {...defaultDateFieldProps} label="Last Updated" source="updatedAt" />
       <BooleanField label="Custom" source="isCustom" />
       <BooleanField label="Active" source="isActive" />
     </Datagrid>

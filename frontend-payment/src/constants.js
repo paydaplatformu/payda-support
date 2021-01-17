@@ -4,14 +4,8 @@ export const REPEAT_INTERVAL = {
   NONE: "NONE",
   MONTHLY: "MONTHLY",
   YEARLY: "YEARLY",
-  TEST_A: "TEST_A",
-  TEST_B: "TEST_B",
-};
-
-export const SUBSCRIPTION_STATUS = {
-  CREATED: "CREATED",
-  RUNNING: "RUNNING",
-  CANCELLED: "CANCELLED",
+  DAILY: "DAILY",
+  WEEKLY: "WEEKLY",
 };
 
 export const CURRENCY = {
@@ -27,14 +21,14 @@ export const LANG_CODES = {
 export const RECURRENCY_TRANSLATION_KEYS = {
   MONTHLY: "recurring_monthly",
   YEARLY: "recurring_yearly",
-  TEST_A: "recurring_a",
-  TEST_B: "recurring_b",
+  DAILY: "recurring_daily",
+  WEEKLY: "recurring_weekly",
 };
 
 export const REPEAT_INTERVAL_TRANSLATION_KEYS = {
   MONTHLY: "monthly",
   YEARLY: "yearly",
   NONE: "non_recurrent",
-  TEST_A: "recurring_a",
-  TEST_B: "recurring_b",
+  DAILY: "daily",
+  WEEKLY: "weekly",
 };

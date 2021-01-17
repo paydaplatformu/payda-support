@@ -26,9 +26,11 @@
   "error_page_contact": "Tekrar deneyebilir veya bize info@paydaplatformu.org adresinden ulaşabilirsiniz",
   "recurring_monthly": "(Ayda bir defa)",
   "recurring_yearly": "(Yılda bir defa)",
-  "recurring_a": "(Test aralığı a)",
-  "recurring_b": "(Test aralığı b)",
+  "recurring_daily": "(Günde bir defa)",
+  "recurring_weekly": "(Haftada bir defa)",
   "monthly": "Aylık",
   "yearly": "Yıllık",
+  "daily": "Günlük",
+  "weekly": "Haftalık",
   "non_recurrent": "Tekrarsız"
 }

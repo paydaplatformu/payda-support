@@ -4,8 +4,6 @@ import { Admin, Resource } from "react-admin";
 import authProvider from "./authProvider";
 import { client } from "./dataProvider";
 import { DonationList, DonationShow } from "./donation";
-import { SubscriptionList, SubscriptionShow } from "./subscription";
-import { ChargableSubscriptionList, ChargableSubscriptionShow } from "./chargable-subscription";
 import { PackageCreate, PackageEdit, PackageList } from "./package";
 
 class AdminPage extends Component {
@@ -24,8 +22,6 @@ class AdminPage extends Component {
       <Admin dataProvider={this.state.provider} authProvider={authProvider}>
         <Resource name="Donation" list={DonationList} show={DonationShow} />
         <Resource name="Package" list={PackageList} edit={PackageEdit} create={PackageCreate} />
-        <Resource name="Subscription" list={SubscriptionList} show={SubscriptionShow} />
-        <Resource name="ChargableSubscription" list={ChargableSubscriptionList} show={ChargableSubscriptionShow} />
       </Admin>
     );
   }

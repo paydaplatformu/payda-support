@@ -26,7 +26,10 @@ const query = gql`
         allowPriceCurrencyCustomization
         allowRepeatIntervalCustomization
       }
-      repeatInterval
+      recurrenceConfig {
+        count
+        repeatInterval
+      }
     }
     availableCurrencies: __type(name: "Currency") {
       enumValues {
@@ -76,10 +79,7 @@ export const PackageContextProvider = ({ children }) => {
               availableCurrencies: data.availableCurrencies && data.availableCurrencies.enumValues.map(c => c.name),
               availableRepeatIntervals:
                 data.availableRepeatIntervals &&
-                data.availableRepeatIntervals.enumValues
-                  .map(c => c.name)
-                  .filter(c => !!c)
-                  .filter(c => !c.toLowerCase().includes("test")),
+                data.availableRepeatIntervals.enumValues.map(c => c.name).filter(c => !!c),
               selectedPackage: state && state.selectedPackage,
               selectPackage,
             }}

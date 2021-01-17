@@ -19,11 +19,11 @@ export const typeDef = gql`
     reference: String
     createdAt: Date!
     updatedAt: Date!
-    repeatInterval: RepeatInterval!
     donationCount: Int!
     image: String
     price: MonetaryAmount!
     customizationConfig: PackageCustomizationConfig!
+    recurrenceConfig: PackageRecurrenceConfig!
     isCustom: Boolean!
     priority: Int!
     tags: [PackageTag!]!

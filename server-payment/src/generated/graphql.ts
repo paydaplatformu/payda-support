@@ -1,5 +1,4 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from "graphql";
-import { RunningSubscription } from "./../models/Subscription";
 import { IContext } from "../schema/context";
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -22,10 +21,10 @@ export type Scalars = {
 
 export enum RepeatInterval {
   None = "NONE",
+  Daily = "DAILY",
+  Weekly = "WEEKLY",
   Monthly = "MONTHLY",
   Yearly = "YEARLY",
-  TestA = "TEST_A",
-  TestB = "TEST_B",
 }
 
 export enum Currency {
@@ -61,12 +60,6 @@ export enum DeactivationReason {
   UserRequest = "USER_REQUEST",
 }
 
-export enum SubscriptionStatus {
-  Created = "CREATED",
-  Running = "RUNNING",
-  Cancelled = "CANCELLED",
-}
-
 export type KeyValue = {
   readonly __typename?: "KeyValue";
   readonly key: Scalars["String"];
@@ -99,10 +92,15 @@ export type PackageCustomizationConfig = {
   readonly allowRepeatIntervalCustomization: Scalars["Boolean"];
 };
 
-export type SubscriptionChargeResult = {
-  readonly __typename?: "SubscriptionChargeResult";
-  readonly status: Scalars["Boolean"];
-  readonly body: Scalars["String"];
+export type PackageRecurrenceConfigInput = {
+  readonly repeatInterval: RepeatInterval;
+  readonly count: Scalars["Int"];
+};
+
+export type PackageRecurrenceConfig = {
+  readonly __typename?: "PackageRecurrenceConfig";
+  readonly repeatInterval: RepeatInterval;
+  readonly count: Scalars["Int"];
 };
 
 export type Query = {
@@ -113,12 +111,6 @@ export type Query = {
   readonly Donation: Maybe<Donation>;
   readonly allDonations: ReadonlyArray<Donation>;
   readonly _allDonationsMeta: Maybe<ListMetadata>;
-  readonly Subscription: Maybe<Subscription>;
-  readonly allSubscriptions: ReadonlyArray<Subscription>;
-  readonly _allSubscriptionsMeta: Maybe<ListMetadata>;
-  readonly ChargableSubscription: Maybe<ChargableSubscription>;
-  readonly allChargableSubscriptions: ReadonlyArray<ChargableSubscription>;
-  readonly _allChargableSubscriptionsMeta: Maybe<ListMetadata>;
 };
 
 export type QueryPackageArgs = {
@@ -161,62 +153,19 @@ export type Query_AllDonationsMetaArgs = {
   filter: Maybe<DonationFilter>;
 };
 
-export type QuerySubscriptionArgs = {
-  id: Scalars["String"];
-};
-
-export type QueryAllSubscriptionsArgs = {
-  page: Maybe<Scalars["Int"]>;
-  perPage: Maybe<Scalars["Int"]>;
-  sortField: Maybe<Scalars["String"]>;
-  sortOrder: Maybe<Scalars["String"]>;
-  filter: Maybe<SubscriptionFilter>;
-};
-
-export type Query_AllSubscriptionsMetaArgs = {
-  page: Maybe<Scalars["Int"]>;
-  perPage: Maybe<Scalars["Int"]>;
-  sortField: Maybe<Scalars["String"]>;
-  sortOrder: Maybe<Scalars["String"]>;
-  filter: Maybe<SubscriptionFilter>;
-};
-
-export type QueryChargableSubscriptionArgs = {
-  id: Scalars["String"];
-};
-
-export type QueryAllChargableSubscriptionsArgs = {
-  page: Maybe<Scalars["Int"]>;
-  perPage: Maybe<Scalars["Int"]>;
-  sortField: Maybe<Scalars["String"]>;
-  sortOrder: Maybe<Scalars["String"]>;
-  filter: ChargableSubscriptionFilter;
-};
-
-export type Query_AllChargableSubscriptionsMetaArgs = {
-  page: Maybe<Scalars["Int"]>;
-  perPage: Maybe<Scalars["Int"]>;
-  sortField: Maybe<Scalars["String"]>;
-  sortOrder: Maybe<Scalars["String"]>;
-  filter: ChargableSubscriptionFilter;
-};
-
 export type Mutation = {
   readonly __typename?: "Mutation";
   readonly createPackage: Package;
   readonly updatePackage: Maybe<Package>;
   readonly createDonation: DonationCreationResult;
   readonly cleanPendingDonations: Scalars["Int"];
-  readonly updateSubscription: Maybe<Subscription>;
-  readonly chargeSubscription: SubscriptionChargeResult;
-  readonly cancelSubscription: Maybe<Subscription>;
 };
 
 export type MutationCreatePackageArgs = {
   defaultTag: PackageTagInput;
+  recurrenceConfig: PackageRecurrenceConfigInput;
   customizationConfig: PackageCustomizationConfigInput;
   reference: Maybe<Scalars["String"]>;
-  repeatInterval: RepeatInterval;
   image: Maybe<Scalars["String"]>;
   price: MonetaryAmountInput;
   priority: Scalars["Int"];
@@ -239,19 +188,6 @@ export type MutationCreateDonationArgs = {
   language: LanguageCode;
 };
 
-export type MutationUpdateSubscriptionArgs = {
-  id: Scalars["String"];
-  status: SubscriptionStatus;
-};
-
-export type MutationChargeSubscriptionArgs = {
-  id: Scalars["String"];
-};
-
-export type MutationCancelSubscriptionArgs = {
-  id: Scalars["String"];
-};
-
 export type PackageFilter = {
   readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
   readonly onlyActive: Maybe<Scalars["Boolean"]>;
@@ -269,11 +205,11 @@ export type Package = {
   readonly reference: Maybe<Scalars["String"]>;
   readonly createdAt: Scalars["Date"];
   readonly updatedAt: Scalars["Date"];
-  readonly repeatInterval: RepeatInterval;
   readonly donationCount: Scalars["Int"];
   readonly image: Maybe<Scalars["String"]>;
   readonly price: MonetaryAmount;
   readonly customizationConfig: PackageCustomizationConfig;
+  readonly recurrenceConfig: PackageRecurrenceConfig;
   readonly isCustom: Scalars["Boolean"];
   readonly priority: Scalars["Int"];
   readonly tags: ReadonlyArray<PackageTag>;
@@ -319,59 +255,12 @@ export type DonationCreationResult = {
   readonly __typename?: "DonationCreationResult";
   readonly donation: Donation;
   readonly package: Package;
-  readonly subscription: Maybe<Subscription>;
   readonly formHtmlTags: ReadonlyArray<Scalars["String"]>;
-};
-
-export type ChargableSubscriptionFilter = {
-  readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
-  readonly status: Maybe<SubscriptionStatus>;
-  readonly repeatInterval: RepeatInterval;
-  readonly hasPaymentToken: Maybe<Scalars["Boolean"]>;
-};
-
-export type SubscriptionFilter = {
-  readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
-  readonly status: Maybe<SubscriptionStatus>;
-  readonly repeatInterval: Maybe<RepeatInterval>;
-  readonly hasPaymentToken: Maybe<Scalars["Boolean"]>;
-};
-
-export type Subscription = {
-  readonly __typename?: "Subscription";
-  readonly id: Scalars["String"];
-  readonly packageId: Scalars["String"];
-  /** The language user chose while starting the subscription. Helpful for communicating with the user */
-  readonly language: LanguageCode;
-  /** Original donation made by the user */
-  readonly donationId: Scalars["String"];
-  readonly processHistory: ReadonlyArray<PaymentProcess>;
-  readonly deactivationReason: Maybe<DeactivationReason>;
-  readonly hasPaymentToken: Scalars["Boolean"];
-  readonly status: SubscriptionStatus;
-  readonly createdAt: Scalars["Date"];
-  readonly updatedAt: Scalars["Date"];
 };
 
 export type ListMetadata = {
   readonly __typename?: "ListMetadata";
   readonly count: Scalars["Int"];
-};
-
-export type ChargableSubscription = {
-  readonly __typename?: "ChargableSubscription";
-  readonly id: Scalars["String"];
-  readonly packageId: Scalars["String"];
-  /** The language user chose while starting the subscription. Helpful for communicating with the user */
-  readonly language: LanguageCode;
-  /** Original donation made by the user */
-  readonly donationId: Scalars["String"];
-  readonly processHistory: ReadonlyArray<PaymentProcess>;
-  readonly deactivationReason: Maybe<DeactivationReason>;
-  readonly hasPaymentToken: Scalars["Boolean"];
-  readonly status: SubscriptionStatus;
-  readonly createdAt: Scalars["Date"];
-  readonly updatedAt: Scalars["Date"];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -469,16 +358,16 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   LanguageCode: LanguageCode;
   DeactivationReason: DeactivationReason;
-  SubscriptionStatus: SubscriptionStatus;
   KeyValue: ResolverTypeWrapper<KeyValue>;
   String: ResolverTypeWrapper<Scalars["String"]>;
   PackageTagInput: PackageTagInput;
   PackageTag: ResolverTypeWrapper<PackageTag>;
   PackageCustomizationConfigInput: PackageCustomizationConfigInput;
   PackageCustomizationConfig: ResolverTypeWrapper<PackageCustomizationConfig>;
-  SubscriptionChargeResult: ResolverTypeWrapper<SubscriptionChargeResult>;
-  Query: ResolverTypeWrapper<{}>;
+  PackageRecurrenceConfigInput: PackageRecurrenceConfigInput;
   Int: ResolverTypeWrapper<Scalars["Int"]>;
+  PackageRecurrenceConfig: ResolverTypeWrapper<PackageRecurrenceConfig>;
+  Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   PackageFilter: PackageFilter;
   Package: ResolverTypeWrapper<Package>;
@@ -486,11 +375,7 @@ export type ResolversTypes = ResolversObject<{
   DonationInput: DonationInput;
   Donation: ResolverTypeWrapper<Donation>;
   DonationCreationResult: ResolverTypeWrapper<DonationCreationResult>;
-  ChargableSubscriptionFilter: ChargableSubscriptionFilter;
-  SubscriptionFilter: SubscriptionFilter;
-  Subscription: ResolverTypeWrapper<{}>;
   ListMetadata: ResolverTypeWrapper<ListMetadata>;
-  ChargableSubscription: ResolverTypeWrapper<RunningSubscription>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -508,9 +393,10 @@ export type ResolversParentTypes = ResolversObject<{
   PackageTag: PackageTag;
   PackageCustomizationConfigInput: PackageCustomizationConfigInput;
   PackageCustomizationConfig: PackageCustomizationConfig;
-  SubscriptionChargeResult: SubscriptionChargeResult;
-  Query: {};
+  PackageRecurrenceConfigInput: PackageRecurrenceConfigInput;
   Int: Scalars["Int"];
+  PackageRecurrenceConfig: PackageRecurrenceConfig;
+  Query: {};
   Mutation: {};
   PackageFilter: PackageFilter;
   Package: Package;
@@ -518,11 +404,7 @@ export type ResolversParentTypes = ResolversObject<{
   DonationInput: DonationInput;
   Donation: Donation;
   DonationCreationResult: DonationCreationResult;
-  ChargableSubscriptionFilter: ChargableSubscriptionFilter;
-  SubscriptionFilter: SubscriptionFilter;
-  Subscription: {};
   ListMetadata: ListMetadata;
-  ChargableSubscription: RunningSubscription;
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes["Date"], any> {
@@ -581,12 +463,12 @@ export type PackageCustomizationConfigResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type SubscriptionChargeResultResolvers<
+export type PackageRecurrenceConfigResolvers<
   ContextType = IContext,
-  ParentType extends ResolversParentTypes["SubscriptionChargeResult"] = ResolversParentTypes["SubscriptionChargeResult"]
+  ParentType extends ResolversParentTypes["PackageRecurrenceConfig"] = ResolversParentTypes["PackageRecurrenceConfig"]
 > = ResolversObject<{
-  status?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  body?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  repeatInterval?: Resolver<ResolversTypes["RepeatInterval"], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -625,42 +507,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<Query_AllDonationsMetaArgs, never>
   >;
-  Subscription?: Resolver<
-    Maybe<ResolversTypes["Subscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QuerySubscriptionArgs, "id">
-  >;
-  allSubscriptions?: Resolver<
-    ReadonlyArray<ResolversTypes["Subscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryAllSubscriptionsArgs, never>
-  >;
-  _allSubscriptionsMeta?: Resolver<
-    Maybe<ResolversTypes["ListMetadata"]>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_AllSubscriptionsMetaArgs, never>
-  >;
-  ChargableSubscription?: Resolver<
-    Maybe<ResolversTypes["ChargableSubscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryChargableSubscriptionArgs, "id">
-  >;
-  allChargableSubscriptions?: Resolver<
-    ReadonlyArray<ResolversTypes["ChargableSubscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryAllChargableSubscriptionsArgs, "filter">
-  >;
-  _allChargableSubscriptionsMeta?: Resolver<
-    Maybe<ResolversTypes["ListMetadata"]>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_AllChargableSubscriptionsMetaArgs, "filter">
-  >;
 }>;
 
 export type MutationResolvers<
@@ -673,7 +519,7 @@ export type MutationResolvers<
     ContextType,
     RequireFields<
       MutationCreatePackageArgs,
-      "defaultTag" | "customizationConfig" | "repeatInterval" | "price" | "priority"
+      "defaultTag" | "recurrenceConfig" | "customizationConfig" | "price" | "priority"
     >
   >;
   updatePackage?: Resolver<
@@ -689,24 +535,6 @@ export type MutationResolvers<
     RequireFields<MutationCreateDonationArgs, "donationInput" | "language">
   >;
   cleanPendingDonations?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
-  updateSubscription?: Resolver<
-    Maybe<ResolversTypes["Subscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateSubscriptionArgs, "id" | "status">
-  >;
-  chargeSubscription?: Resolver<
-    ResolversTypes["SubscriptionChargeResult"],
-    ParentType,
-    ContextType,
-    RequireFields<MutationChargeSubscriptionArgs, "id">
-  >;
-  cancelSubscription?: Resolver<
-    Maybe<ResolversTypes["Subscription"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationCancelSubscriptionArgs, "id">
-  >;
 }>;
 
 export type PackageResolvers<
@@ -718,11 +546,11 @@ export type PackageResolvers<
   reference?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
-  repeatInterval?: Resolver<ResolversTypes["RepeatInterval"], ParentType, ContextType>;
   donationCount?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   price?: Resolver<ResolversTypes["MonetaryAmount"], ParentType, ContextType>;
   customizationConfig?: Resolver<ResolversTypes["PackageCustomizationConfig"], ParentType, ContextType>;
+  recurrenceConfig?: Resolver<ResolversTypes["PackageRecurrenceConfig"], ParentType, ContextType>;
   isCustom?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   priority?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   tags?: Resolver<ReadonlyArray<ResolversTypes["PackageTag"]>, ParentType, ContextType>;
@@ -753,35 +581,8 @@ export type DonationCreationResultResolvers<
 > = ResolversObject<{
   donation?: Resolver<ResolversTypes["Donation"], ParentType, ContextType>;
   package?: Resolver<ResolversTypes["Package"], ParentType, ContextType>;
-  subscription?: Resolver<Maybe<ResolversTypes["Subscription"]>, ParentType, ContextType>;
   formHtmlTags?: Resolver<ReadonlyArray<ResolversTypes["String"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type SubscriptionResolvers<
-  ContextType = IContext,
-  ParentType extends ResolversParentTypes["Subscription"] = ResolversParentTypes["Subscription"]
-> = ResolversObject<{
-  id?: SubscriptionResolver<ResolversTypes["String"], "id", ParentType, ContextType>;
-  packageId?: SubscriptionResolver<ResolversTypes["String"], "packageId", ParentType, ContextType>;
-  language?: SubscriptionResolver<ResolversTypes["LanguageCode"], "language", ParentType, ContextType>;
-  donationId?: SubscriptionResolver<ResolversTypes["String"], "donationId", ParentType, ContextType>;
-  processHistory?: SubscriptionResolver<
-    ReadonlyArray<ResolversTypes["PaymentProcess"]>,
-    "processHistory",
-    ParentType,
-    ContextType
-  >;
-  deactivationReason?: SubscriptionResolver<
-    Maybe<ResolversTypes["DeactivationReason"]>,
-    "deactivationReason",
-    ParentType,
-    ContextType
-  >;
-  hasPaymentToken?: SubscriptionResolver<ResolversTypes["Boolean"], "hasPaymentToken", ParentType, ContextType>;
-  status?: SubscriptionResolver<ResolversTypes["SubscriptionStatus"], "status", ParentType, ContextType>;
-  createdAt?: SubscriptionResolver<ResolversTypes["Date"], "createdAt", ParentType, ContextType>;
-  updatedAt?: SubscriptionResolver<ResolversTypes["Date"], "updatedAt", ParentType, ContextType>;
 }>;
 
 export type ListMetadataResolvers<
@@ -789,23 +590,6 @@ export type ListMetadataResolvers<
   ParentType extends ResolversParentTypes["ListMetadata"] = ResolversParentTypes["ListMetadata"]
 > = ResolversObject<{
   count?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type ChargableSubscriptionResolvers<
-  ContextType = IContext,
-  ParentType extends ResolversParentTypes["ChargableSubscription"] = ResolversParentTypes["ChargableSubscription"]
-> = ResolversObject<{
-  id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  packageId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  language?: Resolver<ResolversTypes["LanguageCode"], ParentType, ContextType>;
-  donationId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  processHistory?: Resolver<ReadonlyArray<ResolversTypes["PaymentProcess"]>, ParentType, ContextType>;
-  deactivationReason?: Resolver<Maybe<ResolversTypes["DeactivationReason"]>, ParentType, ContextType>;
-  hasPaymentToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  status?: Resolver<ResolversTypes["SubscriptionStatus"], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -817,15 +601,13 @@ export type Resolvers<ContextType = IContext> = ResolversObject<{
   KeyValue?: KeyValueResolvers<ContextType>;
   PackageTag?: PackageTagResolvers<ContextType>;
   PackageCustomizationConfig?: PackageCustomizationConfigResolvers<ContextType>;
-  SubscriptionChargeResult?: SubscriptionChargeResultResolvers<ContextType>;
+  PackageRecurrenceConfig?: PackageRecurrenceConfigResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Package?: PackageResolvers<ContextType>;
   Donation?: DonationResolvers<ContextType>;
   DonationCreationResult?: DonationCreationResultResolvers<ContextType>;
-  Subscription?: SubscriptionResolvers<ContextType>;
   ListMetadata?: ListMetadataResolvers<ContextType>;
-  ChargableSubscription?: ChargableSubscriptionResolvers<ContextType>;
 }>;
 
 /**

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Form, Input, InputNumber } from "antd";
 
 import { TranslationContext } from "../../translations";
@@ -9,10 +9,12 @@ import SubmitButton from "./form-components/SubmitButton";
 import PackageSelect from "./form-components/package/PackageSelect";
 import PackageCustomize from "./form-components/package/PackageCustomize";
 import ModalsFormInput from "./form-components/modals/ModalsFormInput";
+import { isPackageRecurrent } from "../../utils";
 
 const DonationForm = ({ createDonation }) => {
   const [form] = Form.useForm();
 
+  const [quantityDisabled, setQuantityDisabled] = useState(false);
   const { resetFields, setFieldsValue } = form;
 
   const { translate, langCode } = useContext(TranslationContext);
@@ -35,6 +37,17 @@ const DonationForm = ({ createDonation }) => {
 
   const formatQuantity = value => (langCode === LANG_CODES.TR ? `${value} Adet` : `Quantity: ${value}`);
 
+  const handleRepeatIntervalChange = repeatInterval => {
+    if (isPackageRecurrent(repeatInterval)) {
+      setQuantityDisabled(true);
+      setFieldsValue({
+        quantity: 1,
+      });
+    } else {
+      setQuantityDisabled(false);
+    }
+  };
+
   return (
     <Form form={form} onFinish={onSubmitForm}>
       <PackageContextProvider>
@@ -42,10 +55,11 @@ const DonationForm = ({ createDonation }) => {
           <div style={{ width: "100%", marginRight: 10 }}>
             <PackageSelect
               onPackageSelect={pkg => {
+                handleRepeatIntervalChange(pkg.recurrenceConfig.repeatInterval);
                 setFieldsValue({
                   customPriceAmount: pkg && pkg.price.amount,
                   customPriceCurrency: pkg && pkg.price.currency,
-                  customRepeatInterval: pkg && pkg.repeatInterval,
+                  customRepeatInterval: pkg && pkg.recurrenceConfig.repeatInterval,
                 });
               }}
             />
@@ -54,6 +68,7 @@ const DonationForm = ({ createDonation }) => {
             <InputNumber
               min={1}
               size="large"
+              disabled={quantityDisabled}
               style={langCode === LANG_CODES.EN ? { minWidth: 120 } : undefined}
               formatter={formatQuantity}
             />
@@ -63,6 +78,9 @@ const DonationForm = ({ createDonation }) => {
           amountField="customPriceAmount"
           currencyField="customPriceCurrency"
           repeatIntervalField="customRepeatInterval"
+          onRepeatIntervalChange={repeatInterval => {
+            handleRepeatIntervalChange(repeatInterval);
+          }}
         />
         <Form.Item
           validateTrigger="onBlur"

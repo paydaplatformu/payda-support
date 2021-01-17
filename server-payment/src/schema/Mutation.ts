@@ -12,9 +12,9 @@ export const typeDef = gql`
   type Mutation {
     createPackage(
       defaultTag: PackageTagInput!
+      recurrenceConfig: PackageRecurrenceConfigInput!
       customizationConfig: PackageCustomizationConfigInput!
       reference: String
-      repeatInterval: RepeatInterval!
       image: String
       price: MonetaryAmountInput!
       priority: Int!
@@ -33,12 +33,6 @@ export const typeDef = gql`
 
     createDonation(donationInput: DonationInput!, language: LanguageCode!): DonationCreationResult!
     cleanPendingDonations: Int!
-
-    updateSubscription(id: String!, status: SubscriptionStatus!): Subscription
-
-    chargeSubscription(id: String!): SubscriptionChargeResult!
-
-    cancelSubscription(id: String!): Subscription
   }
 `;
 
@@ -78,20 +72,5 @@ export const resolvers: MutationResolvers = {
   cleanPendingDonations: (parent, args, { donationService, user }) => {
     if (!user) throw new AuthenticationRequired();
     return donationService.cleanPendingDonations();
-  },
-
-  updateSubscription: (parent, modifier, { subscriptionService, user }) => {
-    if (!user) throw new AuthenticationRequired();
-    return subscriptionService.edit(modifier.id, { status: modifier.status });
-  },
-
-  chargeSubscription: (parent, { id }, { iyzicoService, user }) => {
-    if (!user) throw new AuthenticationRequired();
-    return iyzicoService.chargeUsingToken(id);
-  },
-
-  cancelSubscription: (parent, { id }, { subscriptionService, user }) => {
-    if (!user) throw new AuthenticationRequired();
-    return subscriptionService.cancelSubscription(id);
   },
 };

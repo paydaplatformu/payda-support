@@ -9,7 +9,9 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=paydapw
       - MONGO_INITDB_DATABASE=paydadb
     volumes:
-      - ./data/db:/data/db
+      - docker-data:/data/db
     ports:
       - 27017:27017
     command: mongod --smallfiles --logpath=/dev/null
+volumes:
+  docker-data:

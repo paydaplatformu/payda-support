@@ -20,12 +20,12 @@ const getPackageDisplayText = (pack, langCode) => {
   return `${getPackageName(pack, langCode)} - ${getPackagePriceText(pack)}`;
 };
 
-const PackageSelect = (props) => {
+const PackageSelect = props => {
   const { translate, langCode } = useContext(TranslationContext);
   const { loading, packages, selectPackage } = useContext(PackageContext);
 
-  const onPackageSelect = (value) => {
-    const pkg = packages.find((p) => p.id === value);
+  const onPackageSelect = value => {
+    const pkg = packages.find(p => p.id === value);
     selectPackage(pkg);
     props.onPackageSelect && props.onPackageSelect(pkg);
   };
@@ -50,13 +50,11 @@ const PackageSelect = (props) => {
           onSelect={onPackageSelect}
         >
           {!loading &&
-            packages.map((pack) => (
+            packages.map(pack => (
               <Select.Option key={pack.id} value={pack.id}>
                 {getPackageDisplayText(pack, langCode)}{" "}
-                {isPackageRecurrent(pack.repeatInterval)
-                  ? translate(
-                      getPackageRecurrencyTranslationKey(pack.repeatInterval)
-                    )
+                {isPackageRecurrent(pack.recurrenceConfig.repeatInterval)
+                  ? translate(getPackageRecurrencyTranslationKey(pack.recurrenceConfig.repeatInterval))
                   : null}
               </Select.Option>
             ))}

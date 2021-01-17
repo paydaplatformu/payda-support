@@ -141,7 +141,7 @@ export const createServer = async (callback?: (error?: any, app?: Express) => an
             const pkg = await packageService.getById(donation.packageId);
             if (!pkg) return res.send("Package not found.");
 
-            const isRepeating = pkg.repeatInterval !== RepeatInterval.None;
+            const isRepeating = pkg.recurrenceConfig.repeatInterval !== RepeatInterval.None;
 
             const dummyInput = {
               HASH: "somehash",

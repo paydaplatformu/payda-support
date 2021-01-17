@@ -26,9 +26,11 @@
   "error_page_contact": "Please try again or contact us at info@paydaplatformu.org",
   "recurring_monthly": "(Once per month)",
   "recurring_yearly": "(Once per year)",
-  "recurring_a": "(Test interval a)",
-  "recurring_b": "(Test interval b)",
+  "recurring_daily": "(Once per day)",
+  "recurring_weekly": "(Once per week)",
   "monthly": "Monthly",
   "yearly": "Yearly",
+  "daily": "Daily",
+  "weekly": "Weekly",
   "non_recurrent": "None"
 }

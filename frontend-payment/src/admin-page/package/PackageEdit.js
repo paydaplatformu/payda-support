@@ -10,11 +10,7 @@ import {
   SaveButton,
 } from "react-admin";
 
-import {
-  repeatIntervalChoices,
-  currencyChoices,
-  languageChoices,
-} from "../../utils";
+import { repeatIntervalChoices, currencyChoices, languageChoices } from "../../utils";
 
 import {
   StyledTextInput,
@@ -24,55 +20,38 @@ import {
   StyledDivider,
 } from "./PackageFormComponents";
 
-const PackageEditToolbar = (props) => (
+const PackageEditToolbar = props => (
   <Toolbar {...props}>
     <SaveButton />
   </Toolbar>
 );
 
-const PackageEdit = (props) => (
+const PackageEdit = props => (
   <Edit undoable={false} {...props}>
     <SimpleForm toolbar={<PackageEditToolbar />}>
       <h2>Package Information</h2>
       <StyledDivider />
-      <StyledSelectInput
-        source="defaultTag.code"
-        label="Default Package Language"
-        choices={languageChoices}
-      />
+      <StyledSelectInput source="defaultTag.code" label="Default Package Language" choices={languageChoices} />
       <StyledTextInput source="defaultTag.name" label="Default Package Name" />
-      <StyledTextInput
-        multiline
-        source="defaultTag.description"
-        label="Default Package Description"
-      />
+      <StyledTextInput multiline source="defaultTag.description" label="Default Package Description" />
       <h4 style={{ marginTop: 30, width: "50%" }}>
-        * You can add package information in other languages by clicking the
-        button below
+        * You can add package information in other languages by clicking the button below
       </h4>
       <StyledArrayInput source="tags" label="">
         <SimpleFormIterator style={{ marginTop: 30 }}>
-          <SelectInput
-            source="code"
-            label="Language"
-            choices={languageChoices}
-          />
+          <SelectInput source="code" label="Language" choices={languageChoices} />
           <TextInput source="name" label="Name" />
           <TextInput multiline source="description" label="Description" />
         </SimpleFormIterator>
       </StyledArrayInput>
       <h2 style={{ marginTop: 30 }}>Price Information</h2>
       <StyledDivider />
-      <StyledTextInput
-        disabled
-        source="price.currency"
-        label="Currency"
-        choices={currencyChoices}
-      />
+      <StyledTextInput disabled source="price.currency" label="Currency" choices={currencyChoices} />
       <StyledTextInput disabled source="price.amount" label="Price" />
+      <StyledTextInput disabled source="recurrenceConfig.count" label="Repeat Count" />
       <StyledTextInput
         disabled
-        source="repeatInterval"
+        source="recurrenceConfig.repeatInterval"
         label="Repetitive Payment Interval"
         choices={repeatIntervalChoices}
       />

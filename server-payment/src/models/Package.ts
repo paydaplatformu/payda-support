@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
-import { MonetaryAmount, Currency, RepeatInterval, PackageTag, PackageCustomizationConfig } from "../generated/graphql";
+import { MonetaryAmount, PackageTag, PackageCustomizationConfig, PackageRecurrenceConfig } from "../generated/graphql";
 
 export interface PackageCreator {
   defaultTag: PackageTag;
   reference?: string | null;
-  repeatInterval: RepeatInterval;
   image?: string | null;
   price: MonetaryAmount;
+  recurrenceConfig: PackageRecurrenceConfig;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;
@@ -18,6 +18,7 @@ export interface PackageModifier {
   reference: string | null;
   image: string | null;
   isActive: boolean;
+  recurrenceConfig: PackageRecurrenceConfig;
   customizationConfig: PackageCustomizationConfig;
   priority: number;
   tags: ReadonlyArray<PackageTag>;
@@ -29,9 +30,9 @@ export interface PackageEntity {
   reference: string | null;
   createdAt: Date;
   updatedAt: Date;
-  repeatInterval: RepeatInterval;
   image: string | null;
   price: MonetaryAmount;
+  recurrenceConfig: PackageRecurrenceConfig;
   customizationConfig: PackageCustomizationConfig;
   isCustom: boolean;
   priority: number;

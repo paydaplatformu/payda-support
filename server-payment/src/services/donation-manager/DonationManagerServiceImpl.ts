@@ -1,20 +1,11 @@
 import { inject, injectable } from "inversify";
-import { config } from "../../config";
+import { Donation, DonationCreationResult, LanguageCode, Package, RepeatInterval } from "../../generated/graphql";
 import { DonationCreator } from "../../models/Donation";
-import { DonationManagerService } from "./DonationManagerService";
-import { DonationService } from "../donation/DonationService";
-import { PackageService } from "../package/PackageService";
-import { SubscriptionService } from "../subscription/SubscriptionService";
 import { TYPES } from "../../types";
-import {
-  Donation,
-  RepeatInterval,
-  LanguageCode,
-  Subscription,
-  DonationCreationResult,
-  Package,
-} from "../../generated/graphql";
+import { DonationService } from "../donation/DonationService";
 import { IyzicoService } from "../iyzico/IyzicoService";
+import { PackageService } from "../package/PackageService";
+import { DonationManagerService } from "./DonationManagerService";
 
 @injectable()
 export class DonationManagerServiceImpl implements DonationManagerService {
@@ -26,9 +17,6 @@ export class DonationManagerServiceImpl implements DonationManagerService {
 
   @inject(TYPES.IyzicoService)
   private iyzicoService: IyzicoService = null as any;
-
-  @inject(TYPES.SubscriptionService)
-  private subscriptionService: SubscriptionService = null as any;
 
   private getPackageForDonationCreator = async (donationCreator: DonationCreator) => {
     const pkg = await this.packageService.getById(donationCreator.packageId);
@@ -46,10 +34,12 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     const repeatInterval =
       pkg.customizationConfig.allowRepeatIntervalCustomization && donationCreator.customRepeatInterval
         ? donationCreator.customRepeatInterval
-        : pkg.repeatInterval;
+        : pkg.recurrenceConfig.repeatInterval;
 
     const isCustom =
-      priceAmount !== pkg.price.amount || priceCurrency !== pkg.price.currency || repeatInterval !== pkg.repeatInterval;
+      priceAmount !== pkg.price.amount ||
+      priceCurrency !== pkg.price.currency ||
+      repeatInterval !== pkg.recurrenceConfig.repeatInterval;
 
     if (isCustom) {
       return this.packageService.create({
@@ -66,7 +56,10 @@ export class DonationManagerServiceImpl implements DonationManagerService {
         },
         priority: pkg.priority,
         reference: pkg.reference,
-        repeatInterval,
+        recurrenceConfig: {
+          count: pkg.recurrenceConfig.count,
+          repeatInterval,
+        },
         tags: pkg.tags,
         isCustom: true,
       });
@@ -75,19 +68,33 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     return pkg;
   };
 
-  private getSubscription = async (
+  private handleSubscription = async (
     donation: Donation,
     pkg: Package,
     language: LanguageCode
-  ): Promise<Subscription | null> => {
-    if (pkg.repeatInterval !== RepeatInterval.None) {
-      return this.subscriptionService.create({
-        donationId: donation.id,
-        packageId: pkg.id,
-        language,
-      });
+  ): Promise<readonly string[]> => {
+    if (donation.quantity !== 1) {
+      throw new Error("Subscriptions can only have 1 as quantity");
     }
-    return null;
+
+    const tag = pkg.tags.find((t) => t.code === language) || pkg.defaultTag;
+
+    const name = pkg.isCustom
+      ? `${tag.name} (${pkg.price.amount}/${pkg.price.currency}/${pkg.recurrenceConfig.repeatInterval})`
+      : tag.name;
+
+    const product = await this.iyzicoService.createProduct({ name, description: tag.description }, language);
+    const paymentPlan = await this.iyzicoService.createPaymentPlan(
+      {
+        name,
+        price: pkg.price,
+        productReferenceCode: product.referenceCode,
+        recurrenceConfig: pkg.recurrenceConfig,
+      },
+      language
+    );
+    await this.iyzicoService.createCustomer({ email: donation.email, fullName: donation.fullName }, language);
+    return this.iyzicoService.getFormContentsForSubscription(donation, paymentPlan.referenceCode, language);
   };
 
   public createDonation = async (
@@ -99,11 +106,19 @@ export class DonationManagerServiceImpl implements DonationManagerService {
       ...donationCreator,
       packageId: pkg.id,
     });
-    const subscription = await this.getSubscription(donation, pkg, language);
-    const formHtmlTags = await this.iyzicoService.getFormContents(donation, pkg, language);
+
+    if (pkg.recurrenceConfig.repeatInterval !== RepeatInterval.None) {
+      const formHtmlTags = await this.handleSubscription(donation, pkg, language);
+      return {
+        donation,
+        formHtmlTags,
+        package: pkg,
+      };
+    }
+
+    const formHtmlTags = await this.iyzicoService.getFormContentsForSinglePayment(donation, pkg, language);
     return {
       donation,
-      subscription,
       formHtmlTags,
       package: pkg,
     };

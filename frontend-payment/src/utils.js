@@ -1,13 +1,7 @@
-import {
-  RECURRENCY_TRANSLATION_KEYS,
-  REPEAT_INTERVAL,
-  CURRENCY,
-  SUBSCRIPTION_STATUS
-} from "./constants";
+import { RECURRENCY_TRANSLATION_KEYS, REPEAT_INTERVAL, CURRENCY } from "./constants";
 
 export const getPackageTag = (pack, langCode) =>
-  (pack.tags && pack.tags.find(tag => tag.code === langCode.toUpperCase())) ||
-  pack.defaultTag;
+  (pack.tags && pack.tags.find(tag => tag.code === langCode.toUpperCase())) || pack.defaultTag;
 
 export const getPackageName = (pack, langCode) => {
   const packageTag = getPackageTag(pack, langCode);
@@ -21,8 +15,7 @@ export const getPackageDescription = (pack, langCode) => {
   return packageTag.description;
 };
 
-export const getPackageHasDescription = (pack, langCode) =>
-  !!getPackageDescription(pack, langCode);
+export const getPackageHasDescription = (pack, langCode) => !!getPackageDescription(pack, langCode);
 
 export const getPackagePriceText = pack => {
   const packagePrice = pack.price;
@@ -34,8 +27,7 @@ export const getPackagePriceText = pack => {
 
 export const isPackageRecurrent = repeatInterval => repeatInterval !== "NONE";
 
-export const getPackageRecurrencyTranslationKey = repeatInterval =>
-  RECURRENCY_TRANSLATION_KEYS[repeatInterval];
+export const getPackageRecurrencyTranslationKey = repeatInterval => RECURRENCY_TRANSLATION_KEYS[repeatInterval];
 
 export const defaultDateFieldProps = {
   options: {
@@ -45,40 +37,30 @@ export const defaultDateFieldProps = {
     hour: "numeric",
     minute: "numeric",
     hour12: false,
-    timeZone: "Europe/Istanbul"
-  }
+    timeZone: "Europe/Istanbul",
+  },
 };
 
 export const languageChoices = [
   { id: "TR", name: "Turkish" },
-  { id: "EN", name: "English" }
+  { id: "EN", name: "English" },
 ];
 
 export const activeRepeatIntervalChoices = [
   { id: REPEAT_INTERVAL.MONTHLY, name: "Monthly" },
   { id: REPEAT_INTERVAL.YEARLY, name: "Yearly" },
-  { id: REPEAT_INTERVAL.TEST_A, name: "TEST_A" },
-  { id: REPEAT_INTERVAL.TEST_B, name: "TEST_B" }
+  { id: REPEAT_INTERVAL.WEEKLY, name: "Weekly" },
+  { id: REPEAT_INTERVAL.DAILY, name: "Daily" },
 ];
 
-export const repeatIntervalChoices = [
-  { id: REPEAT_INTERVAL.NONE, name: "None" },
-  ...activeRepeatIntervalChoices
-];
-
-export const subscriptionStatusChoices = [
-  { id: SUBSCRIPTION_STATUS.CREATED, name: "Created" },
-  { id: SUBSCRIPTION_STATUS.RUNNING, name: "Running" },
-  { id: SUBSCRIPTION_STATUS.CANCELLED, name: "Cancelled" }
-];
+export const repeatIntervalChoices = [{ id: REPEAT_INTERVAL.NONE, name: "None" }, ...activeRepeatIntervalChoices];
 
 export const currencyChoices = [
   { id: CURRENCY.TRY, name: "TRY" },
-  { id: CURRENCY.USD, name: "USD" }
+  { id: CURRENCY.USD, name: "USD" },
 ];
 
 export const getSourceProp = element => {
-  if (element.props.children)
-    return `${element.props.source}.${element.props.children.props.source}`;
+  if (element.props.children) return `${element.props.source}.${element.props.children.props.source}`;
   return element.props.source;
 };

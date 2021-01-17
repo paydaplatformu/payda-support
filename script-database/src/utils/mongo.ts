@@ -3,7 +3,7 @@ import { MongoClient, Collection } from "mongodb";
 export const connect = (url: string): Promise<MongoClient> =>
   new Promise((resolve, reject) => {
     const client = new MongoClient(url, { useNewUrlParser: true });
-    client.connect(function(err) {
+    client.connect(function (err) {
       if (err) {
         console.error({ err, url });
         return reject(err);
@@ -18,11 +18,11 @@ export const copyStream = (source: Collection, target: Collection) =>
     target.deleteMany({}).then(() => {
       const cursor = source.find();
 
-      cursor.on("data", document => {
+      cursor.on("data", (document) => {
         target.insertOne(document);
       });
 
-      cursor.once("error", error => {
+      cursor.once("error", (error) => {
         return reject(error);
       });
 
