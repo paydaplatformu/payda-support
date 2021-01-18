@@ -15,6 +15,7 @@ export interface IyzicoProduct {
   referenceCode: string;
   name: string;
   description: string;
+  pricingPlans: IyzicoPaymentPlan[];
 }
 
 export interface CreateIyzicoPaymentPlan {
@@ -35,6 +36,7 @@ export interface CreateIyzicoCustomer {
 }
 
 export interface IyzicoCustomer {
+  email: string;
   referenceCode: string;
 }
 
@@ -49,7 +51,10 @@ export interface IyzicoService {
   getWebhookSignature(iyziEventType: string, token: string): string;
   extractDonationIdFromReference(reference: string): string;
 
+  getAllProducts(language: LanguageCode): Promise<IyzicoProduct[]>;
+  getProduct(productReferenceCode: string): Promise<IyzicoProduct | null>;
   createProduct(input: CreateIyzicoProduct, language: LanguageCode): Promise<IyzicoProduct>;
   createPaymentPlan(input: CreateIyzicoPaymentPlan, language: LanguageCode): Promise<IyzicoPaymentPlan>;
+  getAllCustomers(language: LanguageCode): Promise<IyzicoCustomer[]>;
   createCustomer(input: CreateIyzicoCustomer, language: LanguageCode): Promise<IyzicoCustomer>;
 }

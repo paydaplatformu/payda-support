@@ -142,9 +142,9 @@ if (["development", "test", "staging"].includes(config.get("environment"))) {
   config.set("defaultUser.password", "123456");
 
   config.set("iyzico.baseUrl", "https://sandbox-api.iyzipay.com");
-  config.set("iyzico.apiKey", "sandbox-v6mUQCgtToxpNffEvSXjMhdXgkZqRbQ5");
-  config.set("iyzico.secretKey", "sandbox-PuJMxTCqTUb1aj7EgGhTsMdWDfwGX6jy");
-  config.set("iyzico.callbackUrl", "http://localhost:3000/iyzico/form-callback");
+  config.set("iyzico.apiKey", "sandbox-MoI8lgrjCscRxtJyp3v7i0RTU3163PHK");
+  config.set("iyzico.secretKey", "sandbox-XgsUdNUPu1CXKtlGhr0HJ7XdshBFdpNt");
+  config.set("iyzico.callbackUrl", "http://localhost:8080/iyzico/form-callback");
 
   config.set(
     "clients",

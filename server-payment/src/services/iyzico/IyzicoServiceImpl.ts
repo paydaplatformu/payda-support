@@ -158,6 +158,8 @@ export class IyzicoServiceImpl implements IyzicoService {
       },
     };
 
+    console.log(data);
+
     const result = await promisify(this.client.subscriptionCheckoutForm.initialize).call(
       this.client.subscriptionCheckoutForm,
       data
@@ -171,37 +173,113 @@ export class IyzicoServiceImpl implements IyzicoService {
     return value;
   };
 
-  public createProduct = (input: CreateIyzicoProduct, language: LanguageCode): Promise<IyzicoProduct> => {
-    return promisify(this.client.subscriptionProduct.create).call(this.client.subscriptionProduct, {
+  public getAllProducts = async (language: LanguageCode) => {
+    const doRequest = async (accumulated: IyzicoProduct[] = [], currentPage: number = 1): Promise<IyzicoProduct[]> => {
+      const result = await promisify(this.client.subscriptionProduct.retrieveList).call(
+        this.client.subscriptionProduct,
+        {
+          locale: this.getLocale(language),
+          page: currentPage,
+          count: 100,
+        }
+      );
+      if (result.status !== "success") {
+        console.error(result);
+        throw new Error(result.errorMessage || "Iyzico error");
+      }
+      if (result.data.pageCount === result.data.currentPage) {
+        return accumulated.concat(result.data.items);
+      }
+      return doRequest(accumulated.concat(result.data.items), result.data.currentPage + 1);
+    };
+
+    return doRequest();
+  };
+
+  public getAllCustomers = async (language: LanguageCode) => {
+    const doRequest = async (
+      accumulated: IyzicoCustomer[] = [],
+      currentPage: number = 1
+    ): Promise<IyzicoCustomer[]> => {
+      const result = await promisify(this.client.subscriptionCustomer.retrieveList).call(
+        this.client.subscriptionCustomer,
+        {
+          locale: this.getLocale(language),
+          page: currentPage,
+          count: 100,
+        }
+      );
+      if (result.status !== "success") {
+        console.error(result);
+        throw new Error(result.errorMessage || "Iyzico error");
+      }
+      if (result.data.pageCount === result.data.currentPage) {
+        return accumulated.concat(result.data.items);
+      }
+      return doRequest(accumulated.concat(result.data.items), result.data.currentPage + 1);
+    };
+
+    return doRequest();
+  };
+
+  public getProduct = async (productReferenceCode: string) => {
+    const result = await promisify(this.client.subscriptionProduct.retrieve).call(this.client.subscriptionProduct, {
+      productReferenceCode,
+    });
+    if (result.status !== "success") {
+      console.error(result);
+      throw new Error(result.errorMessage || "Iyzico error");
+    }
+    return result.data;
+  };
+
+  public createProduct = async (input: CreateIyzicoProduct, language: LanguageCode): Promise<IyzicoProduct> => {
+    const result = await promisify(this.client.subscriptionProduct.create).call(this.client.subscriptionProduct, {
       locale: this.getLocale(language),
       ...input,
     });
+    if (result.status !== "success") {
+      console.error(result);
+      throw new Error(result.errorMessage || "Iyzico error");
+    }
+    return result.data;
   };
 
-  public createPaymentPlan = (input: CreateIyzicoPaymentPlan, language: LanguageCode): Promise<IyzicoPaymentPlan> => {
+  public createPaymentPlan = async (
+    input: CreateIyzicoPaymentPlan,
+    language: LanguageCode
+  ): Promise<IyzicoPaymentPlan> => {
     const paymentInterval = this.getInterval(input.recurrenceConfig.repeatInterval);
     if (!paymentInterval) {
       throw new Error("Cannot create payment plan for single pay donations");
     }
 
-    return promisify(this.client.subscriptionPricingPlan.create).call(this.client.subscriptionPricingPlan, {
-      locale: this.getLocale(language),
-      productReferenceCode: input.productReferenceCode,
-      name: input.name,
-      price: input.price.amount,
-      currencyCode: this.getCurrency(input.price),
-      paymentInterval,
-      paymentIntervalCount: 1,
-      planPaymentType: Iyzipay.PLAN_PAYMENT_TYPE.RECURRING,
-      recurrenceCount: input.recurrenceConfig.count,
-    });
+    const result = await promisify(this.client.subscriptionPricingPlan.create).call(
+      this.client.subscriptionPricingPlan,
+      {
+        locale: this.getLocale(language),
+        productReferenceCode: input.productReferenceCode,
+        name: input.name,
+        price: input.price.amount,
+        currencyCode: this.getCurrency(input.price),
+        paymentInterval,
+        paymentIntervalCount: 1,
+        planPaymentType: Iyzipay.PLAN_PAYMENT_TYPE.RECURRING,
+        recurrenceCount: input.recurrenceConfig.count,
+      }
+    );
+    if (result.status !== "success") {
+      console.error(result);
+      throw new Error(result.errorMessage || "Iyzico error");
+    }
+    return result.data;
   };
 
-  public createCustomer = (input: CreateIyzicoCustomer, language: LanguageCode): Promise<IyzicoCustomer> => {
+  public createCustomer = async (input: CreateIyzicoCustomer, language: LanguageCode): Promise<IyzicoCustomer> => {
     const { firstName, lastName } = splitName(input.fullName);
 
-    return promisify(this.client.subscriptionCustomer.create).call(this.client.subscriptionCustomer, {
-      locale: Iyzipay.LOCALE.EN,
+    const result = await promisify(this.client.subscriptionCustomer.create).call(this.client.subscriptionCustomer, {
+      locale: this.getLocale(language),
       name: firstName,
       surname: lastName,
       identityNumber: "1111111110",
@@ -220,5 +298,11 @@ export class IyzicoServiceImpl implements IyzicoService {
         address: "not available",
       },
     });
+
+    if (result.status !== "success") {
+      console.error(result);
+      throw new Error(result.errorMessage || "Iyzico error");
+    }
+    return result.data;
   };
 }
