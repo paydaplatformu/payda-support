@@ -6,14 +6,12 @@ export const typeDef = gql`
     search: String
     ids: [String!]
     packageId: String
-
-    "If true only shows donations that was created by user, excluding automated subscriptions"
-    onlyDirect: Boolean
   }
 
   input DonationInput {
     fullName: String!
     email: String!
+    phoneNumber: String!
     packageId: String!
     customPriceAmount: Float
     customPriceCurrency: Currency
@@ -26,16 +24,13 @@ export const typeDef = gql`
     id: String!
     fullName: String!
     email: String!
+    phoneNumber: String!
     packageId: String!
     notes: String
     paymentConfirmed: Boolean!
     date: Date!
     quantity: Int!
-
     ip: String
-
-    "If the donation is created because of a subscription, this will point to the original user donation"
-    parentDonationId: String
   }
 
   type DonationCreationResult {

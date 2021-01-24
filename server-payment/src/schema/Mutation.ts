@@ -65,7 +65,6 @@ export const resolvers: MutationResolvers = {
     const donationCreator: DonationCreator = {
       ...donationInput,
       ip,
-      parentDonationId: undefined,
     };
     return donationManagerService.createDonation(donationCreator, language);
   },

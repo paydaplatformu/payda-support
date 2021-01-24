@@ -221,13 +221,12 @@ export type DonationFilter = {
   readonly search: Maybe<Scalars["String"]>;
   readonly ids: Maybe<ReadonlyArray<Scalars["String"]>>;
   readonly packageId: Maybe<Scalars["String"]>;
-  /** If true only shows donations that was created by user, excluding automated subscriptions */
-  readonly onlyDirect: Maybe<Scalars["Boolean"]>;
 };
 
 export type DonationInput = {
   readonly fullName: Scalars["String"];
   readonly email: Scalars["String"];
+  readonly phoneNumber: Scalars["String"];
   readonly packageId: Scalars["String"];
   readonly customPriceAmount: Maybe<Scalars["Float"]>;
   readonly customPriceCurrency: Maybe<Currency>;
@@ -241,14 +240,13 @@ export type Donation = {
   readonly id: Scalars["String"];
   readonly fullName: Scalars["String"];
   readonly email: Scalars["String"];
+  readonly phoneNumber: Scalars["String"];
   readonly packageId: Scalars["String"];
   readonly notes: Maybe<Scalars["String"]>;
   readonly paymentConfirmed: Scalars["Boolean"];
   readonly date: Scalars["Date"];
   readonly quantity: Scalars["Int"];
   readonly ip: Maybe<Scalars["String"]>;
-  /** If the donation is created because of a subscription, this will point to the original user donation */
-  readonly parentDonationId: Maybe<Scalars["String"]>;
 };
 
 export type DonationCreationResult = {
@@ -565,13 +563,13 @@ export type DonationResolvers<
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   fullName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  phoneNumber?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   packageId?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   paymentConfirmed?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   date?: Resolver<ResolversTypes["Date"], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   ip?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
-  parentDonationId?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

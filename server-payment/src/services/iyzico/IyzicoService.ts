@@ -33,6 +33,7 @@ export interface IyzicoPaymentPlan {
 export interface CreateIyzicoCustomer {
   fullName: string;
   email: string;
+  phoneNumber: string;
 }
 
 export interface IyzicoCustomer {

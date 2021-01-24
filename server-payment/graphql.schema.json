@@ -1676,16 +1676,6 @@
               "ofType": null
             },
             "defaultValue": null
-          },
-          {
-            "name": "onlyDirect",
-            "description": "If true only shows donations that was created by user, excluding automated subscriptions",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -1714,6 +1704,20 @@
           },
           {
             "name": "email",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "phoneNumber",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1853,6 +1857,22 @@
             "deprecationReason": null
           },
           {
+            "name": "phoneNumber",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "packageId",
             "description": null,
             "args": [],
@@ -1931,18 +1951,6 @@
           {
             "name": "ip",
             "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "parentDonationId",
-            "description": "If the donation is created because of a subscription, this will point to the original user donation",
             "args": [],
             "type": {
               "kind": "SCALAR",

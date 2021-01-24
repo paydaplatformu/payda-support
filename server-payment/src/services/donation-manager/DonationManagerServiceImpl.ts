@@ -2,6 +2,7 @@ import { throws } from "assert";
 import { inject, injectable } from "inversify";
 import { Donation, DonationCreationResult, LanguageCode, Package, RepeatInterval } from "../../generated/graphql";
 import { DonationCreator } from "../../models/Donation";
+import { ValidationError } from "../../models/Errors";
 import { TYPES } from "../../types";
 import { DonationService } from "../donation/DonationService";
 import {
@@ -105,7 +106,10 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     if (!customer) {
       try {
         customer = await this.iyzicoService.createCustomer(input, language);
-      } catch {
+      } catch (error) {
+        console.log({ error });
+        if (error instanceof ValidationError) throw error;
+
         // In case of race condition
         const customers = await this.iyzicoService.getAllCustomers(language);
         customer = customers.find((customer) => customer.email === input.email);
@@ -174,7 +178,10 @@ export class DonationManagerServiceImpl implements DonationManagerService {
       language
     );
 
-    await this.getOrCreateCustomer({ email: donation.email, fullName: donation.fullName }, language);
+    await this.getOrCreateCustomer(
+      { email: donation.email, phoneNumber: donation.phoneNumber, fullName: donation.fullName },
+      language
+    );
 
     return this.iyzicoService.getFormContentsForSubscription(donation, paymentPlanReferenceCode, language);
   };

@@ -9,13 +9,13 @@ import {
   CreateIyzicoProduct,
   IyzicoCustomer,
   IyzicoPaymentPlan,
-  IyzicoPaymentResult,
   IyzicoProduct,
   IyzicoService,
 } from "./IyzicoService";
 import * as crypto from "crypto";
 import { promisify } from "util";
 import { range } from "lodash";
+import { FieldErrorCode, ValidationError } from "../../models/Errors";
 
 const Iyzipay = require("iyzipay");
 
@@ -47,6 +47,15 @@ export class IyzicoServiceImpl implements IyzicoService {
       return null;
     } else {
       throw new Error("Unknown interval");
+    }
+  };
+
+  private handleErrors = (result: any) => {
+    if (result?.errorCode === "200310") {
+      throw new ValidationError([{ name: "Phone number", code: FieldErrorCode.INVALID_PHONE_NUMBER }]);
+    }
+    if (result?.errorCode === "200303") {
+      throw new ValidationError([{ name: "Email", code: FieldErrorCode.INVALID_EMAIL }]);
     }
   };
 
@@ -96,10 +105,11 @@ export class IyzicoServiceImpl implements IyzicoService {
         id: donation.email,
         name: firstName,
         surname: lastName,
-        identityNumber: "1111111110",
+        identityNumber: donation.phoneNumber,
         city: "Istanbul",
         country: "Turkey",
         email: donation.email,
+        gsmNumber: donation.phoneNumber,
         ip: donation.ip,
         registrationAddress: "not available",
       },
@@ -116,8 +126,9 @@ export class IyzicoServiceImpl implements IyzicoService {
       this.client.checkoutFormInitialize,
       data
     );
-    console.log(result);
+    console.log({ result });
     if (!result.checkoutFormContent) {
+      this.handleErrors(result);
       return [];
     }
     const value = [result.checkoutFormContent as string, '<div id="iyzipay-checkout-form" class="responsive"></div>'];
@@ -142,7 +153,7 @@ export class IyzicoServiceImpl implements IyzicoService {
         surname: lastName,
         identityNumber: "1111111110",
         email: donation.email,
-        gsmNumber: "+9005555555555",
+        gsmNumber: donation.phoneNumber,
         billingAddress: {
           contactName: donation.fullName,
           city: "Istanbul",
@@ -166,6 +177,7 @@ export class IyzicoServiceImpl implements IyzicoService {
     );
     console.log(result);
     if (!result.checkoutFormContent) {
+      this.handleErrors(result);
       return [];
     }
     const value = [result.checkoutFormContent as string, '<div id="iyzipay-checkout-form" class="responsive"></div>'];
@@ -268,6 +280,10 @@ export class IyzicoServiceImpl implements IyzicoService {
         recurrenceCount: input.recurrenceConfig.count,
       }
     );
+    console.log({
+      recurrenceCount: input.recurrenceConfig.count,
+      result,
+    });
     if (result.status !== "success") {
       console.error(result);
       throw new Error(result.errorMessage || "Iyzico error");
@@ -284,7 +300,7 @@ export class IyzicoServiceImpl implements IyzicoService {
       surname: lastName,
       identityNumber: "1111111110",
       email: input.email,
-      gsmNumber: "+9005555555555",
+      gsmNumber: input.phoneNumber,
       billingAddress: {
         contactName: input.fullName,
         city: "Istanbul",
@@ -301,6 +317,7 @@ export class IyzicoServiceImpl implements IyzicoService {
 
     if (result.status !== "success") {
       console.error(result);
+      this.handleErrors(result);
       throw new Error(result.errorMessage || "Iyzico error");
     }
     return result.data;

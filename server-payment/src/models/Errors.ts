@@ -10,11 +10,12 @@ export class AuthenticationRequired extends AuthenticationError {
 
 export enum FieldErrorCode {
   INVALID_EMAIL = "INVALID_EMAIL",
+  INVALID_PHONE_NUMBER = "INVALID_PHONE_NUMBER",
   INVALID_NAME = "INVALID_NAME",
   FULL_NAME_LENGTH = "FULL_NAME_LENGTH",
   INVALID_QUANTITY = "INVALID_QUANTITY",
   PACKAGE_DOES_NOT_EXIST = "PACKAGE_DOES_NOT_EXIST",
-  INVALID_AMOUNT = "INVALID_AMOUNT"
+  INVALID_AMOUNT = "INVALID_AMOUNT",
 }
 
 export interface InvalidField {
@@ -26,7 +27,7 @@ export class InvalidInput extends UserInputError {
   public statusCode: number;
   constructor(invalidFields: InvalidField[]) {
     super("Invalid input.", {
-      invalidFields
+      invalidFields,
     });
     this.statusCode = 400;
   }

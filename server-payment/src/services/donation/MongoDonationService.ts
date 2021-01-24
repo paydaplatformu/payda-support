@@ -30,7 +30,6 @@ export class MongoDonationService
       ...creator,
       paymentConfirmed: false,
       packageId: new ObjectId(creator.packageId),
-      parentDonationId: creator.parentDonationId !== undefined ? new ObjectId(creator.parentDonationId) : undefined,
       date: new Date(),
     };
   }
@@ -56,12 +55,11 @@ export class MongoDonationService
   };
 
   protected getFilters = (filter: Partial<DonationFilter>): object[] => {
-    const { paymentConfirmed, ids, search, packageId, onlyDirect } = filter || {};
+    const { paymentConfirmed, ids, search, packageId } = filter || {};
     return [
       paymentConfirmed === undefined || paymentConfirmed === null ? undefined : { paymentConfirmed },
       isDefined(ids) ? { _id: { $in: ids.map((id) => new ObjectId(id)) } } : undefined,
       search !== undefined ? { $text: { $search: search } } : undefined,
-      onlyDirect === true ? { parentDonationId: null } : undefined,
       packageId !== undefined ? { packageId: packageId === null ? null : new ObjectId(packageId) } : undefined,
     ].filter((el) => el !== undefined) as any;
   };
@@ -71,13 +69,13 @@ export class MongoDonationService
       id: entity._id.toString(),
       date: entity.date,
       email: entity.email,
+      phoneNumber: entity.phoneNumber,
       fullName: entity.fullName,
       ip: entity.ip,
       packageId: entity.packageId.toString(),
       notes: entity.notes,
       paymentConfirmed: entity.paymentConfirmed,
       quantity: entity.quantity,
-      parentDonationId: entity?.parentDonationId?.toString() || null,
     };
   };
 
