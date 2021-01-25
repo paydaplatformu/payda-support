@@ -18,7 +18,12 @@ class DonationForm extends Component {
     return (
       <Mutation mutation={CREATE_DONATION}>
         {(createDonation, { loading, error, data }) => {
-          if (error) return <p>Error!</p>;
+          const errorMessage = error?.graphQLErrors
+            ?.map(innerError => innerError?.extensions?.invalidFields?.map(field => field?.code)?.filter(el => !!el))
+            ?.flat()
+            ?.join(", ");
+
+          if (error) return <p>{errorMessage || "Error!"}</p>;
           if (data?.createDonation?.formHtmlTags?.length === 0) return <p>Error!</p>;
 
           if (loading) {

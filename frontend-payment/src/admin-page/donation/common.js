@@ -6,6 +6,7 @@ export const commonDonationFields = [
   <TextField source="id" />,
   <TextField source="fullName" />,
   <EmailField source="email" />,
+  <TextField source="phoneNumber" />,
   <ReferenceField sortable={false} reference="Package" source="packageId">
     <TextField source="defaultTag.name" />
   </ReferenceField>,
@@ -20,16 +21,6 @@ export const commonDonationFields = [
   </ReferenceField>,
   <ReferenceField sortable={false} label="Custom" reference="Package" source="packageId" linkType={false}>
     <BooleanField source="isCustom" />
-  </ReferenceField>,
-  <ReferenceField
-    sortable={false}
-    label="Parent"
-    reference="Donation"
-    source="parentDonationId"
-    linkType="show"
-    allowEmpty
-  >
-    <TextField source="id" />
   </ReferenceField>,
   <BooleanField source="paymentConfirmed" />,
   <DateField {...defaultDateFieldProps} label="Date" source="date" />,

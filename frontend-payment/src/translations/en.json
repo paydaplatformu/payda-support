@@ -1,6 +1,7 @@
 {
   "support_now": "Support Now!",
   "email_address": "Email Address",
+  "phone_number": "Phone Number",
   "supporter_name": "Supporter Name",
   "quantity": "Quantity",
   "select_package": "Please select a donation package",
@@ -13,6 +14,7 @@
   "packageid_validation_error": "Please select a package",
   "fullname_validation_error": "Please enter your full name",
   "email_validation_error": "Please enter a valid email address",
+  "phone_number_validation_error": "Please enter a valid phone number",
   "agreements_accepted_validation_error": "You have to accept these to make a donation",
   "package_details": "Please click to see details of the packages",
   "notes": "Additional notes for your donation",

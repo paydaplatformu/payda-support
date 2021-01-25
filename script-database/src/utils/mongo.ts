@@ -13,21 +13,12 @@ export const connect = (url: string): Promise<MongoClient> =>
     });
   });
 
-export const copyStream = (source: Collection, target: Collection) =>
-  new Promise((resolve, reject) => {
-    target.deleteMany({}).then(() => {
-      const cursor = source.find();
-
-      cursor.on("data", (document) => {
-        target.insertOne(document);
-      });
-
-      cursor.once("error", (error) => {
-        return reject(error);
-      });
-
-      cursor.once("end", () => {
-        return resolve();
-      });
-    });
-  });
+export const copyCollection = async (
+  source: Collection,
+  target: Collection
+) => {
+  await target.deleteMany({});
+  const input = await source.find().toArray();
+  const promises = input.map(async (document) => target.insertOne(document));
+  await Promise.all(promises);
+};

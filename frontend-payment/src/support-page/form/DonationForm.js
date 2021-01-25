@@ -4,6 +4,7 @@ import { Form, Input, InputNumber } from "antd";
 import { TranslationContext } from "../../translations";
 import { LANG_CODES } from "../../constants";
 import { PackageContextProvider } from "./form-components/package/PackageContext";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 import SubmitButton from "./form-components/SubmitButton";
 import PackageSelect from "./form-components/package/PackageSelect";
@@ -24,15 +25,19 @@ const DonationForm = ({ createDonation }) => {
   }, [langCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSubmitForm = data => {
-    createDonation({
-      variables: {
-        donationInput: {
-          ...data,
-          agreementsAccepted: undefined,
+    const phoneNumber = data.phoneNumber && parsePhoneNumberFromString(data.phoneNumber, "TR");
+    if (phoneNumber?.isValid()) {
+      createDonation({
+        variables: {
+          donationInput: {
+            ...data,
+            phoneNumber: phoneNumber.format("E.164"),
+            agreementsAccepted: undefined,
+          },
+          language: langCode.toUpperCase(),
         },
-        language: langCode.toUpperCase(),
-      },
-    });
+      });
+    }
   };
 
   const formatQuantity = value => (langCode === LANG_CODES.TR ? `${value} Adet` : `Quantity: ${value}`);
@@ -107,6 +112,26 @@ const DonationForm = ({ createDonation }) => {
           ]}
         >
           <Input placeholder={translate("email_address")} size="large" />
+        </Form.Item>
+        <Form.Item
+          validateTrigger="onBlur"
+          name="phoneNumber"
+          rules={[
+            {
+              required: true,
+              validator: (rule, value) => {
+                const phoneNumber = parsePhoneNumberFromString(value, "TR");
+                if (phoneNumber?.isValid()) {
+                  return Promise.resolve();
+                } else {
+                  return Promise.reject(translate("phone_number_validation_error"));
+                }
+              },
+              message: translate("phone_number_validation_error"),
+            },
+          ]}
+        >
+          <Input placeholder={translate("phone_number")} type="tel" size="large" />
         </Form.Item>
         <Form.Item name="notes">
           <Input.TextArea placeholder={translate("notes")} size="large" rows={4} />

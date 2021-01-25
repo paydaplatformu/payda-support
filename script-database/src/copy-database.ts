@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import program from "commander";
-import { connect, copyStream } from "./utils/mongo";
+import { connect, copyCollection } from "./utils/mongo";
 
 (async () => {
   try {
@@ -21,10 +21,10 @@ import { connect, copyStream } from "./utils/mongo";
 
     const collections = ["packages", "donations", "subscriptions", "users"];
 
-    const promises = collections.map(collection => {
+    const promises = collections.map((collection) => {
       const source = sourceClient.db().collection(collection);
       const target = targetClient.db().collection(collection);
-      return copyStream(source, target);
+      return copyCollection(source, target);
     });
 
     await Promise.all(promises);

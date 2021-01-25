@@ -7,6 +7,7 @@
     "apollo-boost": "^0.4.9",
     "dangerously-set-html-content": "^1.0.8",
     "graphql": "^15.4.0",
+    "libphonenumber-js": "^1.9.8",
     "qs": "^6.7.0",
     "ra-data-graphql-simple": "^3.10.2",
     "react": "17.0.1",

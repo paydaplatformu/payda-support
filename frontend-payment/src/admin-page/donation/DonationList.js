@@ -7,7 +7,7 @@ import {
   BooleanInput,
   ReferenceInput,
   SelectInput,
-  TextInput
+  TextInput,
 } from "react-admin";
 import { commonDonationFields } from "./common";
 
@@ -15,16 +15,9 @@ const DonationFilter = props => (
   <Filter {...props}>
     <TextInput label="Search" source="search" alwaysOn />
     <NullableBooleanInput label="Payment" source="paymentConfirmed" alwaysOn />
-    <ReferenceInput
-      label="Package"
-      source="packageId"
-      reference="Package"
-      alwaysOn
-      perPage={100000}
-    >
+    <ReferenceInput label="Package" source="packageId" reference="Package" alwaysOn perPage={100000}>
       <SelectInput optionText="defaultTag.name" />
     </ReferenceInput>
-    <BooleanInput label="Only Direct" source="onlyDirect" />
   </Filter>
 );
 

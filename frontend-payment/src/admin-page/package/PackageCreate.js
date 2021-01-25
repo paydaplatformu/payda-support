@@ -31,9 +31,9 @@ const PackageCreate = props => (
       </StyledArrayInput>
       <h2 style={{ marginTop: 30 }}>Price Information</h2>
       <StyledDivider />
-      <StyledSelectInput source="price.currency" label="Currency" choices={currencyChoices} />
-      <StyledNumberInput source="price.amount" label="Price" />
-      <StyledNumberInput source="recurrenceConfig.count" label="Repeat Count" />
+      <StyledSelectInput source="price.currency" label="Currency" choices={currencyChoices} required />
+      <StyledNumberInput source="price.amount" label="Price" required />
+      <StyledNumberInput source="recurrenceConfig.count" label="Repeat Count" required />
       <StyledSelectInput
         source="recurrenceConfig.repeatInterval"
         label="Repetitive Payment Interval"
@@ -60,7 +60,7 @@ const PackageCreate = props => (
       <h2 style={{ marginTop: 30 }}>Other Information</h2>
       <StyledDivider />
       <StyledTextInput source="reference" />
-      <StyledNumberInput source="priority" />
+      <StyledNumberInput source="priority" required />
       <BooleanInput source="isActive" label="Accept Donations" />
     </SimpleForm>
   </Create>
