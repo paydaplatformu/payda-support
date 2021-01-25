@@ -22,10 +22,10 @@ jobs:
       - name: Install dpl
         run: sudo gem install dpl:2.0.0.beta.3 bundler
       - name: Install frontend dependencies
-        working-directory: frontent-payment
+        working-directory: frontend-payment
         run: yarn --frozen-lockfile
       - name: Build frontend
-        working-directory: frontent-payment
+        working-directory: frontend-payment
         run: yarn build
       - name: Distribute frontend
         run: cp -R frontend-payment/build/ server-payment/frontend-dist/
