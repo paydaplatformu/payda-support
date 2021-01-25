@@ -77,14 +77,22 @@ export class DonationManagerServiceImpl implements DonationManagerService {
   };
 
   private getOrCreateProduct = async (input: CreateIyzicoProduct, language: LanguageCode) => {
+    console.log("getOrCreateProduct", { input });
     const products = await this.iyzicoService.getAllProducts(language);
 
+    console.log("getOrCreateProduct", { input, products });
+
     let product = products.find((product) => product.name === input.name);
+
+    console.log("getOrCreateProduct", { input, products, product });
 
     if (!product) {
       try {
         product = await this.iyzicoService.createProduct(input, language);
-      } catch {
+        console.log("getOrCreateProductCreated", { input, products, product });
+      } catch (error) {
+        console.log("getOrCreateProductError", { input, error });
+
         // In case of race condition
         const products = await this.iyzicoService.getAllProducts(language);
         product = products.find((product) => product.name === input.name);
@@ -94,6 +102,8 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     if (!product) {
       throw new Error("Could not create product");
     }
+
+    console.log("getOrCreateProductResult", { input, products, product });
 
     return product;
   };
