@@ -1,0 +1,42 @@
+name: Delivery
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+      - name: Install dpl
+        run: sudo gem install dpl:2.0.0.beta.3 bundler
+      - name: Install frontend dependencies
+        working-directory: frontent-payment
+        run: yarn --frozen-lockfile
+      - name: Build frontend
+        working-directory: frontent-payment
+        run: yarn build
+      - name: Distribute frontend
+        run: cp -R frontend-payment/build/ server-payment/frontend-dist/
+      - name: Install backend dependencies
+        working-directory: server-payment
+        run: yarn --frozen-lockfile
+      - name: Generate typescript types
+        working-directory: server-payment      
+        run: yarn generate:typescript         
+      - name: Build backend
+        run: yarn build
+      - name: Deploy
+        run: dpl --provider=heroku --app=ism-backend-fitness-staging --api-key=${{secrets.HEROKU_API_KEY}}
+    
