@@ -155,6 +155,8 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     pkg: Package,
     language: LanguageCode
   ): Promise<readonly string[]> => {
+    console.log("handleSubscription", { donation, pkg });
+
     if (donation.quantity !== 1) {
       throw new Error("Subscriptions can only have 1 as quantity");
     }
@@ -167,6 +169,8 @@ export class DonationManagerServiceImpl implements DonationManagerService {
 
     const product = await this.getOrCreateProduct({ name, description: tag.description }, language);
 
+    console.log("handleSubscription", { donation, pkg, product });
+
     const paymentPlanReferenceCode = await this.getOrCreatePaymentPlan(
       {
         name,
@@ -178,10 +182,14 @@ export class DonationManagerServiceImpl implements DonationManagerService {
       language
     );
 
+    console.log("handleSubscription", { donation, pkg, product, paymentPlanReferenceCode });
+
     await this.getOrCreateCustomer(
       { email: donation.email, phoneNumber: donation.phoneNumber, fullName: donation.fullName },
       language
     );
+
+    console.log("handleSubscriptionAfterCustomer", { donation, pkg, product, paymentPlanReferenceCode });
 
     return this.iyzicoService.getFormContentsForSubscription(donation, paymentPlanReferenceCode, language);
   };
@@ -190,14 +198,22 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     donationCreator: DonationCreator,
     language: LanguageCode
   ): Promise<DonationCreationResult> => {
+    console.log("createDonation", { donationCreator });
+
     const pkg = await this.getPackageForDonationCreator(donationCreator);
+
+    console.log("createDonation", { donationCreator, pkg });
     const donation = await this.donationService.create({
       ...donationCreator,
       packageId: pkg.id,
     });
 
+    console.log("createDonation", { donationCreator, pkg, donation });
+
     if (pkg.recurrenceConfig.repeatInterval !== RepeatInterval.None) {
       const formHtmlTags = await this.handleSubscription(donation, pkg, language);
+      console.log("createDonationSub", { donationCreator, pkg, donation, formHtmlTags });
+
       return {
         donation,
         formHtmlTags,
@@ -206,6 +222,8 @@ export class DonationManagerServiceImpl implements DonationManagerService {
     }
 
     const formHtmlTags = await this.iyzicoService.getFormContentsForSinglePayment(donation, pkg, language);
+    console.log("createDonationSingle", { donationCreator, pkg, donation, formHtmlTags });
+
     return {
       donation,
       formHtmlTags,
