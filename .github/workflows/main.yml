@@ -40,5 +40,5 @@ jobs:
         run: yarn build
       - name: Deploy
         working-directory: server-payment
-        run: dpl --provider=heroku --app=ism-backend-fitness-staging --api-key=${{secrets.HEROKU_API_KEY}}
+        run: dpl --provider=heroku --app=payda-support-v2 --api-key=${{secrets.HEROKU_API_KEY}}
     
