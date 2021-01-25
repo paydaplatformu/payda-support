@@ -195,9 +195,13 @@ export class IyzicoServiceImpl implements IyzicoService {
           count: 100,
         }
       );
+      console.log("iyzico getAllProducts response", { result });
       if (result.status !== "success") {
         console.error(result);
         throw new Error(result.errorMessage || "Iyzico error");
+      }
+      if (result.data.pageCount === 0) {
+        return [];
       }
       if (result.data.pageCount === result.data.currentPage) {
         return accumulated.concat(result.data.items);
@@ -224,6 +228,9 @@ export class IyzicoServiceImpl implements IyzicoService {
       if (result.status !== "success") {
         console.error(result);
         throw new Error(result.errorMessage || "Iyzico error");
+      }
+      if (result.data.pageCount === 0) {
+        return [];
       }
       if (result.data.pageCount === result.data.currentPage) {
         return accumulated.concat(result.data.items);
