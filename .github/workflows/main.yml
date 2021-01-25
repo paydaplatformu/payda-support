@@ -33,10 +33,12 @@ jobs:
         working-directory: server-payment
         run: yarn --frozen-lockfile
       - name: Generate typescript types
-        working-directory: server-payment      
+        working-directory: server-payment 
         run: yarn generate:typescript         
       - name: Build backend
+        working-directory: server-payment
         run: yarn build
       - name: Deploy
+        working-directory: server-payment
         run: dpl --provider=heroku --app=ism-backend-fitness-staging --api-key=${{secrets.HEROKU_API_KEY}}
     
