@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Datagrid,
-  Filter,
-  List,
-  NullableBooleanInput,
-  BooleanInput,
-  ReferenceInput,
-  SelectInput,
-  TextInput,
-} from "react-admin";
+import { Datagrid, Filter, List, NullableBooleanInput, ReferenceInput, SelectInput, TextInput } from "react-admin";
 import { commonDonationFields } from "./common";
 
 const DonationFilter = props => (
